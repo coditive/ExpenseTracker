@@ -1,8 +1,9 @@
-package com.syrous.expensetracker
+package com.syrous.expensetracker.screen
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.syrous.expensetracker.databinding.ActivityMainBinding
 import com.syrous.expensetracker.utils.SharedPrefManager
 
@@ -30,6 +31,11 @@ class MainActivity : AppCompatActivity() {
             } else {
                 sharedPrefManager.addMonthStartBalance(amount)
             }
+        }
+
+        binding.addTransactionButton.setOnClickListener {
+            val intent = Intent(this, UserTransactionActivity::class.java)
+            startActivity(intent)
         }
     }
 }
