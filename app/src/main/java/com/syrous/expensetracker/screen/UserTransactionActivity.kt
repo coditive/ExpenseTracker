@@ -2,6 +2,7 @@ package com.syrous.expensetracker.screen
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.syrous.expensetracker.ExpenseTrackerApplication
 import com.syrous.expensetracker.databinding.LayoutAddUserTransactionBinding
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Transaction
@@ -17,13 +18,15 @@ class UserTransactionActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = LayoutAddUserTransactionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        transactionManager = (this.applicationContext as ExpenseTrackerApplication).appComponent.getTransactionManager()
     }
 
     override fun onResume() {
         super.onResume()
         setUI()
         binding.addUserTransactionButton.setOnClickListener {
-//            addUserTransaction()
+            addUserTransaction()
+            finish()
         }
 
         binding.expenseCheckBox.setOnCheckedChangeListener { _, isChecked ->
@@ -52,7 +55,7 @@ class UserTransactionActivity: AppCompatActivity() {
 
     private fun addUserTransaction() {
         val amount = binding.amountEt.text.toString()
-        val category = ""
+        val category = "Personal"
         val description = binding.descriptionEt.text.toString()
         val date = binding.transactionDatePicker.dayOfMonth.toString() + "/" +
                 binding.transactionDatePicker.month.toString() + "/" +

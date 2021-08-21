@@ -5,6 +5,9 @@
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.35885416666666664" />
         <entry key="app/src/main/res/layout/layout_add_user_transaction.xml" value="0.37395833333333334" />
+        <entry key="app/src/main/res/layout/layout_date_header.xml" value="0.3723958333333333" />
+        <entry key="app/src/main/res/layout/layout_date_header_view_holder.xml" value="0.3723958333333333" />
+        <entry key="app/src/main/res/layout/layout_transaction_view_holder.xml" value="0.3578125" />
       </map>
     </option>
   </component>
