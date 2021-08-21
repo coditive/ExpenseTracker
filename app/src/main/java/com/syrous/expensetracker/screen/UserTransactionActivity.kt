@@ -1,9 +1,13 @@
 package com.syrous.expensetracker.screen
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.syrous.expensetracker.ExpenseTrackerApplication
 import com.syrous.expensetracker.databinding.LayoutAddUserTransactionBinding
+import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Transaction
 import java.util.*
@@ -14,6 +18,10 @@ class UserTransactionActivity: AppCompatActivity() {
     private lateinit var binding: LayoutAddUserTransactionBinding
     private var transactionCategory = 0
     private lateinit var transactionManager: TransactionManager
+    private val categoryManager = CategoryManagerImpl() as CategoryManager
+    private lateinit var categoryArrayAdapter: ArrayAdapter<String>
+    private var category: String = ""
+    private var isExpenseChecked = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = LayoutAddUserTransactionBinding.inflate(layoutInflater)
@@ -33,6 +41,11 @@ class UserTransactionActivity: AppCompatActivity() {
             if(isChecked) {
                 transactionCategory = 0
                 binding.incomeCheckBox.isChecked = false
+                isExpenseChecked = true
+                categoryArrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                    categoryManager.getExpenseCategories())
+                categoryArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.categorySpinner.adapter = categoryArrayAdapter
             }
         }
 
@@ -40,6 +53,25 @@ class UserTransactionActivity: AppCompatActivity() {
             if(isChecked) {
                 transactionCategory = 1
                 binding.expenseCheckBox.isChecked = false
+                isExpenseChecked = false
+                categoryArrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item,
+                    categoryManager.getIncomeCategories())
+                categoryArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.categorySpinner.adapter = categoryArrayAdapter
+            }
+        }
+
+        binding.categorySpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if(isExpenseChecked) {
+                    category = categoryManager.getExpenseCategories()[p2]
+                } else {
+                    category = categoryManager.getIncomeCategories()[p2]
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
             }
         }
     }
@@ -51,11 +83,11 @@ class UserTransactionActivity: AppCompatActivity() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         binding.transactionDatePicker.init(year, month, day, null)
+
     }
 
     private fun addUserTransaction() {
         val amount = binding.amountEt.text.toString()
-        val category = "Personal"
         val description = binding.descriptionEt.text.toString()
         val date = binding.transactionDatePicker.dayOfMonth.toString() + "/" +
                 binding.transactionDatePicker.month.toString() + "/" +
@@ -97,4 +129,28 @@ class UserTransactionActivity: AppCompatActivity() {
             System.currentTimeMillis()
         )
     }
+}
+
+class CategoryManagerImpl: CategoryManager {
+    override fun getExpenseCategories(): Array<String> {
+        val categoryList = mutableListOf<String>()
+        categoryList.add("Food")
+        categoryList.add("Gifts")
+        categoryList.add("Medical/Health")
+        categoryList.add("Home")
+        categoryList.add("Personal")
+        categoryList.add("MF")
+        return categoryList.toTypedArray()
+    }
+
+    override fun getIncomeCategories(): Array<String>{
+        val categoryList = mutableListOf<String>()
+        categoryList.add("Savings")
+        categoryList.add("Paycheck")
+        categoryList.add("Bonus")
+        categoryList.add("Interest")
+        categoryList.add("Other")
+        return categoryList.toTypedArray()
+    }
+
 }

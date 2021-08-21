@@ -6,5 +6,11 @@ interface TransactionManager {
 
     fun addTransactionToStorage(transaction: Transaction)
 
-    fun getTransactionsFromStorage(transactionCategory: Int): List<Transaction>
+    fun getAllTransactionsFromStorage(): List<Transaction>
+
+    fun getCategorisedTransactionsFromStorage(transactionCategory: Int): List<Transaction>
+
+    fun getTotalExpenses(): Int
+
+    fun getTotalIncome(): Int
 }

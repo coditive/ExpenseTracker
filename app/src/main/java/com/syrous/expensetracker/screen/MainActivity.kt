@@ -4,12 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.syrous.expensetracker.ExpenseTrackerApplication
 import com.syrous.expensetracker.databinding.ActivityMainBinding
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Transaction
 import com.syrous.expensetracker.utils.SharedPrefManager
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,8 +47,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val transactionList = transactionManager.getTransactionsFromStorage(0)
+        val transactionList = transactionManager.getAllTransactionsFromStorage()
         transactionAdapter.submitList(transactionList)
+        binding.totalExpensesTv.text = transactionManager.getTotalExpenses().toString()
+        binding.totalExpensesTv.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark))
         binding.addTransactionButton.setOnClickListener {
             val intent = Intent(this, UserTransactionActivity::class.java)
             startActivity(intent)
@@ -59,7 +63,45 @@ class TransactionManagerImpl : TransactionManager {
         listOfTransactions.add(transaction)
     }
 
-    override fun getTransactionsFromStorage(transactionCategory: Int): List<Transaction> {
+    override fun getAllTransactionsFromStorage(): List<Transaction> {
         return listOfTransactions.toList()
+    }
+
+    override fun getCategorisedTransactionsFromStorage(transactionCategory: Int): List<Transaction> {
+        val listOfCategorisedTransaction = mutableListOf<Transaction>()
+        if(transactionCategory == 0){
+            for (transaction in listOfTransactions) {
+                if(transaction.amount < 0) {
+                    listOfCategorisedTransaction.add(transaction)
+                }
+            }
+        } else {
+            for (transaction in listOfTransactions) {
+                if(transaction.amount > 0) {
+                    listOfCategorisedTransaction.add(transaction)
+                }
+            }
+        }
+        return listOfCategorisedTransaction.toList()
+    }
+
+    override fun getTotalExpenses(): Int {
+        var totalExpense = 0
+        for(transaction in listOfTransactions) {
+            if(transaction.amount < 0) {
+                totalExpense += abs(transaction.amount)
+            }
+        }
+        return totalExpense * -1
+    }
+
+    override fun getTotalIncome(): Int {
+        var totalIncome = 0
+        for(transaction in listOfTransactions) {
+            if(transaction.amount > 0) {
+                totalIncome += abs(transaction.amount)
+            }
+        }
+        return totalIncome
     }
 }
