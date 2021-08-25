@@ -2,6 +2,7 @@ package com.syrous.expensetracker.screen
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -38,6 +39,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if(sharedPrefManager.getMonthStartBalance() != 0) {
+            binding.submitMonthStartAmountButton.visibility = View.GONE
+            binding.monthStartAmountTv.setText(sharedPrefManager.getMonthStartBalance().toString())
+        }
         binding.submitMonthStartAmountButton.setOnClickListener {
             val amount = binding.monthStartAmountTv.text.toString().toInt()
             if (amount == 0) {
@@ -45,12 +50,22 @@ class MainActivity : AppCompatActivity() {
             } else {
                 sharedPrefManager.addMonthStartBalance(amount)
             }
+            binding.submitMonthStartAmountButton.visibility = View.GONE
         }
 
         val transactionList = transactionManager.getAllTransactionsFromStorage()
         transactionAdapter.submitList(transactionList)
-        binding.totalExpensesTv.text = transactionManager.getTotalExpenses().toString()
+        binding.totalExpensesTv.text = abs(transactionManager.getTotalExpenses()).toString()
         binding.totalExpensesTv.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark))
+        val balance = transactionManager.getTotalIncome() + transactionManager.getTotalExpenses() + sharedPrefManager.getMonthStartBalance()
+        if(balance < 0){
+            binding.balanceTv.text = balance.toString()
+            binding.balanceTv.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark))
+        }else {
+            binding.balanceTv.text = balance.toString()
+            binding.balanceTv.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark))
+        }
+
         binding.addTransactionButton.setOnClickListener {
             val intent = Intent(this, UserTransactionActivity::class.java)
             startActivity(intent)

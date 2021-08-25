@@ -14,6 +14,10 @@ class SharedPrefManager private constructor(sharedPreferences: SharedPreferences
             .apply()
     }
 
+    fun getMonthStartBalance(): Int {
+      return  sharedPref.getInt(Constants.monthStartBalance, 0)
+    }
+
     companion object {
         fun initSharedPrefManager(context: Context): SharedPrefManager {
             val sharedPref = context.getSharedPreferences(Constants.SharedPrefName, MODE_PRIVATE)
