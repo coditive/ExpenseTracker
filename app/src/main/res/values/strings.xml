@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Expense Tracker</string>
+
+    <string name="text_total_balance">TOTAL BALANCE</string>
 </resources>
