@@ -10,10 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.syrous.expensetracker.ExpenseTrackerApplication
 import com.syrous.expensetracker.databinding.ActivityMainBinding
 import com.syrous.expensetracker.datainterface.TransactionManager
-import com.syrous.expensetracker.model.Transaction
+import com.syrous.expensetracker.data.local.model.Transaction
 import com.syrous.expensetracker.utils.SharedPrefManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 
+
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

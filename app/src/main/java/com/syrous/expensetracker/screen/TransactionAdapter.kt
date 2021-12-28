@@ -7,8 +7,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.syrous.expensetracker.data.local.model.Transaction
 import com.syrous.expensetracker.databinding.LayoutTransactionViewHolderBinding
-import com.syrous.expensetracker.model.Transaction
 
 class TransactionAdapter: ListAdapter <Transaction, TransactionViewHolder>(callback){
 
@@ -56,7 +56,7 @@ class TransactionAdapter: ListAdapter <Transaction, TransactionViewHolder>(callb
             binding.apply {
                 amountTv.text = transaction.amount.toString()
                 descriptionTv.text = transaction.description
-                categoryTv.text = transaction.category
+                //TODO : Category id mapping to name
                 date.text = transaction.date
                 serialNumber.text = (position+1).toString()
             }

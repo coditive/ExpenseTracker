@@ -1,6 +1,6 @@
 package com.syrous.expensetracker.datainterface
 
-import com.syrous.expensetracker.model.Transaction
+import com.syrous.expensetracker.data.local.model.Transaction
 
 interface TransactionManager {
 
