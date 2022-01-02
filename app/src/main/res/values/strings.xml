@@ -3,4 +3,26 @@
     <string name="appwidget_text">Expense Tracker</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
+
+    <string-array name="expense_categories">
+        <item>"Food"</item>
+        <item>"Gifts"</item>
+        <item>"Medical/Health"</item>
+        <item>"Home"</item>
+        <item>"Personal"</item>
+        <item>"MF"</item>
+    </string-array>
+
+    <string-array name="income_categories">
+        <item>"Savings"</item>
+        <item>"Paycheck"</item>
+        <item>"Bonus"</item>
+        <item>"Interest"</item>
+        <item>"Other"</item>
+    </string-array>
+
+    //Main Activity
+
+
+
 </resources>

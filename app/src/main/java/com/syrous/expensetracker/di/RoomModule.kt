@@ -2,9 +2,10 @@ package com.syrous.expensetracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.google.android.material.tabs.TabLayout
 import com.syrous.expensetracker.data.local.ExpenseDB
 import com.syrous.expensetracker.data.local.TransactionDao
+import com.syrous.expensetracker.datainterface.CategoryManager
+import com.syrous.expensetracker.datainterface.CategoryManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,6 +34,11 @@ class RoomModule {
 
         @Provides
         fun provideTransactionDao(db: ExpenseDB): TransactionDao = db.transactionDao()
+
+        @Provides
+        fun provideCategoryTagManager(@ApplicationContext context: Context): CategoryManager {
+            return CategoryManagerImpl(context)
+        }
 
     }
 

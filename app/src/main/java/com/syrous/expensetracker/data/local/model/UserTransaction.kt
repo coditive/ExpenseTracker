@@ -6,11 +6,11 @@ import java.util.*
 
 
 @Entity
-data class Transaction(
-    @PrimaryKey val id: Int,
+data class UserTransaction(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val amount: Int,
-    val date: String,
-    val category: Int,
     val description: String,
-    val timestamp: Date
+    val date: Date,
+    val transactionCategory: TransactionCategory,
+    val categoryTag: String,
 )
