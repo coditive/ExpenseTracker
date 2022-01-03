@@ -9,10 +9,13 @@ import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
 import com.syrous.expensetracker.R
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Implementation of App Widget functionality.
  */
+
+@AndroidEntryPoint
 class ExpenseTrackerWidget : AppWidgetProvider() {
 
 

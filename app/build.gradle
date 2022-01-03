@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "org.jetbrains.kotlin.kapt" version "1.6.10"
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -68,7 +69,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.4.0"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
 
-
-
-
+    //Firebase Distribution
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }

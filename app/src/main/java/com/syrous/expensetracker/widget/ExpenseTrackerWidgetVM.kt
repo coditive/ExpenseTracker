@@ -1,4 +1,4 @@
-package com.syrous.expensetracker.screen.usertransaction
+package com.syrous.expensetracker.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,15 +8,15 @@ import com.syrous.expensetracker.data.local.model.UserTransaction
 import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.*
 import javax.inject.Inject
 
-interface UserTransactionVM {
 
-    val viewState: StateFlow<ViewState>
+interface ExpenseTrackerWidgetVM {
+
+    val viewState: StateFlow<BottomSheetViewState>
 
     fun setTransactionCategory(transactionCategory: TransactionCategory)
 
@@ -33,24 +33,24 @@ interface UserTransactionVM {
     fun addUserTransaction()
 }
 
-@HiltViewModel
-class UserTransactionVMImpl @Inject constructor(
+
+
+class ExpenseTrackerWidgetVMImpl @Inject constructor(
     transactionDao: TransactionDao,
     private val categoryManager: CategoryManager
-): ViewModel(), UserTransactionVM {
-
-    private val _viewState = MutableStateFlow<ViewState>(ViewState.Success.defaultState())
-    override val viewState: StateFlow<ViewState>
-        get() = _viewState
+) : ViewModel(), ExpenseTrackerWidgetVM {
 
     private val transactionManager: TransactionManager = TransactionManagerImpl(transactionDao, viewModelScope)
+
+    private val _viewState = MutableStateFlow<BottomSheetViewState>(Success.defaultState())
+    override val viewState: StateFlow<BottomSheetViewState>
+        get() = _viewState
 
     private var amount = 0
     private var description: String = ""
     private var date = Date()
-    private var categoryTag = ""
     private var transactionCategory = TransactionCategory.EXPENSE
-
+    private var categoryTag = ""
     override fun setTransactionCategory(transactionCategory: TransactionCategory) {
         this.transactionCategory = transactionCategory
     }
@@ -72,7 +72,7 @@ class UserTransactionVMImpl @Inject constructor(
     }
 
     override fun getTagList(): List<String> {
-       return if(transactionCategory == TransactionCategory.EXPENSE) {
+        return if(transactionCategory == TransactionCategory.EXPENSE) {
             categoryManager.getStoredExpenseCategories().toList()
         } else {
             categoryManager.getStoredIncomeCategories().toList()
@@ -82,8 +82,8 @@ class UserTransactionVMImpl @Inject constructor(
     override fun addUserTransaction() {
         val result = transactionValuesValidator(amount, transactionCategory, description, date, categoryTag)
         if(result != null) {
-           transactionManager.addTransactionToStorage(result)
-            _viewState.value = ViewState.Success(transactionCategory, date, categoryTag, description, amount, isTransactionAdded = true)
+            transactionManager.addTransactionToStorage(result)
+            _viewState.value = Success(transactionCategory, date, categoryTag, description, amount)
         }
     }
 
@@ -96,44 +96,42 @@ class UserTransactionVMImpl @Inject constructor(
     ): UserTransaction? {
 
         if(categoryTag.isEmpty()) {
-            _viewState.value = ViewState.Error("category_tag", "Type is Null")
+            _viewState.value = Error("category_tag", "Category is Null")
             return null
         }
 
         if (description.isEmpty()) {
-            _viewState.value = ViewState.Error("description", "Description is null")
+            _viewState.value = Error("description", "Description is null")
             return null
         }
 
-        _viewState.value = ViewState.Success(transactionCategory, date, categoryTag, description, amount, false)
+        _viewState.value = Success(transactionCategory, date, categoryTag, description, amount)
         return UserTransaction(amount = amount, description = description, transactionCategory = transactionCategory, date = date, categoryTag = categoryTag)
     }
 
 }
 
-sealed class ViewState {
+sealed class BottomSheetViewState
 
-    data class Success(
-        val transactionCategory: TransactionCategory,
-        val date: Date,
-        val categoryTag: String,
-        val description: String,
-        val amount: Int,
-        val isTransactionAdded: Boolean
-    ) : ViewState() {
+
+data class Success(
+    val transactionCategory: TransactionCategory,
+    val date: Date,
+    val categoryTag: String?,
+    val description: String?,
+    val amount: Int
+    ): BottomSheetViewState() {
         companion object {
             fun defaultState(): Success {
                 return Success(
                     TransactionCategory.EXPENSE,
                     Date(),
-                    categoryTag = "",
-                    description = "",
-                    amount = 0,
-                    isTransactionAdded = false
+                    null,
+                    null,
+                    0
                 )
             }
         }
     }
 
-    data class Error(val element: String, val errorMessage: String) : ViewState()
-}
+data class Error(val element: String, val message: String): BottomSheetViewState()
