@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.data.remote.ApiRequest
 import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
@@ -37,10 +38,11 @@ interface ExpenseTrackerWidgetVM {
 
 class ExpenseTrackerWidgetVMImpl @Inject constructor(
     transactionDao: TransactionDao,
+    apiRequest: ApiRequest,
     private val categoryManager: CategoryManager
 ) : ViewModel(), ExpenseTrackerWidgetVM {
 
-    private val transactionManager: TransactionManager = TransactionManagerImpl(transactionDao, viewModelScope)
+    private val transactionManager: TransactionManager = TransactionManagerImpl(transactionDao, apiRequest, viewModelScope)
 
     private val _viewState = MutableStateFlow<BottomSheetViewState>(Success.defaultState())
     override val viewState: StateFlow<BottomSheetViewState>
@@ -82,7 +84,7 @@ class ExpenseTrackerWidgetVMImpl @Inject constructor(
     override fun addUserTransaction() {
         val result = transactionValuesValidator(amount, transactionCategory, description, date, categoryTag)
         if(result != null) {
-            transactionManager.addTransactionToStorage(result)
+            transactionManager.addTransaction(result)
             _viewState.value = Success(transactionCategory, date, categoryTag, description, amount)
         }
     }

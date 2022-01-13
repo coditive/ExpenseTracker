@@ -7,14 +7,22 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.data.remote.ApiRequest
+import com.syrous.expensetracker.utils.Constants
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 
-class UploadUserTransactionUseCase @Inject
-constructor(private val transactionDao: TransactionDao) {
+
+
+
+
+class UploadUserTransactionUseCase @Inject constructor(
+    private val transactionDao: TransactionDao,
+    private val apiRequest: ApiRequest
+) {
 
     private val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val columnSeparator = ","
@@ -25,9 +33,10 @@ constructor(private val transactionDao: TransactionDao) {
         val listOfUserTransaction = transactionDao.getAllUserTransactions()
         val csvFile = convertUserTransactionToCSVFile(listOfUserTransaction,
             createCSVFileOnStorage(context, fileName))
-
-
     }
+
+
+
 
     private suspend fun convertUserTransactionToCSVFile(
         listOfUserTransaction: List<UserTransaction>,

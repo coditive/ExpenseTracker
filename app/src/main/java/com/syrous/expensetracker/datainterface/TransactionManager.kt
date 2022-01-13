@@ -5,6 +5,10 @@ import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.data.local.model.TransactionCategory.EXPENSE
 import com.syrous.expensetracker.data.local.model.TransactionCategory.INCOME
 import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.data.local.model.toRemoteUserTransaction
+import com.syrous.expensetracker.data.remote.ApiRequest
+import com.syrous.expensetracker.data.remote.model.toUserTransaction
+import com.syrous.expensetracker.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,11 +16,15 @@ import kotlinx.coroutines.launch
 
 interface TransactionManager {
 
-    fun addTransactionToStorage(transaction: UserTransaction)
+    fun addTransaction(transaction: UserTransaction)
 
     fun getAllTransactionsFromStorage(): Flow<List<UserTransaction>>
 
     fun getCategorisedTransactionsFromStorage(transactionCategory: TransactionCategory): Flow<List<UserTransaction>>
+
+    suspend fun syncUserTransaction(sheetName: String = Constants.DEFAULT_SHEET_NAME)
+
+    suspend fun syncAndUploadUserTransactions()
 
     suspend fun getTotalExpenses(): Int
 
@@ -25,14 +33,28 @@ interface TransactionManager {
 
 class TransactionManagerImpl(
     private val transactionDao: TransactionDao,
+    private val apiRequest: ApiRequest,
     private val coroutineScope: CoroutineScope
 ) : TransactionManager {
 
-    override fun addTransactionToStorage(transaction: UserTransaction) {
+    override fun addTransaction(transaction: UserTransaction) {
         coroutineScope.launch {
             transactionDao.insertUserTransaction(transaction)
+            apiRequest.addRowInSheet(remoteTransaction = transaction.toRemoteUserTransaction())
         }
     }
+
+    override suspend fun syncUserTransaction(sheetName: String) {
+        val transactions = apiRequest.getDataFromSheet(sheetName)
+        for (transaction in transactions) {
+            transactionDao.insertUserTransaction(transaction.toUserTransaction())
+        }
+    }
+
+    override suspend fun syncAndUploadUserTransactions() {
+
+    }
+
 
     override fun getAllTransactionsFromStorage(): Flow<List<UserTransaction>> =
         transactionDao.getAllUserTransactionsFlow()

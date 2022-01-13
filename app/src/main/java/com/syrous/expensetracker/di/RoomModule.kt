@@ -6,6 +6,8 @@ import com.syrous.expensetracker.data.local.ExpenseDB
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.CategoryManagerImpl
+import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +29,7 @@ class RoomModule {
             expenseDB = Room.databaseBuilder(
                 context.applicationContext,
                 ExpenseDB::class.java,
-                "expense_DB"
+                Constants.DATABASE_NAME
             ).build()
             return expenseDB
         }
@@ -40,6 +42,13 @@ class RoomModule {
             return CategoryManagerImpl(context)
         }
 
+        @Provides
+        fun initSharedPrefManager(@ApplicationContext context: Context): SharedPrefManager {
+            val sharedPref = context.getSharedPreferences(Constants.SharedPrefName,
+                Context.MODE_PRIVATE
+            )
+            return SharedPrefManager(sharedPref)
+        }
     }
 
 }

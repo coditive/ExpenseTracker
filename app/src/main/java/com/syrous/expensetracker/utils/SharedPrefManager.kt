@@ -3,8 +3,9 @@ package com.syrous.expensetracker.utils
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import javax.inject.Inject
 
-class SharedPrefManager private constructor(sharedPreferences: SharedPreferences) {
+class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
 
     private var sharedPref: SharedPreferences = sharedPreferences
 
@@ -14,14 +15,16 @@ class SharedPrefManager private constructor(sharedPreferences: SharedPreferences
             .apply()
     }
 
+    fun isNewUser(): Boolean = sharedPref.getBoolean(Constants.NEW_USER, true)
+
+    fun makeUserRegular() {
+        sharedPref.edit()
+            .putBoolean(Constants.NEW_USER, false)
+            .apply()
+    }
+
     fun getMonthStartBalance(): Int {
       return  sharedPref.getInt(Constants.monthStartBalance, 0)
     }
 
-    companion object {
-        fun initSharedPrefManager(context: Context): SharedPrefManager {
-            val sharedPref = context.getSharedPreferences(Constants.SharedPrefName, MODE_PRIVATE)
-            return SharedPrefManager(sharedPref)
-        }
-    }
 }

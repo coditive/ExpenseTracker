@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.data.remote.ApiRequest
 import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
@@ -36,6 +37,7 @@ interface UserTransactionVM {
 @HiltViewModel
 class UserTransactionVMImpl @Inject constructor(
     transactionDao: TransactionDao,
+    apiRequest: ApiRequest,
     private val categoryManager: CategoryManager
 ): ViewModel(), UserTransactionVM {
 
@@ -43,7 +45,7 @@ class UserTransactionVMImpl @Inject constructor(
     override val viewState: StateFlow<ViewState>
         get() = _viewState
 
-    private val transactionManager: TransactionManager = TransactionManagerImpl(transactionDao, viewModelScope)
+    private val transactionManager: TransactionManager = TransactionManagerImpl(transactionDao, apiRequest, viewModelScope)
 
     private var amount = 0
     private var description: String = ""
@@ -82,7 +84,7 @@ class UserTransactionVMImpl @Inject constructor(
     override fun addUserTransaction() {
         val result = transactionValuesValidator(amount, transactionCategory, description, date, categoryTag)
         if(result != null) {
-           transactionManager.addTransactionToStorage(result)
+           transactionManager.addTransaction(result)
             _viewState.value = ViewState.Success(transactionCategory, date, categoryTag, description, amount, isTransactionAdded = true)
         }
     }

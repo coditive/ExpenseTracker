@@ -6,36 +6,55 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syrous.expensetracker.data.local.TransactionDao
+import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.data.remote.ApiRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
 import com.syrous.expensetracker.upload.UploadUserTransactionUseCase
+import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
-
 @HiltViewModel
 class ActivityMainVM @Inject constructor(
+    sharedPrefManager: SharedPrefManager,
     transactionDao: TransactionDao,
-    private val useCase: UploadUserTransactionUseCase
-): ViewModel() {
+    apiRequest: ApiRequest
+) : ViewModel() {
 
-    private val transactionManager: TransactionManager = TransactionManagerImpl(transactionDao, viewModelScope)
+    private var transactionManager: TransactionManager
 
-    val transactionsList = transactionManager
-        .getAllTransactionsFromStorage()
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    var transactionsList: StateFlow<List<UserTransaction>>
 
     @RequiresApi(Build.VERSION_CODES.R)
     fun exportDataToDrive(context: Context) {
+    }
+
+    fun uploadDataToSheet() {
+
+    }
+
+
+    init {
+        transactionManager = TransactionManagerImpl(transactionDao, apiRequest, viewModelScope)
+
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.uploadUserTransactionToDrive(context, "TestCSV")
+            if (sharedPrefManager.isNewUser()) {
+                transactionManager.syncUserTransaction()
+                sharedPrefManager.makeUserRegular()
+            }
         }
+
+        transactionsList =  transactionManager
+                .getAllTransactionsFromStorage()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     }
 
 }
