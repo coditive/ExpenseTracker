@@ -40,7 +40,8 @@ class TransactionManagerImpl(
     override fun addTransaction(transaction: UserTransaction) {
         coroutineScope.launch {
             transactionDao.insertUserTransaction(transaction)
-            apiRequest.addRowInSheet(remoteTransaction = transaction.toRemoteUserTransaction())
+            val result = transactionDao.getUserTransaction(transaction.date, transaction.description)
+            apiRequest.addRowInSheet(remoteTransaction = result.toRemoteUserTransaction())
         }
     }
 

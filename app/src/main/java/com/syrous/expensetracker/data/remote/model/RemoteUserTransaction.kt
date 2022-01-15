@@ -11,7 +11,7 @@ data class RemoteUserTransaction(
     val amount: Int,
     val description: String,
     val date: String,
-    val transactionCategory: Int,
+    val transactionCategory: String,
     val categoryTag: String,
 )
 
@@ -23,7 +23,7 @@ fun RemoteUserTransaction.toUserTransaction(): UserTransaction {
         amount,
         description,
         sdf.parse(date)!!,
-        if(transactionCategory == 0) TransactionCategory.INCOME else TransactionCategory.EXPENSE,
+        if(transactionCategory == "EXPENSE") TransactionCategory.INCOME else TransactionCategory.EXPENSE,
         categoryTag
     )
 }

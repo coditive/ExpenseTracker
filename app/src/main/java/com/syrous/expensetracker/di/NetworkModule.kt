@@ -2,6 +2,7 @@ package com.syrous.expensetracker.di
 
 import android.content.Context
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.syrous.expensetracker.BuildConfig
 import com.syrous.expensetracker.data.remote.ApiRequest
 import com.syrous.expensetracker.utils.Constants
@@ -28,7 +29,7 @@ object NetworkModule {
         val okHttpClient = OkHttpClient.Builder()
          if (BuildConfig.DEBUG) {
             val httpLoggingInterceptor = HttpLoggingInterceptor()
-            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
+            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
             okHttpClient.addInterceptor(httpLoggingInterceptor)
         }
         return okHttpClient.build()
@@ -47,6 +48,7 @@ object NetworkModule {
     @Provides
     fun provideMoshi(): Moshi = Moshi
         .Builder()
+        .addLast(KotlinJsonAdapterFactory())
         .build()
 
     @Singleton

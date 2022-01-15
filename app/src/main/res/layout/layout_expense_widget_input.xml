@@ -1,80 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/design_bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     app:layout_behavior="com.google.material.bottomsheet.BottomSheetBehavior">
-
-    <EditText
-        android:id="@+id/expense_input_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="Enter the Expense Amount" />
-
-    <EditText
-        android:id="@+id/expense_details_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="Add Details" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <CheckBox
-            android:id="@+id/expense_check_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Expense"
-            app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
-            app:layout_constraintStart_toEndOf="@id/transaction_category_title_tv"
-            app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv" />
-
-        <CheckBox
-            android:id="@+id/income_check_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Income"
-            app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
-            app:layout_constraintStart_toEndOf="@id/expense_check_box"
-            app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv" />
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/category_chip_layout"
+        <EditText
+            android:id="@+id/expense_input_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            app:chipSpacing="8dp"
-            app:singleSelection="false"/>
-
-        <ImageButton
-            android:id="@+id/add_date_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_calendar_today_24" />
-
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_margin="10dp"
-            android:text="Save" />
+            android:hint="Enter the Expense Amount"
+            android:minHeight="48dp" />
 
+        <EditText
+            android:id="@+id/expense_details_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Add Details"
+            android:minHeight="48dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/expense_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Expense"
+                app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
+                app:layout_constraintStart_toEndOf="@id/transaction_category_title_tv"
+                app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv" />
+
+            <CheckBox
+                android:id="@+id/income_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Income"
+                app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
+                app:layout_constraintStart_toEndOf="@id/expense_check_box"
+                app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/category_chip_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                app:chipSpacing="8dp"
+                app:singleLine="true"
+                app:singleSelection="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/add_date_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:src="@drawable/ic_baseline_calendar_today_24" />
+
+                <Button
+                    android:id="@+id/save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="10dp"
+                    android:text="Save" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

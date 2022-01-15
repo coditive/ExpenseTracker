@@ -6,12 +6,16 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.syrous.expensetracker.data.local.model.UserTransaction
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 @Dao
 interface TransactionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserTransaction(transaction: UserTransaction)
+
+    @Query("SELECT * from usertransaction where date = :date and description = :description")
+    suspend fun getUserTransaction(date: Date, description: String): UserTransaction
 
     @Query("SELECT * from usertransaction")
     fun getAllUserTransactionsFlow(): Flow<List<UserTransaction>>

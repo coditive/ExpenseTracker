@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "org.jetbrains.kotlin.kapt" version "1.6.10"
     id 'dagger.hilt.android.plugin'
-    id 'com.google.gms.google-services'
+//    id 'com.google.gms.google-services'
 }
 
 android {
@@ -74,14 +74,15 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
 
     //Firebase Distribution
-    implementation platform('com.google.firebase:firebase-bom:29.0.3')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+//    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+//    implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.android.gms:play-services-auth:20.0.1'
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:1.13.0"
+    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
 
 }

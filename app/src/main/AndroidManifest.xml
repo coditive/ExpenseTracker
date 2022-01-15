@@ -28,7 +28,7 @@
         </receiver>
 
         <activity
-            android:name=".screen.MainActivity"
+            android:name=".screen.SignInActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".screen.usertransaction.UserTransactionActivity" />
-        <activity android:name=".screen.SignInActivity"/>
+        <activity android:name=".screen.MainActivity"/>
         <activity android:name=".widget.ExpenseTrackerWidgetAddActivity" android:theme="@style/Theme.Transparent"/>
     </application>
 

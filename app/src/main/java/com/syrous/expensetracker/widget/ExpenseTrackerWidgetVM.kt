@@ -9,6 +9,7 @@ import com.syrous.expensetracker.data.remote.ApiRequest
 import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.*
@@ -35,7 +36,7 @@ interface ExpenseTrackerWidgetVM {
 }
 
 
-
+@HiltViewModel
 class ExpenseTrackerWidgetVMImpl @Inject constructor(
     transactionDao: TransactionDao,
     apiRequest: ApiRequest,

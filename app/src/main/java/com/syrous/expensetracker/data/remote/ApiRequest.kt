@@ -26,8 +26,9 @@ interface ApiRequest {
         @Query("date") date: Date
     ): List<RemoteUserTransaction>
 
-    @POST
-    suspend fun addRowInSheet(remoteTransaction: RemoteTransaction)
+    @POST(".")
+    @Headers("content-type: application/json")
+    suspend fun addRowInSheet(@Body remoteTransaction: RemoteTransaction)
 
     @PUT("{column_name}/{value}")
     suspend fun updateSheetValue(

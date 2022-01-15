@@ -3,6 +3,8 @@ package com.syrous.expensetracker.data.local.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.syrous.expensetracker.data.remote.model.RemoteTransaction
+import com.syrous.expensetracker.data.remote.model.RemoteUserTransaction
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -17,5 +19,17 @@ data class UserTransaction(
 )
 
 
-fun UserTransaction.toRemoteUserTransaction(): RemoteTransaction =
-    RemoteTransaction(rows = listOf(UserTransaction(this.id, this.amount, this.description, this.date, this.transactionCategory, this.categoryTag)))
+fun UserTransaction.toRemoteUserTransaction(): RemoteTransaction {
+    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    return RemoteTransaction(
+        sheet = RemoteUserTransaction(
+                id,
+                amount,
+                description,
+                sdf.format(date),
+                transactionCategory.name,
+                categoryTag
+            )
+
+    )
+}

@@ -6,7 +6,9 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -14,12 +16,14 @@ import com.google.android.material.chip.Chip
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.databinding.LayoutExpenseWidgetInputBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ExpenseBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: LayoutExpenseWidgetInputBinding
 
-    private val viewModel: ExpenseTrackerWidgetVMImpl by viewModels()
+    val viewModel: ExpenseTrackerWidgetVMImpl by viewModels()
 
 
     override fun onCreateView(
@@ -28,6 +32,8 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = LayoutExpenseWidgetInputBinding.inflate(layoutInflater, container, false)
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogStyle)
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return binding.root
     }
 
@@ -36,8 +42,8 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
 
         binding.apply {
 
-            viewModel.viewState.asLiveData().observe(viewLifecycleOwner){ viewState ->
-                if(viewState is Success) {
+            viewModel.viewState.asLiveData().observe(viewLifecycleOwner) { viewState ->
+                if (viewState is Success) {
 
                     if (viewState.transactionCategory == TransactionCategory.EXPENSE)
                         expenseCheckBox.isChecked = true
@@ -45,7 +51,7 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
                         incomeCheckBox.isChecked = true
 
                     setUpChips(viewModel.getTagList())
-                } else if(viewState is Error) {
+                } else if (viewState is Error) {
 
                 }
             }
@@ -73,7 +79,8 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
                     viewModel.setTransactionCategory(TransactionCategory.INCOME)
                 }
 
-                setUpChips(viewModel.getTagList())            }
+                setUpChips(viewModel.getTagList())
+            }
 
             incomeCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -92,15 +99,23 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setUpChips(categoryTagsList: List<String>) {
-        for(tag in categoryTagsList) {
-            val chip = layoutInflater.inflate(R.layout.category_type_item_chip, null, false) as Chip
-            chip.text = tag
-            val paddingInDp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10F, resources.displayMetrics)
+        val chipList = mutableListOf<Chip>()
+        binding.categoryChipLayout.removeAllViews()
+        categoryTagsList.forEachIndexed { index, s ->
+            val chip =
+                layoutInflater.inflate(R.layout.category_type_item_chip, null, false) as Chip
+            chip.text = s
+            val paddingInDp = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                10F,
+                resources.displayMetrics
+            )
             chip.setPadding(paddingInDp.toInt(), 0, paddingInDp.toInt(), 0)
             chip.setOnCheckedChangeListener { compoundButton, b ->
-                if(b) viewModel.setCategoryTag(compoundButton.text.toString())
+                if (b) viewModel.setCategoryTag(compoundButton.text.toString())
             }
             binding.categoryChipLayout.addView(chip)
+            chipList.add(chip)
         }
     }
 }
