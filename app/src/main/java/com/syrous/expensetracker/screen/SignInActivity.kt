@@ -1,6 +1,7 @@
 package com.syrous.expensetracker.screen
 
 import android.R.attr.data
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,7 +37,7 @@ class SignInActivity : AppCompatActivity() {
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .build()
 
@@ -44,7 +45,6 @@ class SignInActivity : AppCompatActivity() {
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
-        binding.googleSignButton.setSize(SignInButton.SIZE_STANDARD)
         binding.googleSignButton.setOnClickListener{
             beginSignIn()
         }
@@ -57,11 +57,11 @@ class SignInActivity : AppCompatActivity() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            Log.d(TAG, "account - ${account.idToken}")
+            Log.d(TAG, "account - ${account.email}")
         } catch (e: ApiException) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.printStackTrace())
+            Log.w(TAG, "signInResult:failed code= ${e.status}" + e.printStackTrace())
 
         }
     }
