@@ -21,10 +21,15 @@
         <item>"Other"</item>
     </string-array>
 
-    //Main Activity
 
-    <string name="web_client_id">393653162321–0n67o8rl24e3m4107kgc95j8l5rccs9e.apps.googleusercontent.com</string>
+    <string name="authorization_uri">https://accounts.google.com/o/oauth2/v2/auth</string>
+    <string name="token_endpoint">https://oauth2.googleapis.com/</string>
+    //Google Scopes
+    <string name="appdata_scope">https://www.googleapis.com/auth/drive.appdata</string>
+    <string name="file_scope">https://www.googleapis.com/auth/drive.file</string>
+    <string name="install_scope">https://www.googleapis.com/auth/drive.install</string>
 
-
+    //Google Drive Uris
+    <string name="upload_uri">https://www.googleapis.com/</string>
 
 </resources>

@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                          STORAGE_REQ_CODE
                      )
                  } else {
-                     viewModel.exportDataToDrive(this@MainActivity)
+                     viewModel.searchFolderOrCreate()
                  }
             }
 

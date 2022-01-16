@@ -24,7 +24,7 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: LayoutExpenseWidgetInputBinding
 
-    val viewModel: ExpenseTrackerWidgetVMImpl by viewModels()
+    private val viewModel: ExpenseTrackerWidgetVMImpl by viewModels()
     
     override fun onCreateView(
         inflater: LayoutInflater,

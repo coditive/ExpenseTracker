@@ -21,12 +21,17 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField 'String', "SHEET_API", SHEET_API
-        }
+            buildConfigField 'String', "API_KEY", GOOGLE_API_KEY
+            buildConfigField 'String', "WEB_CLIENT_ID", WEB_CLIENT_ID
+            buildConfigField 'String', "ANDROID_CLIENT_ID", ANDROID_CLIENT_ID
+            buildConfigField 'String', "ANDROID_CLIENT_SECRET", ANDROID_CLIENT_SECRET        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-             buildConfigField 'String', "SHEET_API", SHEET_API
+            buildConfigField 'String', "API_KEY", GOOGLE_API_KEY
+            buildConfigField 'String', "WEB_CLIENT_ID", WEB_CLIENT_ID
+            buildConfigField 'String', "ANDROID_CLIENT_ID", ANDROID_CLIENT_ID
+            buildConfigField 'String', "ANDROID_CLIENT_SECRET", ANDROID_CLIENT_SECRET
         }
     }
     compileOptions {
@@ -78,6 +83,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'com.google.android.gms:play-services-auth:20.0.1'
+
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

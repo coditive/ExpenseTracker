@@ -10,6 +10,7 @@ import com.syrous.expensetracker.data.local.model.UserTransaction
 import com.syrous.expensetracker.data.remote.ApiRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
+import com.syrous.expensetracker.upload.SearchOrCreateAppFolderUseCase
 import com.syrous.expensetracker.upload.UploadUserTransactionUseCase
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
@@ -33,14 +34,11 @@ class ActivityMainVM @Inject constructor(
 
     var transactionsList: StateFlow<List<UserTransaction>>
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    fun exportDataToDrive(context: Context) {
+    private val searchUseCase = SearchOrCreateAppFolderUseCase(apiRequest, sharedPrefManager, viewModelScope)
+
+    fun searchFolderOrCreate() {
+        searchUseCase.execute()
     }
-
-    fun uploadDataToSheet() {
-
-    }
-
 
     init {
         transactionManager = TransactionManagerImpl(transactionDao, apiRequest, viewModelScope)

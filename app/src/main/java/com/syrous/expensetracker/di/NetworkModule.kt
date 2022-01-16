@@ -4,11 +4,14 @@ import android.content.Context
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.syrous.expensetracker.BuildConfig
+import com.syrous.expensetracker.R
 import com.syrous.expensetracker.data.remote.ApiRequest
+import com.syrous.expensetracker.data.remote.AuthTokenRequest
 import com.syrous.expensetracker.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -27,22 +30,13 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         val okHttpClient = OkHttpClient.Builder()
-         if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             val httpLoggingInterceptor = HttpLoggingInterceptor()
             httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
             okHttpClient.addInterceptor(httpLoggingInterceptor)
         }
         return okHttpClient.build()
     }
-
-
-    @Singleton
-    @Provides
-    fun provideRetrofit(moshi: Moshi, okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
-        .client(okHttpClient)
-        .baseUrl(Constants.BASE_URL)
-        .build()
 
     @Singleton
     @Provides
@@ -53,6 +47,26 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideApiRequest(retrofit: Retrofit): ApiRequest = retrofit.create(ApiRequest::class.java)
+    fun provideApiRequest(
+        @ApplicationContext context: Context, moshi: Moshi,
+        okHttpClient: OkHttpClient
+    ): ApiRequest = Retrofit.Builder()
+        .baseUrl(context.resources.getString(R.string.upload_uri))
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
+        .build()
+        .create(ApiRequest::class.java)
+
+    @Singleton
+    @Provides
+    fun provideAuthTokenRequest(
+        @ApplicationContext context: Context, moshi: Moshi,
+        okHttpClient: OkHttpClient
+    ): AuthTokenRequest = Retrofit.Builder()
+        .baseUrl(context.resources.getString(R.string.token_endpoint))
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
+        .build()
+        .create(AuthTokenRequest::class.java)
 
 }

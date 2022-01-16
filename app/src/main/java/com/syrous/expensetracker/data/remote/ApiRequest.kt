@@ -2,10 +2,10 @@ package com.syrous.expensetracker.data.remote
 
 import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.data.local.model.UserTransaction
-import com.syrous.expensetracker.data.remote.model.RemoteTransaction
-import com.syrous.expensetracker.data.remote.model.RemoteUserTransaction
+import com.syrous.expensetracker.data.remote.model.*
 import com.syrous.expensetracker.utils.Constants
 import retrofit2.http.*
+import java.io.File
 import java.util.*
 
 interface ApiRequest {
@@ -41,5 +41,28 @@ interface ApiRequest {
         @Path("column_name") propertyName: String,
         @Path("value") value: String
     )
+
+    @POST("upload/drive/v3/files")
+    suspend fun uploadFile(
+        @Header("Authorization") authToken: String,
+        @Query("key") apiKey: String,
+        @Body file: File
+    )
+
+    @POST("drive/v3/files")
+    @Headers("Content-Type: application/json")
+    suspend fun createFolder(
+        @Header("Authorization") authToken: String,
+        @Query("key") apiKey: String,
+        @Body request: CreateFolderRequest
+    ): BasicFileMetaData
+
+    @GET("drive/v3/files")
+    suspend fun searchFile(
+        @Header("Authorization") authToken: String,
+        @Query("key") apiKey: String,
+        @Query("corpora") corpora: String,
+        @Query("q") query: String
+    ): SearchFileQueryResponse
 
 }

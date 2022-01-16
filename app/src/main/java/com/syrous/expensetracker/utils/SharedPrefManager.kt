@@ -15,6 +15,15 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
             .apply()
     }
 
+
+    fun storeUserToken(token: String) {
+        sharedPref.edit()
+            .putString(Constants.userToken, "Bearer $token")
+            .apply()
+    }
+
+    fun getUserToken(): String = sharedPref.getString(Constants.userToken, Constants.emptyString).toString()
+
     fun isNewUser(): Boolean = sharedPref.getBoolean(Constants.NEW_USER, true)
 
     fun makeUserRegular() {

@@ -6,7 +6,17 @@ object Constants {
     val SharedPrefName = "com.syrous.expensetracker"
     val monthStartBalance = "month_start_balance"
 
-    val BASE_URL = BuildConfig.SHEET_API
+    val userToken = "user_token"
+
+    val emptyString = ""
+
+    val apiKey = BuildConfig.API_KEY
+
+    val webClientId = BuildConfig.WEB_CLIENT_ID
+
+    val androidClientId = BuildConfig.ANDROID_CLIENT_ID
+
+    val androidClientSecret = BuildConfig.ANDROID_CLIENT_SECRET
 
     val DATABASE_NAME = "expense_db"
 
