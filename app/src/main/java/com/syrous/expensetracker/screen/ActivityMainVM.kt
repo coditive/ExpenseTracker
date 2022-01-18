@@ -51,7 +51,6 @@ class ActivityMainVM @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             if (sharedPrefManager.isNewUser()) {
-                transactionManager.syncUserTransaction()
                 sharedPrefManager.makeUserRegular()
             }
         }

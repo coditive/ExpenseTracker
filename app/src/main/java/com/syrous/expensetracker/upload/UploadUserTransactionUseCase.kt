@@ -50,7 +50,7 @@ class UploadUserTransactionUseCase @Inject constructor(
     }
 
 
-    private suspend fun convertUserTransactionToCSVFile(
+    private fun convertUserTransactionToCSVFile(
         listOfUserTransaction: List<UserTransaction>,
         file: File
     ): File {

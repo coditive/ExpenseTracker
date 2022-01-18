@@ -13,38 +13,6 @@ import kotlin.collections.HashMap
 
 interface ApiRequest {
 
-    @GET("sheets/{sheet_name}")
-    suspend fun getDataFromSheet(
-        @Path("sheet_name") sheetName: String,
-        @Query("limit") limit: Int? = null,
-        @Query("offset") offset: Int? = null
-    ): List<RemoteUserTransaction>
-
-    @GET("search")
-    suspend fun searchDataInSheet(
-        @Query("id") id: Long? = null,
-        @Query("description") description: String? = null,
-        @Query("categoryTag") categoryTag: String? = null,
-        @Query("transactionCategory") transactionCategory: TransactionCategory? = null,
-        @Query("date") date: Date
-    ): List<RemoteUserTransaction>
-
-    @POST(".")
-    @Headers("content-type: application/json")
-    suspend fun addRowInSheet(@Body remoteTransaction: RemoteTransaction)
-
-    @PUT("{column_name}/{value}")
-    suspend fun updateSheetValue(
-        @Path("column_name") propertyName: String,
-        @Path("value") value: String
-    )
-
-    @DELETE("{column_name}/{value}")
-    suspend fun deleteRecord(
-        @Path("column_name") propertyName: String,
-        @Path("value") value: String
-    )
-
     @Multipart
     @POST("upload/drive/v3/files")
     suspend fun uploadFile(
