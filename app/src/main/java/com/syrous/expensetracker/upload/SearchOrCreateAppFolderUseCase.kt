@@ -39,8 +39,6 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
                         "application/vnd.google-apps.folder"
                     )
                 )
-
-                Log.d("SearchUsecase", "folder created with id - ${folder.id}")
             }
         }
     }

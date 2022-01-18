@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ActivityMainVM @Inject constructor(
-    sharedPrefManager: SharedPrefManager,
+    private val sharedPrefManager: SharedPrefManager,
     transactionDao: TransactionDao,
     apiRequest: ApiRequest
 ) : ViewModel() {
@@ -36,8 +36,14 @@ class ActivityMainVM @Inject constructor(
 
     private val searchUseCase = SearchOrCreateAppFolderUseCase(apiRequest, sharedPrefManager, viewModelScope)
 
-    fun searchFolderOrCreate() {
-        searchUseCase.execute()
+    private val uploadUseCase = UploadUserTransactionUseCase(transactionDao, apiRequest)
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun searchFolderOrCreate(context: Context) {
+        viewModelScope.launch(Dispatchers.IO){
+            uploadUseCase.uploadUserTransactionToDrive(context, sharedPrefManager.getUserToken(),
+                Constants.apiKey, "test-file")
+        }
     }
 
     init {
