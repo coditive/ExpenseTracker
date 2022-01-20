@@ -24,12 +24,16 @@
 
     <string name="authorization_uri">https://accounts.google.com/o/oauth2/v2/auth</string>
     <string name="token_endpoint">https://oauth2.googleapis.com/</string>
+    
     //Google Scopes
     <string name="appdata_scope">https://www.googleapis.com/auth/drive.appdata</string>
     <string name="file_scope">https://www.googleapis.com/auth/drive.file</string>
     <string name="install_scope">https://www.googleapis.com/auth/drive.install</string>
+    <string name="sheet_scope">https://www.googleapis.com/auth/spreadsheets</string>
 
     //Google Drive Uris
     <string name="upload_uri">https://www.googleapis.com/</string>
 
+    <string name="sheet_api">https://sheets.googleapis.com/v4/spreadsheets/</string>
+    
 </resources>

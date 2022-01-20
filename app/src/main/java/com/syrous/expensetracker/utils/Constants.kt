@@ -18,6 +18,10 @@ object Constants {
 
     val androidClientSecret = BuildConfig.ANDROID_CLIENT_SECRET
 
+    val spreadSheetId = "spreadsheet_id"
+
+    val gridSheetType = "GRID"
+
     val DATABASE_NAME = "expense_db"
 
     val DEFAULT_SHEET_NAME = "Sheet"

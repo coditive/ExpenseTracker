@@ -1,7 +1,6 @@
 package com.syrous.expensetracker.upload
 
-import android.util.Log
-import com.syrous.expensetracker.data.remote.ApiRequest
+import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.CreateFolderRequest
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
@@ -13,8 +12,8 @@ import javax.inject.Inject
 
 
 
-class SearchOrCreateAppFolderUseCase @Inject constructor(
-    private val apiRequest: ApiRequest,
+class SearchOrCreateAppFolderUseCase constructor(
+    private val apiRequest: DriveApiRequest,
     private val sharedPrefManager: SharedPrefManager,
     private val coroutineScope: CoroutineScope
 ) {

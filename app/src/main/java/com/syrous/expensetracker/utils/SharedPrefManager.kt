@@ -15,14 +15,15 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
             .apply()
     }
 
-
     fun storeUserToken(token: String) {
         sharedPref.edit()
             .putString(Constants.userToken, "Bearer $token")
             .apply()
     }
 
-    fun getUserToken(): String = sharedPref.getString(Constants.userToken, Constants.emptyString).toString()
+    fun getUserToken(): String = sharedPref
+        .getString(Constants.userToken, Constants.emptyString)
+        .toString()
 
     fun isNewUser(): Boolean = sharedPref.getBoolean(Constants.NEW_USER, true)
 
@@ -31,6 +32,16 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
             .putBoolean(Constants.NEW_USER, false)
             .apply()
     }
+
+    fun storeSpreadSheetId(spreadSheetId: String) {
+        sharedPref.edit()
+            .putString(Constants.spreadSheetId, spreadSheetId)
+            .apply()
+    }
+
+    fun getSpreadSheetId(): String = sharedPref
+        .getString(Constants.spreadSheetId, Constants.emptyString)
+        .toString()
 
     fun getMonthStartBalance(): Int {
       return  sharedPref.getInt(Constants.monthStartBalance, 0)

@@ -5,7 +5,6 @@ import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.data.local.model.TransactionCategory.EXPENSE
 import com.syrous.expensetracker.data.local.model.TransactionCategory.INCOME
 import com.syrous.expensetracker.data.local.model.UserTransaction
-import com.syrous.expensetracker.data.remote.ApiRequest
 import com.syrous.expensetracker.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

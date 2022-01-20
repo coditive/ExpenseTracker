@@ -2,23 +2,23 @@ package com.syrous.expensetracker.di
 
 import android.content.Context
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.syrous.expensetracker.BuildConfig
 import com.syrous.expensetracker.R
-import com.syrous.expensetracker.data.remote.ApiRequest
+import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.AuthTokenRequest
-import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.model.SpreadSheetUpdateRequest
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 
@@ -50,12 +50,12 @@ object NetworkModule {
     fun provideApiRequest(
         @ApplicationContext context: Context, moshi: Moshi,
         okHttpClient: OkHttpClient
-    ): ApiRequest = Retrofit.Builder()
+    ): DriveApiRequest = Retrofit.Builder()
         .baseUrl(context.resources.getString(R.string.upload_uri))
         .client(okHttpClient)
         .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
         .build()
-        .create(ApiRequest::class.java)
+        .create(DriveApiRequest::class.java)
 
     @Singleton
     @Provides
@@ -68,5 +68,18 @@ object NetworkModule {
         .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
         .build()
         .create(AuthTokenRequest::class.java)
+
+
+    @Singleton
+    @Provides
+    fun provideSheetApiRequest(
+        @ApplicationContext context: Context, moshi: Moshi,
+        okHttpClient: OkHttpClient
+    ): SheetApiRequest = Retrofit.Builder()
+        .baseUrl(context.getString(R.string.sheet_api))
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
+        .build()
+        .create(SheetApiRequest::class.java)
 
 }

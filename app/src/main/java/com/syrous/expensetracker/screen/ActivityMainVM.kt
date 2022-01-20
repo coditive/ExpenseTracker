@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.data.local.model.UserTransaction
-import com.syrous.expensetracker.data.remote.ApiRequest
+import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
+import com.syrous.expensetracker.upload.CreateSheetsUseCase
 import com.syrous.expensetracker.upload.SearchOrCreateAppFolderUseCase
 import com.syrous.expensetracker.upload.UploadUserTransactionUseCase
 import com.syrous.expensetracker.utils.Constants
@@ -27,7 +29,8 @@ import javax.inject.Inject
 class ActivityMainVM @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
     transactionDao: TransactionDao,
-    apiRequest: ApiRequest
+    apiRequest: DriveApiRequest,
+    sheetApiRequest: SheetApiRequest
 ) : ViewModel() {
 
     private var transactionManager: TransactionManager
@@ -36,18 +39,19 @@ class ActivityMainVM @Inject constructor(
 
     private val searchUseCase = SearchOrCreateAppFolderUseCase(apiRequest, sharedPrefManager, viewModelScope)
 
-    private val uploadUseCase = UploadUserTransactionUseCase(transactionDao, apiRequest)
+    private val uploadUseCase = UploadUserTransactionUseCase(transactionDao, apiRequest, sharedPrefManager)
+
+    private val createSheetsUseCase = CreateSheetsUseCase(sharedPrefManager, sheetApiRequest)
 
     @RequiresApi(Build.VERSION_CODES.R)
     fun searchFolderOrCreate(context: Context) {
         viewModelScope.launch(Dispatchers.IO){
-            uploadUseCase.uploadUserTransactionToDrive(context, sharedPrefManager.getUserToken(),
-                Constants.apiKey, "test-file")
+           createSheetsUseCase.execute()
         }
     }
 
     init {
-        transactionManager = TransactionManagerImpl(transactionDao, apiRequest, viewModelScope)
+        transactionManager = TransactionManagerImpl(transactionDao, viewModelScope)
 
         viewModelScope.launch(Dispatchers.IO) {
             if (sharedPrefManager.isNewUser()) {

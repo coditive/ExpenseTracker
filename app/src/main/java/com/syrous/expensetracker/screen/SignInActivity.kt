@@ -59,7 +59,8 @@ class SignInActivity : AppCompatActivity() {
             .requestScopes(
                 Scope(resources.getString(R.string.appdata_scope)),
                 Scope(resources.getString(R.string.file_scope)),
-                Scope(resources.getString(R.string.install_scope))
+                Scope(resources.getString(R.string.install_scope)),
+                Scope(resources.getString(R.string.sheet_scope))
             )
             .build()
 

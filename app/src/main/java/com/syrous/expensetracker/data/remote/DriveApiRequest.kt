@@ -11,7 +11,7 @@ import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
-interface ApiRequest {
+interface DriveApiRequest {
 
     @Multipart
     @POST("upload/drive/v3/files")
@@ -20,7 +20,7 @@ interface ApiRequest {
         @Query("key") apiKey: String,
         @Part(encoding = "8-bit") uploadFileMetaData: MultipartBody.Part,
         @Part(encoding = "base64") file: MultipartBody.Part
-    )
+    ): BasicFileMetaData
 
     @POST("drive/v3/files")
     @Headers("Content-Type: application/json")
