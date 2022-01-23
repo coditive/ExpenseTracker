@@ -21,6 +21,30 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
             .apply()
     }
 
+    fun storeSummarySheetId(id: Int) {
+        sharedPref.edit()
+            .putInt(Constants.summarySheetId, id)
+            .apply()
+    }
+
+    fun storeTransactionSheetId(id: Int) {
+        sharedPref.edit()
+            .putInt(Constants.transactionSheetId, id)
+            .apply()
+    }
+
+    fun storeCategoriesSheetId(id: Int) {
+        sharedPref.edit()
+            .putInt(Constants.categorySheetId, id)
+            .apply()
+    }
+
+    fun getSummarySheetId(): Int = sharedPref.getInt(Constants.summarySheetId, 0)
+
+    fun getTransactionSheetId(): Int = sharedPref.getInt(Constants.transactionSheetId, 0)
+
+    fun getCategoriesSheetId(): Int = sharedPref.getInt(Constants.categorySheetId, 0)
+
     fun getUserToken(): String = sharedPref
         .getString(Constants.userToken, Constants.emptyString)
         .toString()

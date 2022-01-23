@@ -24,9 +24,25 @@ class CreateSheetsUseCase constructor(
             Constants.apiKey
         )
 
+        sharedPrefManager.storeTransactionSheetId(spreadSheetResponse.sheets[0].properties.sheetId)
+
+        val spreadsheetProperties = SheetProperties(
+            sheetId = sharedPrefManager.getTransactionSheetId(),
+            title = "Transactions",
+            index = 1,
+            sheetType = Constants.gridSheetType
+        )
+
+        val spreadSheetPropertiesUpdate = SpreadSheetPropertiesUpdateRequest(
+            properties = spreadsheetProperties,
+            "title"
+        )
+
+        sharedPrefManager.storeSummarySheetId(abs(Random.nextInt()))
+
         val addSummarySheetRequest = AddSheet(
             SheetProperties(
-                sheetId = abs(Random.nextInt()),
+                sheetId = sharedPrefManager.getSummarySheetId(),
                 index = 0,
                 sheetType = Constants.gridSheetType,
                 title = "Summary",
@@ -34,9 +50,11 @@ class CreateSheetsUseCase constructor(
             )
         )
 
+        sharedPrefManager.storeCategoriesSheetId(abs(Random.nextInt()))
+
         val addCategoriesSheetRequest = AddSheet(
             SheetProperties(
-                sheetId = abs(Random.nextInt()),
+                sheetId = sharedPrefManager.getCategoriesSheetId(),
                 index = 2,
                 sheetType = Constants.gridSheetType,
                 title = "Categories",
@@ -46,8 +64,9 @@ class CreateSheetsUseCase constructor(
 
         val batchUpdateRequest = SpreadSheetBatchUpdateRequest(
             requests = listOf(
-                SpreadSheetUpdateRequest(addSummarySheetRequest),
-                SpreadSheetUpdateRequest(addCategoriesSheetRequest)
+                SpreadSheetUpdateRequest(addSheet = addSummarySheetRequest),
+                SpreadSheetUpdateRequest(addSheet = addCategoriesSheetRequest),
+                SpreadSheetUpdateRequest(updateSheetProperties = spreadSheetPropertiesUpdate)
             )
         )
 

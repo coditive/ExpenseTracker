@@ -12,6 +12,7 @@ import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
 import com.syrous.expensetracker.upload.CreateSheetsUseCase
+import com.syrous.expensetracker.upload.ModifySheetToTemplateUseCase
 import com.syrous.expensetracker.upload.SearchOrCreateAppFolderUseCase
 import com.syrous.expensetracker.upload.UploadUserTransactionUseCase
 import com.syrous.expensetracker.utils.Constants
@@ -37,16 +38,24 @@ class ActivityMainVM @Inject constructor(
 
     var transactionsList: StateFlow<List<UserTransaction>>
 
-    private val searchUseCase = SearchOrCreateAppFolderUseCase(apiRequest, sharedPrefManager, viewModelScope)
+    private val searchUseCase =
+        SearchOrCreateAppFolderUseCase(apiRequest, sharedPrefManager)
 
-    private val uploadUseCase = UploadUserTransactionUseCase(transactionDao, apiRequest, sharedPrefManager)
+    private val uploadUseCase =
+        UploadUserTransactionUseCase(transactionDao, apiRequest, sharedPrefManager)
 
     private val createSheetsUseCase = CreateSheetsUseCase(sharedPrefManager, sheetApiRequest)
 
+    private val modifySheetToTemplateUseCase =
+        ModifySheetToTemplateUseCase(sharedPrefManager, sheetApiRequest)
+
     @RequiresApi(Build.VERSION_CODES.R)
     fun searchFolderOrCreate(context: Context) {
-        viewModelScope.launch(Dispatchers.IO){
-           createSheetsUseCase.execute()
+        viewModelScope.launch(Dispatchers.IO) {
+            searchUseCase.execute()
+            uploadUseCase.uploadUserTransactionToDrive(context, "test-file.csv")
+            createSheetsUseCase.execute()
+            modifySheetToTemplateUseCase.execute(context)
         }
     }
 
@@ -59,8 +68,8 @@ class ActivityMainVM @Inject constructor(
             }
         }
 
-        transactionsList =  transactionManager
-                .getAllTransactionsFromStorage()
+        transactionsList = transactionManager
+            .getAllTransactionsFromStorage()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
     }
 

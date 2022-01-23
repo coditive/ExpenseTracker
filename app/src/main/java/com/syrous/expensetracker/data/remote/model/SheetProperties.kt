@@ -5,5 +5,5 @@ data class SheetProperties(
     val title: String,
     val index: Int,
     val sheetType: String,
-    val gridProperties: GridProperties?
+    val gridProperties: GridProperties? = null
 )

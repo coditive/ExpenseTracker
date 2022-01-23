@@ -8,6 +8,7 @@ import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.data.local.model.UserTransaction
 import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.UploadFileMetaData
+import com.syrous.expensetracker.utils.Constants.apiKey
 import com.syrous.expensetracker.utils.SharedPrefManager
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -29,23 +30,30 @@ class UploadUserTransactionUseCase constructor(
     private val lineSeparator = "\r\n"
 
     @RequiresApi(Build.VERSION_CODES.R)
-    suspend fun uploadUserTransactionToDrive(context: Context, authToken: String, apiKey: String, fileName: String) {
+    suspend fun uploadUserTransactionToDrive(context: Context, fileName: String) {
         val listOfUserTransaction = transactionDao.getAllUserTransactions()
-        val csvFile = convertUserTransactionToCSVFile(listOfUserTransaction,
-            createCSVFileOnStorage(context, fileName))
+        val csvFile = convertUserTransactionToCSVFile(
+            listOfUserTransaction,
+            createCSVFileOnStorage(context, fileName)
+        )
 
         val requestFile = csvFile.readBytes().toRequestBody(
             "application/vnd.google-apps.spreadsheet".toMediaType()
         )
 
         val uploadFileMetaData = UploadFileMetaData(
-            "test-file.csv",
+            fileName,
             "application/vnd.google-apps.spreadsheet",
             "test-upload"
         )
         val multipartBody = MultipartBody.Part.create(requestFile)
 
-        val response = apiRequest.uploadFile(authToken, apiKey, MultipartBody.Part.create(uploadFileMetaData), multipartBody)
+        val response = apiRequest.uploadFile(
+            sharedPrefManager.getUserToken(),
+            apiKey,
+            MultipartBody.Part.create(uploadFileMetaData),
+            multipartBody
+        )
         sharedPrefManager.storeSpreadSheetId(response.id)
     }
 
@@ -85,15 +93,15 @@ class UploadUserTransactionUseCase constructor(
     private fun convertRecordToCSV(listOfRecords: List<List<String>>): StringBuilder {
         val stringBuilder = StringBuilder()
 
-        for(record in listOfRecords) {
-            for(item in record) {
+        for (record in listOfRecords) {
+            for (item in record) {
                 stringBuilder.append(item)
                 stringBuilder.append(columnSeparator)
             }
             stringBuilder.append(lineSeparator)
         }
 
-      return stringBuilder
+        return stringBuilder
     }
 
     private fun addRecordsToFile(recordStringBuilder: StringBuilder, file: File): File {
@@ -103,7 +111,7 @@ class UploadUserTransactionUseCase constructor(
         outputStream.close()
         try {
             val br = BufferedReader(FileReader(file))
-            Log.d("UploadUseCase","File contains -> ${br.readLine()}")
+            Log.d("UploadUseCase", "File contains -> ${br.readLine()}")
         } catch (e: IOException) {
             Log.d("UploadUseCase", "Exception Caught")
         }

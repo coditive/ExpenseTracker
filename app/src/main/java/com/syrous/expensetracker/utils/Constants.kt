@@ -22,6 +22,12 @@ object Constants {
 
     val gridSheetType = "GRID"
 
+    val summarySheetId = "summary_sheet_id"
+
+    val categorySheetId = "category_sheet_id"
+
+    val transactionSheetId = "transaction_sheet_id"
+
     val DATABASE_NAME = "expense_db"
 
     val DEFAULT_SHEET_NAME = "Sheet"
