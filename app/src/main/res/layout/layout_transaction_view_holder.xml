@@ -1,56 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/user_transaction_card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/serial_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="12"
-            android:layout_margin="10dp"
-            android:layout_weight="0.05"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="12" />
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="25 june 2021"
-            android:layout_margin="10dp"
-            android:layout_weight="0.05"/>
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/category_tag_tv"
+            tools:text="25 june 2021" />
 
         <TextView
             android:id="@+id/description_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Paytm recharge done"
-            android:layout_margin="10dp"
-            android:layout_weight="0.05"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/serial_number"
+            tools:text="Paytm recharge done" />
 
         <TextView
             android:id="@+id/category_tag_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Personal"
-            android:layout_margin="10dp"
-            android:layout_weight="0.01"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/description_tv"
+            tools:text="Personal" />
 
         <TextView
             android:id="@+id/amount_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="-200"
-            android:layout_margin="10dp"
-            android:layout_weight="0.01"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="-200" />
 
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>

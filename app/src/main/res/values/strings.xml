@@ -35,5 +35,6 @@
     <string name="upload_uri">https://www.googleapis.com/</string>
 
     <string name="sheet_api">https://sheets.googleapis.com/v4/spreadsheets/</string>
-    
+    <string name="total_expenses">Total Expenses :</string>
+
 </resources>
