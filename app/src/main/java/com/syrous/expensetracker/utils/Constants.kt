@@ -1,9 +1,11 @@
 package com.syrous.expensetracker.utils
 
 import com.syrous.expensetracker.BuildConfig
+import java.util.*
 
 object Constants {
     val SharedPrefName = "com.syrous.expensetracker"
+
     val monthStartBalance = "month_start_balance"
 
     val userToken = "user_token"
@@ -33,5 +35,17 @@ object Constants {
     val DEFAULT_SHEET_NAME = "Sheet"
 
     val NEW_USER = "new_user"
+
+    val datePattern = "dd/MM/yyyy"
+
+    val expenseTrackerFolder = "expense_tracker_folder"
+
+    val spreadSheetMimeType = "application/vnd.google-apps.spreadsheet"
+
+    val folderMimeType = "application/vnd.google-apps.folder"
+
+    val corpora = "user"
+
+    val appName = "Expense-Tracker"
 
 }

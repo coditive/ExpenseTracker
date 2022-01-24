@@ -1,50 +1,58 @@
-package com.syrous.expensetracker.upload
+package com.syrous.expensetracker.usecase
 
 import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.syrous.expensetracker.data.local.CategoriesDao
 import com.syrous.expensetracker.data.local.TransactionDao
-import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.data.local.model.DBTransaction
 import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.UploadFileMetaData
+import com.syrous.expensetracker.datainterface.CategoryManager
+import com.syrous.expensetracker.datainterface.TransactionManager
+import com.syrous.expensetracker.model.UserTransaction
+import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.Constants.apiKey
 import com.syrous.expensetracker.utils.SharedPrefManager
+import com.syrous.expensetracker.utils.toUserTransaction
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 
 
 class UploadUserTransactionUseCase constructor(
-    private val transactionDao: TransactionDao,
+    private val transactionManager: TransactionManager,
+    private val categoryManager: CategoryManager,
     private val apiRequest: DriveApiRequest,
     private val sharedPrefManager: SharedPrefManager
 ) {
 
-    private val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private val sdf = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
     private val columnSeparator = ","
     private val lineSeparator = "\r\n"
 
     @RequiresApi(Build.VERSION_CODES.R)
-    suspend fun uploadUserTransactionToDrive(context: Context, fileName: String) {
-        val listOfUserTransaction = transactionDao.getAllUserTransactions()
+    suspend fun uploadUserTransactionToDrive(context: Context, fileName: String, description: String) {
+        val listOfUserTransaction = transactionManager.getAllTransactions()
+
         val csvFile = convertUserTransactionToCSVFile(
             listOfUserTransaction,
             createCSVFileOnStorage(context, fileName)
         )
 
         val requestFile = csvFile.readBytes().toRequestBody(
-            "application/vnd.google-apps.spreadsheet".toMediaType()
+            Constants.spreadSheetMimeType.toMediaType()
         )
 
         val uploadFileMetaData = UploadFileMetaData(
             fileName,
-            "application/vnd.google-apps.spreadsheet",
-            "test-upload"
+            Constants.spreadSheetMimeType,
+            description,
+            listOf(sharedPrefManager.getExpenseTrackerFolderId())
         )
         val multipartBody = MultipartBody.Part.create(requestFile)
 
@@ -59,7 +67,7 @@ class UploadUserTransactionUseCase constructor(
 
 
     private fun convertUserTransactionToCSVFile(
-        listOfUserTransaction: List<UserTransaction>,
+        listOfDBTransaction: List<UserTransaction>,
         file: File
     ): File {
         val listOfRecords = mutableListOf<List<String>>()
@@ -69,18 +77,18 @@ class UploadUserTransactionUseCase constructor(
         listOfHeaders.add(UserTransaction::date.name)
         listOfHeaders.add(UserTransaction::description.name)
         listOfHeaders.add(UserTransaction::amount.name)
-        listOfHeaders.add(UserTransaction::transactionCategory.name)
+        listOfHeaders.add(UserTransaction::category.name)
         listOfHeaders.add(UserTransaction::categoryTag.name)
 
         listOfRecords.add(listOfHeaders)
 
-        for (transaction in listOfUserTransaction) {
+        for (transaction in listOfDBTransaction) {
             val record = mutableListOf<String>()
             record.add(transaction.id.toString())
             record.add(sdf.format(transaction.date))
             record.add(transaction.description)
             record.add(transaction.amount.toString())
-            record.add(transaction.transactionCategory.name)
+            record.add(transaction.category.name)
             record.add(transaction.categoryTag)
 
             listOfRecords.add(record)
@@ -106,16 +114,8 @@ class UploadUserTransactionUseCase constructor(
 
     private fun addRecordsToFile(recordStringBuilder: StringBuilder, file: File): File {
         val outputStream = FileOutputStream(file)
-
         outputStream.write(recordStringBuilder.toString().toByteArray())
         outputStream.close()
-        try {
-            val br = BufferedReader(FileReader(file))
-            Log.d("UploadUseCase", "File contains -> ${br.readLine()}")
-        } catch (e: IOException) {
-            Log.d("UploadUseCase", "Exception Caught")
-        }
-
         return file
     }
 

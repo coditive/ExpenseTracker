@@ -10,7 +10,8 @@ import okio.BufferedSink
 data class UploadFileMetaData (
     val name: String,
     val mimeType: String,
-    val description: String
+    val description: String,
+    val parents: List<String>
     ): RequestBody() {
     override fun contentType(): MediaType = "application/json".toMediaType()
 

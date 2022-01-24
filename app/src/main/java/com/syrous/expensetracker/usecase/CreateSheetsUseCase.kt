@@ -1,4 +1,4 @@
-package com.syrous.expensetracker.upload
+package com.syrous.expensetracker.usecase
 
 import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.data.remote.model.*

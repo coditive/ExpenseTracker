@@ -13,9 +13,7 @@ import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.syrous.expensetracker.databinding.ActivityMainBinding
 import com.syrous.expensetracker.screen.usertransaction.UserTransactionActivity
-import com.syrous.expensetracker.upload.UploadUserTransactionUseCase
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -23,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: ActivityMainVM by viewModels()
+    private val viewModel: ActivityMainVMImpl by viewModels()
 
     private val STORAGE_REQ_CODE = 1121
 
@@ -45,21 +43,25 @@ class MainActivity : AppCompatActivity() {
             }
 
             exportTransactionButton.setOnClickListener {
-                 if(ContextCompat.checkSelfPermission(this@MainActivity,
-                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                     != PackageManager.PERMISSION_GRANTED){
+                if (ContextCompat.checkSelfPermission(
+                        this@MainActivity,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
 
-                     ActivityCompat.requestPermissions(this@MainActivity,
-                         arrayOf(
-                             Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-                             Manifest.permission.READ_EXTERNAL_STORAGE,
-                             Manifest.permission.WRITE_EXTERNAL_STORAGE
-                         ),
-                         STORAGE_REQ_CODE
-                     )
-                 } else {
-                     viewModel.searchFolderOrCreate(this@MainActivity)
-                 }
+                    ActivityCompat.requestPermissions(
+                        this@MainActivity,
+                        arrayOf(
+                            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ),
+                        STORAGE_REQ_CODE
+                    )
+                } else {
+                    viewModel.searchFolderOrCreate(this@MainActivity)
+                }
             }
 
             transactionRecyclerView.apply {
@@ -69,9 +71,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        viewModel.transactionsList.asLiveData().observe(this) {
-            transactionList -> transactionAdapter.submitList(transactionList)
+
+        viewModel.userTransactionFlow.asLiveData().observe(this) { userTransactionList ->
+            transactionAdapter.submitList(userTransactionList)
         }
+
     }
 
     override fun onRequestPermissionsResult(
@@ -80,11 +84,13 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == STORAGE_REQ_CODE) {
+        if (requestCode == STORAGE_REQ_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this@MainActivity, "Storage Permission Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Storage Permission Granted", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                Toast.makeText(this@MainActivity, "Storage Permission Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Storage Permission Denied", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }

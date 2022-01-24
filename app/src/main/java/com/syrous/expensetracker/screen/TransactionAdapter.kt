@@ -7,27 +7,28 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.syrous.expensetracker.data.local.model.TransactionCategory
-import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.data.local.model.DBTransaction
 import com.syrous.expensetracker.databinding.LayoutTransactionViewHolderBinding
+import com.syrous.expensetracker.model.Category
+import com.syrous.expensetracker.model.UserTransaction
+import com.syrous.expensetracker.utils.Constants
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionAdapter : ListAdapter<UserTransaction, TransactionViewHolder>(callback) {
+    private val dateFormatter = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
 
     companion object {
         val callback = object : DiffUtil.ItemCallback<UserTransaction>() {
             override fun areItemsTheSame(
                 oldItem: UserTransaction,
                 newItem: UserTransaction
-            ): Boolean =
-                oldItem.id == newItem.id
+            ): Boolean = true
 
             override fun areContentsTheSame(
                 oldItem: UserTransaction,
                 newItem: UserTransaction
-            ): Boolean =
-                oldItem.date == newItem.date && oldItem.amount == newItem.amount
+            ): Boolean = true
         }
     }
 
@@ -38,7 +39,7 @@ class TransactionAdapter : ListAdapter<UserTransaction, TransactionViewHolder>(c
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        holder.bind(getItem(position), position)
+        holder.bind(getItem(position), position, dateFormatter)
     }
 }
 
@@ -47,10 +48,10 @@ class TransactionViewHolder(
     private val context: Context
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(transaction: UserTransaction, position: Int) {
+    fun bind(transaction: UserTransaction, position: Int, dateFormatter: SimpleDateFormat) {
         binding.apply {
-            serialNumber.text = transaction.id.toString()
-            if (transaction.transactionCategory == TransactionCategory.EXPENSE)
+            (position + 1).toString().also { serialNumber.text = it }
+            if (transaction.category == Category.EXPENSE)
                 amountTv.setTextColor(
                     ContextCompat.getColor(
                         context,
@@ -65,7 +66,7 @@ class TransactionViewHolder(
                     )
                 )
             descriptionTv.text = transaction.description
-            val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
             date.text = dateFormatter.format(transaction.date)
             amountTv.text = transaction.amount.toString()
             categoryTagTv.text = transaction.categoryTag

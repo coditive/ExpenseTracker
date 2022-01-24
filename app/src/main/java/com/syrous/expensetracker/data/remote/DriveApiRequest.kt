@@ -1,15 +1,8 @@
 package com.syrous.expensetracker.data.remote
 
-import com.syrous.expensetracker.data.local.model.TransactionCategory
-import com.syrous.expensetracker.data.local.model.UserTransaction
 import com.syrous.expensetracker.data.remote.model.*
-import com.syrous.expensetracker.utils.Constants
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.*
-import java.io.File
-import java.util.*
-import kotlin.collections.HashMap
 
 interface DriveApiRequest {
 

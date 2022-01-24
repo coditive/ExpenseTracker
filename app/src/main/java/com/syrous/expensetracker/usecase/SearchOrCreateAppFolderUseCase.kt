@@ -1,12 +1,9 @@
-package com.syrous.expensetracker.upload
+package com.syrous.expensetracker.usecase
 
 import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.CreateFolderRequest
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 class SearchOrCreateAppFolderUseCase constructor(
@@ -20,20 +17,25 @@ class SearchOrCreateAppFolderUseCase constructor(
         val result = apiRequest.searchFile(
             sharedPrefManager.getUserToken(),
             Constants.apiKey,
-            "user",
+            Constants.corpora,
             query
         )
+
+        sharedPrefManager.storeExpenseTrackerFolderId(result.files[0].id)
 
         if (result.files.isEmpty()) {
             val folder = apiRequest.createFolder(
                 sharedPrefManager.getUserToken(),
                 Constants.apiKey,
                 CreateFolderRequest(
-                    "Expense-Tracker",
-                    "application/vnd.google-apps.folder"
+                    Constants.appName,
+                    Constants.folderMimeType
                 )
             )
+
+            sharedPrefManager.storeExpenseTrackerFolderId(folder.id)
         }
+
     }
 }
 

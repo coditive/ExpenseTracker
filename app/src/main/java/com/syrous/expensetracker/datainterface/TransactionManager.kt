@@ -1,23 +1,26 @@
 package com.syrous.expensetracker.datainterface
 
+import com.syrous.expensetracker.data.local.CategoriesDao
 import com.syrous.expensetracker.data.local.TransactionDao
-import com.syrous.expensetracker.data.local.model.TransactionCategory
-import com.syrous.expensetracker.data.local.model.TransactionCategory.EXPENSE
-import com.syrous.expensetracker.data.local.model.TransactionCategory.INCOME
-import com.syrous.expensetracker.data.local.model.UserTransaction
+import com.syrous.expensetracker.model.Category
+import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.utils.Constants
-import kotlinx.coroutines.CoroutineScope
+import com.syrous.expensetracker.utils.toDBTransaction
+import com.syrous.expensetracker.utils.toUserTransaction
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.mapLatest
 
 interface TransactionManager {
 
-    fun addTransaction(transaction: UserTransaction)
+    suspend fun addTransaction(transaction: UserTransaction)
 
     fun getAllTransactionsFromStorage(): Flow<List<UserTransaction>>
 
-    fun getCategorisedTransactionsFromStorage(transactionCategory: TransactionCategory): Flow<List<UserTransaction>>
+    suspend fun getAllTransactions(): List<UserTransaction>
+
+    fun getCategorisedTransactionsFromStorage(
+        category: Category
+    ): Flow<List<UserTransaction>>
 
     suspend fun syncUserTransaction(sheetName: String = Constants.DEFAULT_SHEET_NAME)
 
@@ -30,14 +33,12 @@ interface TransactionManager {
 
 class TransactionManagerImpl(
     private val transactionDao: TransactionDao,
-    private val coroutineScope: CoroutineScope
+    private val categoriesDao: CategoriesDao
 ) : TransactionManager {
 
-    override fun addTransaction(transaction: UserTransaction) {
-        coroutineScope.launch {
-            transactionDao.insertUserTransaction(transaction)
-            transactionDao.getUserTransaction(transaction.date, transaction.description)
-        }
+    override suspend fun addTransaction(transaction: UserTransaction) {
+        val id = categoriesDao.getSubCategoryId(transaction.categoryTag)
+        transactionDao.insertUserTransaction(transaction.toDBTransaction(id))
     }
 
     override suspend fun syncUserTransaction(sheetName: String) {
@@ -48,21 +49,35 @@ class TransactionManagerImpl(
 
     }
 
-
     override fun getAllTransactionsFromStorage(): Flow<List<UserTransaction>> =
-        transactionDao.getAllUserTransactionsFlow()
-
-    override fun getCategorisedTransactionsFromStorage(transactionCategory: TransactionCategory): Flow<List<UserTransaction>> =
-        transactionDao.getAllUserTransactionsFlow().map { userTransactionList ->
-            userTransactionList.filter { transaction ->
-                transaction.transactionCategory == transactionCategory
+        transactionDao.getAllUserTransactionsFlow().mapLatest { dbTransaction ->
+            val userTransactionList = mutableListOf<UserTransaction>()
+            for (transaction in dbTransaction) {
+                val category = categoriesDao.getSubCategoryFromId(transaction.categoryId)
+                userTransactionList.add(transaction.toUserTransaction(categoryTag = category.name))
             }
+            userTransactionList
         }
+
+    override suspend fun getAllTransactions(): List<UserTransaction> =
+        transactionDao.getAllUserTransactions().map { dbTransaction ->
+            val categoryTag = categoriesDao.getSubCategoryFromId(dbTransaction.categoryId)
+            dbTransaction.toUserTransaction(categoryTag.name)
+        }
+
+
+    override fun getCategorisedTransactionsFromStorage(
+        category: Category
+    ): Flow<List<UserTransaction>> = getAllTransactionsFromStorage().mapLatest { transactionList ->
+        transactionList.filter { transaction ->
+            transaction.category.value != category.value
+        }
+    }
 
     override suspend fun getTotalExpenses(): Int {
         var expense = 0
         transactionDao.getAllUserTransactions()
-            .filter { it.transactionCategory == EXPENSE }
+            .filter { it.category == Category.EXPENSE }
             .forEach {
                 expense += it.amount
             }
@@ -72,7 +87,7 @@ class TransactionManagerImpl(
     override suspend fun getTotalIncome(): Int {
         var income = 0
         transactionDao.getAllUserTransactions()
-            .filter { it.transactionCategory == INCOME }
+            .filter { it.category == Category.INCOME }
             .forEach {
                 income += it.amount
             }

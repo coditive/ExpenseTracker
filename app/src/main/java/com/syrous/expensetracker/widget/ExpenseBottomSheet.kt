@@ -15,8 +15,8 @@ import androidx.lifecycle.asLiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.syrous.expensetracker.R
-import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.databinding.LayoutExpenseWidgetInputBinding
+import com.syrous.expensetracker.model.Category
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +25,7 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
     private lateinit var binding: LayoutExpenseWidgetInputBinding
 
     private val viewModel: ExpenseTrackerWidgetVMImpl by viewModels()
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,15 +45,18 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
             viewModel.viewState.asLiveData().observe(viewLifecycleOwner) { viewState ->
                 if (viewState is Success) {
 
-                    if (viewState.transactionCategory == TransactionCategory.EXPENSE)
+                    if (viewState.transactionCategory == Category.EXPENSE)
                         expenseCheckBox.isChecked = true
                     else
                         incomeCheckBox.isChecked = true
 
-                    setUpChips(viewModel.getTagList())
                 } else if (viewState is Error) {
 
                 }
+            }
+
+            viewModel.getTagList().asLiveData().observe(viewLifecycleOwner) { subCategoryList ->
+                setUpChips(subCategoryList)
             }
 
             saveButton.setOnClickListener {
@@ -71,28 +74,24 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
 
             expenseCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    viewModel.setTransactionCategory(TransactionCategory.EXPENSE)
+                    viewModel.setTransactionCategory(Category.EXPENSE)
                     incomeCheckBox.isChecked = false
                 } else {
                     incomeCheckBox.isChecked = true
                     expenseCheckBox.isChecked = false
-                    viewModel.setTransactionCategory(TransactionCategory.INCOME)
+                    viewModel.setTransactionCategory(Category.INCOME)
                 }
-
-                setUpChips(viewModel.getTagList())
             }
 
             incomeCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    viewModel.setTransactionCategory(TransactionCategory.INCOME)
+                    viewModel.setTransactionCategory(Category.INCOME)
                     expenseCheckBox.isChecked = false
                 } else {
                     expenseCheckBox.isChecked = true
                     incomeCheckBox.isChecked = false
-                    viewModel.setTransactionCategory(TransactionCategory.EXPENSE)
+                    viewModel.setTransactionCategory(Category.EXPENSE)
                 }
-
-                setUpChips(viewModel.getTagList())
             }
         }
 
@@ -101,7 +100,7 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
     private fun setUpChips(categoryTagsList: List<String>) {
         val chipList = mutableListOf<Chip>()
         binding.categoryChipLayout.removeAllViews()
-        categoryTagsList.forEachIndexed { index, s ->
+        categoryTagsList.forEachIndexed { _, s ->
             val chip =
                 layoutInflater.inflate(R.layout.category_type_item_chip, null, false) as Chip
             chip.text = s

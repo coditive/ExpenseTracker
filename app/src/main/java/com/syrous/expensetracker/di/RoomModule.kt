@@ -2,10 +2,13 @@ package com.syrous.expensetracker.di
 
 import android.content.Context
 import androidx.room.Room
+import com.syrous.expensetracker.data.local.CategoriesDao
 import com.syrous.expensetracker.data.local.ExpenseDB
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.CategoryManagerImpl
+import com.syrous.expensetracker.datainterface.TransactionManager
+import com.syrous.expensetracker.datainterface.TransactionManagerImpl
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.Module
@@ -38,13 +41,24 @@ class RoomModule {
         fun provideTransactionDao(db: ExpenseDB): TransactionDao = db.transactionDao()
 
         @Provides
-        fun provideCategoryTagManager(@ApplicationContext context: Context): CategoryManager {
-            return CategoryManagerImpl(context)
-        }
+        fun provideCategoriesDao(db: ExpenseDB): CategoriesDao = db.categoriesDao()
+
+        @Provides
+        fun provideCategoryTagManager(
+            @ApplicationContext context: Context,
+            categoriesDao: CategoriesDao
+        ): CategoryManager = CategoryManagerImpl(context, categoriesDao)
+
+        @Provides
+        fun provideTransactionManager(
+            transactionDao: TransactionDao,
+            categoriesDao: CategoriesDao
+        ): TransactionManager = TransactionManagerImpl(transactionDao, categoriesDao)
 
         @Provides
         fun initSharedPrefManager(@ApplicationContext context: Context): SharedPrefManager {
-            val sharedPref = context.getSharedPreferences(Constants.SharedPrefName,
+            val sharedPref = context.getSharedPreferences(
+                Constants.SharedPrefName,
                 Context.MODE_PRIVATE
             )
             return SharedPrefManager(sharedPref)

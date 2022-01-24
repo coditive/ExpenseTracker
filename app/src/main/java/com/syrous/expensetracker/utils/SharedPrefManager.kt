@@ -15,6 +15,12 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
             .apply()
     }
 
+    fun storeExpenseTrackerFolderId(id: String) {
+        sharedPref.edit()
+            .putString(Constants.expenseTrackerFolder, id)
+            .apply()
+    }
+
     fun storeUserToken(token: String) {
         sharedPref.edit()
             .putString(Constants.userToken, "Bearer $token")
@@ -38,6 +44,9 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
             .putInt(Constants.categorySheetId, id)
             .apply()
     }
+
+    fun getExpenseTrackerFolderId(): String =
+        sharedPref.getString(Constants.expenseTrackerFolder, "").toString()
 
     fun getSummarySheetId(): Int = sharedPref.getInt(Constants.summarySheetId, 0)
 
@@ -68,7 +77,7 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
         .toString()
 
     fun getMonthStartBalance(): Int {
-      return  sharedPref.getInt(Constants.monthStartBalance, 0)
+        return sharedPref.getInt(Constants.monthStartBalance, 0)
     }
 
 }

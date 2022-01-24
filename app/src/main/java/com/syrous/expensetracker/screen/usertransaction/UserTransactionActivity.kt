@@ -9,10 +9,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.asLiveData
-import com.syrous.expensetracker.data.local.model.TransactionCategory
 import com.syrous.expensetracker.databinding.LayoutAddUserTransactionBinding
+import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.screen.usertransaction.ViewState.Error
 import com.syrous.expensetracker.screen.usertransaction.ViewState.Success
+import com.syrous.expensetracker.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,9 +24,11 @@ class UserTransactionActivity : AppCompatActivity() {
 
     private lateinit var binding: LayoutAddUserTransactionBinding
 
-    private var categoryTagList = emptyList<String>()
+    private var categoryTagList = mutableListOf<String>()
 
     private val viewModel: UserTransactionVMImpl by viewModels()
+
+    private val dateFormatter = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,19 +53,17 @@ class UserTransactionActivity : AppCompatActivity() {
                         null
                     )
 
-                    if (viewState.transactionCategory == TransactionCategory.EXPENSE)
+                    if (viewState.category == Category.EXPENSE)
                         expenseCheckBox.isChecked = true
                     else
                         incomeCheckBox.isChecked = true
 
-                    categoryTagList = viewModel.getTagList()
                 }
 
-                if(viewState.isTransactionAdded) finish()
 
             } else if (viewState is Error) {
                 when (viewState.element) {
-
+                    //TODO(Alert dialog)
                 }
             }
         }
@@ -70,10 +71,19 @@ class UserTransactionActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryTagList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
+        viewModel.getTagList().asLiveData().observe(this) { subCategoryList ->
+            categoryTagList = subCategoryList.toMutableList()
+            adapter.clear()
+            adapter.addAll(categoryTagList)
+            adapter.notifyDataSetChanged()
+        }
+
+
         binding.apply {
 
             addUserTransactionButton.setOnClickListener {
                 viewModel.addUserTransaction()
+                finish()
             }
 
             amountEt.addTextChangedListener { text: Editable? ->
@@ -85,9 +95,8 @@ class UserTransactionActivity : AppCompatActivity() {
             }
 
             transactionDatePicker.setOnDateChangedListener { _, year, month, day ->
-                val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 val dateString = "$day/$month/$year"
-                viewModel.setDate(dateFormater.parse(dateString)!!)
+                viewModel.setDate(dateFormatter.parse(dateString)!!)
             }
 
 
@@ -111,32 +120,24 @@ class UserTransactionActivity : AppCompatActivity() {
 
             expenseCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    viewModel.setTransactionCategory(TransactionCategory.EXPENSE)
+                    viewModel.setTransactionCategory(Category.EXPENSE)
                     incomeCheckBox.isChecked = false
                 } else {
                     incomeCheckBox.isChecked = true
                     expenseCheckBox.isChecked = false
-                    viewModel.setTransactionCategory(TransactionCategory.INCOME)
+                    viewModel.setTransactionCategory(Category.INCOME)
                 }
-                categoryTagList = viewModel.getTagList()
-                adapter.clear()
-                adapter.addAll(categoryTagList)
-                adapter.notifyDataSetChanged()
             }
 
             incomeCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    viewModel.setTransactionCategory(TransactionCategory.INCOME)
+                    viewModel.setTransactionCategory(Category.INCOME)
                     expenseCheckBox.isChecked = false
                 } else {
                     expenseCheckBox.isChecked = true
                     incomeCheckBox.isChecked = false
-                    viewModel.setTransactionCategory(TransactionCategory.EXPENSE)
+                    viewModel.setTransactionCategory(Category.EXPENSE)
                 }
-                categoryTagList = viewModel.getTagList()
-                adapter.clear()
-                adapter.addAll(categoryTagList)
-                adapter.notifyDataSetChanged()
             }
         }
     }

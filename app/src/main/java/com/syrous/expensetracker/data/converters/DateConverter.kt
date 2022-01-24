@@ -1,4 +1,4 @@
-package com.syrous.expensetracker.data.local.converters
+package com.syrous.expensetracker.data.converters
 
 import androidx.room.TypeConverter
 import java.util.*
