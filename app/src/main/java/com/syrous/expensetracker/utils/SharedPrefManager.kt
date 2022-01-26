@@ -45,6 +45,14 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
             .apply()
     }
 
+    fun storeFileUploadStatus(status: Boolean) {
+        sharedPref.edit()
+            .putBoolean(Constants.fileUpload, status)
+            .apply()
+    }
+
+    fun isFileUploadStatus(): Boolean = sharedPref.getBoolean(Constants.fileUpload, false)
+
     fun getExpenseTrackerFolderId(): String =
         sharedPref.getString(Constants.expenseTrackerFolder, "").toString()
 

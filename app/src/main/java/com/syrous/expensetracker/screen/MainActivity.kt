@@ -11,9 +11,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import com.syrous.expensetracker.databinding.ActivityMainBinding
 import com.syrous.expensetracker.screen.usertransaction.UserTransactionActivity
+import com.syrous.expensetracker.service.enqueueSpreadSheetSyncWork
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -25,13 +28,15 @@ class MainActivity : AppCompatActivity() {
 
     private val STORAGE_REQ_CODE = 1121
 
+    @Inject lateinit var workManager: WorkManager
+
     private val transactionAdapter = TransactionAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -93,5 +98,10 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        workManager.enqueueSpreadSheetSyncWork()
     }
 }

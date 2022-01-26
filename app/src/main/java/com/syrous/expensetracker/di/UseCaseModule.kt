@@ -4,10 +4,7 @@ import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.datainterface.CategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
-import com.syrous.expensetracker.usecase.CreateSheetsUseCase
-import com.syrous.expensetracker.usecase.ModifySheetToTemplateUseCase
-import com.syrous.expensetracker.usecase.SearchOrCreateAppFolderUseCase
-import com.syrous.expensetracker.usecase.UploadUserTransactionUseCase
+import com.syrous.expensetracker.usecase.*
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.Module
 import dagger.Provides
@@ -44,11 +41,19 @@ object UseCaseModule {
     @Provides
     fun provideUploadUserTransactionUseCase(
         transactionManager: TransactionManager,
-        categoryManager: CategoryManager,
         driveApiRequest: DriveApiRequest,
         sharedPrefManager: SharedPrefManager
     ): UploadUserTransactionUseCase = UploadUserTransactionUseCase(
-        transactionManager, categoryManager, driveApiRequest, sharedPrefManager
+        transactionManager, driveApiRequest, sharedPrefManager
+    )
+
+    @Provides
+    fun provideAppendTransactionsUseCase(
+        transactionManager: TransactionManager,
+        sheetApiRequest: SheetApiRequest,
+        sharedPrefManager: SharedPrefManager
+    ): AppendTransactionsUseCase = AppendTransactionsUseCase(
+        transactionManager, sheetApiRequest, sharedPrefManager
     )
 
 }

@@ -13,10 +13,7 @@ import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.screen.MainActivityViewState.Success.Companion
 import com.syrous.expensetracker.screen.usertransaction.ViewState
-import com.syrous.expensetracker.usecase.CreateSheetsUseCase
-import com.syrous.expensetracker.usecase.ModifySheetToTemplateUseCase
-import com.syrous.expensetracker.usecase.SearchOrCreateAppFolderUseCase
-import com.syrous.expensetracker.usecase.UploadUserTransactionUseCase
+import com.syrous.expensetracker.usecase.*
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -40,10 +37,12 @@ interface ActivityMainVM {
 @HiltViewModel
 class ActivityMainVMImpl @Inject constructor(
     private val transactionManager: TransactionManager,
+    private val sharedPrefManager: SharedPrefManager,
     private val searchUseCase: SearchOrCreateAppFolderUseCase,
     private val uploadUseCase: UploadUserTransactionUseCase,
     private val createSheetsUseCase: CreateSheetsUseCase,
-    private val modifySheetToTemplateUseCase: ModifySheetToTemplateUseCase
+    private val modifySheetToTemplateUseCase: ModifySheetToTemplateUseCase,
+    private val appendTransactionsUseCase: AppendTransactionsUseCase
 ) : ViewModel(), ActivityMainVM {
 
     private val _viewState = MutableStateFlow(MainActivityViewState.Success.defaultState())
@@ -57,17 +56,22 @@ class ActivityMainVMImpl @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.R)
     fun searchFolderOrCreate(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            searchUseCase.execute()
-            delay(100)
-            uploadUseCase.uploadUserTransactionToDrive(
-                context,
-                "Total-Expense-Sheet.csv",
-                "All in one sheet for expenses"
-            )
-            delay(100)
-            createSheetsUseCase.execute()
-            delay(100)
-            modifySheetToTemplateUseCase.execute(context)
+            if (sharedPrefManager.isFileUploadStatus()) {
+                searchUseCase.execute()
+                delay(100)
+                uploadUseCase.uploadUserTransactionToDrive(
+                    context,
+                    "Total-Expense-Sheet.csv",
+                    "All in one sheet for expenses"
+                )
+                delay(100)
+                createSheetsUseCase.execute()
+                delay(100)
+                modifySheetToTemplateUseCase.execute(context)
+                sharedPrefManager.storeFileUploadStatus(true)
+            } else {
+                appendTransactionsUseCase.execute()
+            }
         }
     }
 

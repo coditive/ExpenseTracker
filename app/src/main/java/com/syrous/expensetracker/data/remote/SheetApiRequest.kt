@@ -1,6 +1,7 @@
 package com.syrous.expensetracker.data.remote
 
 import com.syrous.expensetracker.data.remote.model.*
+import retrofit2.Response
 import retrofit2.http.*
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
@@ -11,7 +12,7 @@ interface SheetApiRequest {
         @Header("Authorization") authToken: String,
         @Path("spreadSheetId") spreadSheetId: String,
         @Query("key") apiKey: String
-    ): SpreadSheetResponse
+    ): Response<SpreadSheetResponse>
 
     @POST("{spreadSheetId}:batchUpdate")
     suspend fun updateSpreadSheetToFormat(

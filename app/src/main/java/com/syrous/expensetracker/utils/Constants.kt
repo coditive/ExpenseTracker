@@ -48,4 +48,6 @@ object Constants {
 
     val appName = "Expense-Tracker"
 
+    val fileUpload = "file_upload"
+
 }

@@ -1,9 +1,6 @@
 package com.syrous.expensetracker.data.local
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.syrous.expensetracker.data.local.model.DBTransaction
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -26,4 +23,9 @@ interface TransactionDao {
     @Query("SELECT distinct(categoryId) FROM dbtransaction")
     fun getAllUserCategoriesIdList(): List<Int>
 
+    @Query("SELECT * FROM dbtransaction where isStoredOnSheet = 0")
+    fun getUnSyncedUserTransaction(): Flow<List<DBTransaction>>
+
+    @Query("UPDATE dbtransaction SET isStoredOnSheet = 1 WHERE timestamp = :timestamp")
+    suspend fun updateUserTransactionSyncStatus(timestamp: Long)
 }
