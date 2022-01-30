@@ -68,6 +68,7 @@ class SignInActivity : AppCompatActivity() {
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
+
         binding.googleSignButton.setOnClickListener {
             beginSignIn()
         }

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextAppearance.ExpenseTracker.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
+        <item name="fontFamily">@font/space_grotesk_light</item>
+        <item name="android:textSize">96sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
+        <item name="fontFamily">@font/space_grotesk_light</item>
+        <item name="android:textSize">60sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">38sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="fontFamily">@font/space_grotesk_regular</item>
+        <item name="android:textSize">34sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/space_grotesk_regular</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:fontWeight">500</item>
+
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">@font/space_grotesk_regular</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="fontFamily">@font/space_grotesk_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">.05</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/space_grotesk_regular</item>
+        <item name="android:textColor">?attr/colorPrimaryVariant</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">.2</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Button" parent="TextAppearance.MaterialComponents.Button">
+        <item name="fontFamily">@font/space_grotesk_bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.175</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Caption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/space_grotesk_regular</item>
+        <item name="android:textColor">?attr/colorPrimaryVariant</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextAppearance.ExpenseTracker.Overline" parent="TextAppearance.MaterialComponents.Overline">
+        <item name="fontFamily">@font/space_grotesk_regular</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+</resources>

@@ -1,19 +1,21 @@
 package com.syrous.expensetracker.screen
 
-import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import androidx.work.WorkManager
+import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.ActivityMainBinding
-import com.syrous.expensetracker.screen.usertransaction.UserTransactionActivity
+import com.syrous.expensetracker.databinding.LayoutDashboardScreenBinding
+import com.syrous.expensetracker.model.DashboardCategoryItem
 import com.syrous.expensetracker.service.enqueueSpreadSheetSyncWork
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -28,9 +30,8 @@ class MainActivity : AppCompatActivity() {
 
     private val STORAGE_REQ_CODE = 1121
 
-    @Inject lateinit var workManager: WorkManager
-
-    private val transactionAdapter = TransactionAdapter()
+    @Inject
+    lateinit var workManager: WorkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,45 +42,40 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        binding.apply {
-            addTransactionButton.setOnClickListener {
-                val intent = Intent(this@MainActivity, UserTransactionActivity::class.java)
-                startActivity(intent)
-            }
 
-            exportTransactionButton.setOnClickListener {
-                if (ContextCompat.checkSelfPermission(
-                        this@MainActivity,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                    != PackageManager.PERMISSION_GRANTED
-                ) {
+//        binding.apply {
+//            addTransactionButton.setOnClickListener {
+//                val intent = Intent(this@MainActivity, UserTransactionActivity::class.java)
+//                startActivity(intent)
+//            }
 
-                    ActivityCompat.requestPermissions(
-                        this@MainActivity,
-                        arrayOf(
-                            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        ),
-                        STORAGE_REQ_CODE
-                    )
-                } else {
-                    viewModel.searchFolderOrCreate(this@MainActivity)
-                }
-            }
+//            exportTransactionButton.setOnClickListener {
+//                if (ContextCompat.checkSelfPermission(
+//                        this@MainActivity,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                    )
+//                    != PackageManager.PERMISSION_GRANTED
+//                ) {
+//
+//                    ActivityCompat.requestPermissions(
+//                        this@MainActivity,
+//                        arrayOf(
+//                            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+//                            Manifest.permission.READ_EXTERNAL_STORAGE,
+//                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                        ),
+//                        STORAGE_REQ_CODE
+//                    )
+//                } else {
+//                    viewModel.searchFolderOrCreate(this@MainActivity)
+//                }
+//            }
+//
+//            transactionRecyclerView.apply {
+//                adapter = transactionAdapter
+//                layoutManager = LinearLayoutManager(this@MainActivity)
+//            }
 
-            transactionRecyclerView.apply {
-                adapter = transactionAdapter
-                layoutManager = LinearLayoutManager(this@MainActivity)
-            }
-
-        }
-
-
-        viewModel.userTransactionFlow.asLiveData().observe(this) { userTransactionList ->
-            transactionAdapter.submitList(userTransactionList)
-        }
 
     }
 

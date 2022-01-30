@@ -1,5 +1,7 @@
 <resources>
 
+    <style name="AppTheme" parent="ExpenseTracker.DayNight" />
+
     <style name="Widget.ExpenseTracker.AppWidget.Container" parent="android:Widget">
         <item name="android:id">@android:id/background</item>
         <item name="android:background">?android:attr/colorBackground</item>
@@ -22,6 +24,13 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+
+
+    <style name="ExpenseTracker.DayNight.Splash" parent="Base.ExpenseTracker">
+
+    </style>
+
 
 
 </resources>

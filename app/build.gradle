@@ -24,7 +24,8 @@ android {
             buildConfigField 'String', "API_KEY", GOOGLE_API_KEY
             buildConfigField 'String', "WEB_CLIENT_ID", WEB_CLIENT_ID
             buildConfigField 'String', "ANDROID_CLIENT_ID", ANDROID_CLIENT_ID
-            buildConfigField 'String', "ANDROID_CLIENT_SECRET", ANDROID_CLIENT_SECRET        }
+            buildConfigField 'String', "ANDROID_CLIENT_SECRET", ANDROID_CLIENT_SECRET
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -80,7 +81,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0"
 
     //ktx
-    implementation "androidx.fragment:fragment-ktx:1.4.0"
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
 
     //Firebase Distribution
@@ -97,5 +98,15 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
     implementation "com.squareup.moshi:moshi-adapters:1.8.0"
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
+
+
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    //Navigation Component
+    implementation "androidx.navigation:navigation-fragment-ktx:2.4.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.4.0"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:2.4.0"
 
 }

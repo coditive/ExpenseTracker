@@ -6,18 +6,29 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.2644628099173554" />
         <entry key="app/src/main/res/drawable-v21/app_widget_background.xml" value="0.33" />
         <entry key="app/src/main/res/drawable-v21/app_widget_inner_view_background.xml" value="0.33" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3165" />
+        <entry key="app/src/main/res/drawable/ic_app_icon_large.xml" value="0.161" />
+        <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.3165" />
+        <entry key="app/src/main/res/font/poppins_medium.xml" value="0.4010416666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.35885416666666664" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.3591485507246377" />
         <entry key="app/src/main/res/layout/category_type_item_chip.xml" value="0.37083333333333335" />
         <entry key="app/src/main/res/layout/expense_tracker_widget.xml" value="0.35833333333333334" />
         <entry key="app/src/main/res/layout/layout_add_user_transaction.xml" value="0.37395833333333334" />
+        <entry key="app/src/main/res/layout/layout_category_card.xml" value="0.37083333333333335" />
+        <entry key="app/src/main/res/layout/layout_dashboard_card.xml" value="0.37083333333333335" />
+        <entry key="app/src/main/res/layout/layout_dashboard_screen.xml" value="0.37083333333333335" />
         <entry key="app/src/main/res/layout/layout_date_header.xml" value="0.3723958333333333" />
         <entry key="app/src/main/res/layout/layout_date_header_view_holder.xml" value="0.3723958333333333" />
         <entry key="app/src/main/res/layout/layout_expense_tracker_appwidget_preview.xml" value="0.3572916666666667" />
         <entry key="app/src/main/res/layout/layout_expense_tracker_loading_appwidget.xml" value="0.3572916666666667" />
         <entry key="app/src/main/res/layout/layout_expense_tracker_widget.xml" value="0.18177083333333333" />
         <entry key="app/src/main/res/layout/layout_expense_widget_input.xml" value="0.3572916666666667" />
+        <entry key="app/src/main/res/layout/layout_splash_screen.xml" value="0.37083333333333335" />
         <entry key="app/src/main/res/layout/layout_transaction_view_holder.xml" value="0.3578125" />
+        <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.37083333333333335" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2" />
         <entry key="app/src/main/res/xml/provider_paths.xml" value="0.3541666666666667" />
       </map>
     </option>
@@ -27,5 +38,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.37083333333333335" />
+      </ProjectState>
+    </option>
   </component>
 </project>

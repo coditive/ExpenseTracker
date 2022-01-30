@@ -7,4 +7,8 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">0dp</dimen>
 
+    <!--Emphasis modifiers for "on" colors-->
+    <dimen name="alpha_emphasis_high">0.87</dimen>
+    <dimen name="alpha_emphasis_medium">0.6</dimen>
+    <dimen name="alpha_emphasis_disabled">0.38</dimen>
 </resources>

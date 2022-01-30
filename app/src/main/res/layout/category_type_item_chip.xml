@@ -9,4 +9,4 @@
     style="@style/Widget.MaterialComponents.Chip.Choice"
     android:textAppearance="?android:attr/textAppearance"
     android:textColor="@color/white"
-    app:chipBackgroundColor="@color/light_blue_200" />
+    app:chipBackgroundColor="@color/light_blue" />
