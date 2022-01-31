@@ -8,10 +8,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
+import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.random.Random
 
-class CreateSheetsUseCase constructor(
+class CreateSheetsUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
     private val sheetApiRequest: SheetApiRequest
 ) {

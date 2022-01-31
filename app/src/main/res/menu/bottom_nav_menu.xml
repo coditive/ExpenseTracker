@@ -6,7 +6,7 @@
         android:id="@+id/page_1"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_import_export_24"
-        android:title="Export"
+        android:title="Overview"
         />
     <item
         android:id="@+id/page_2"

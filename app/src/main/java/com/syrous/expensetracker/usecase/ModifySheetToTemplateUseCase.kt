@@ -6,8 +6,9 @@ import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.data.remote.model.*
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
+import javax.inject.Inject
 
-class ModifySheetToTemplateUseCase constructor(
+class ModifySheetToTemplateUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
     private val sheetApiRequest: SheetApiRequest
 ) {

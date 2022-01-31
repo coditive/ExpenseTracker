@@ -4,6 +4,6 @@ import androidx.annotation.DrawableRes
 
 data class DashboardCategoryItem(
     val itemName: String,
-    @DrawableRes val itemImage: Int,
-    val amountSpent: Int
+    val amountSpent: Int,
+    val count: Int
 )

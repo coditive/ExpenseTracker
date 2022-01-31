@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
+import javax.inject.Inject
 
 
-class SearchOrCreateAppFolderUseCase constructor(
+class SearchOrCreateAppFolderUseCase @Inject constructor(
     private val apiRequest: DriveApiRequest,
     private val sharedPrefManager: SharedPrefManager
 ) {

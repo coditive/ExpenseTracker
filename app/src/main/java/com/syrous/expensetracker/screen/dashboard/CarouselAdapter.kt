@@ -45,6 +45,7 @@ class DashboardCategoryItemVH(private val binding: LayoutCategoryCardBinding) :
 
     fun bind(item: DashboardCategoryItem) {
         binding.categoryItemName.text = item.itemName
+        binding.categoryItemAmount.text = "₹ ${item.amountSpent}"
     }
 
 }

@@ -19,9 +19,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 
-class UploadUserTransactionUseCase constructor(
+class UploadUserTransactionUseCase @Inject constructor(
     private val transactionManager: TransactionManager,
     private val apiRequest: DriveApiRequest,
     private val sharedPrefManager: SharedPrefManager

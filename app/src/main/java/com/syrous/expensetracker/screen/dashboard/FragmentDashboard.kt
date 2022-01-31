@@ -1,6 +1,8 @@
 package com.syrous.expensetracker.screen.dashboard
 
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.LayoutDashboardScreenBinding
 import com.syrous.expensetracker.model.DashboardCategoryItem
 import com.syrous.expensetracker.screen.CarouselAdapter
+
 
 class FragmentDashboard : Fragment() {
 
@@ -40,9 +45,11 @@ class FragmentDashboard : Fragment() {
                 addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
-                        (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                        val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                       Log.d("FragmentDashBoard", "$position")
                     }
                 })
+
             }
 
         }

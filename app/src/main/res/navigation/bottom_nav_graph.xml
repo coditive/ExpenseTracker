@@ -8,7 +8,16 @@
     <fragment
         android:id="@+id/fragmentDashboard"
         android:name="com.syrous.expensetracker.screen.dashboard.FragmentDashboard"
-        android:label="FragmentDashboard"
-        tools:layout="@layout/layout_dashboard_screen"/>
+        android:label="Overview"
+        tools:layout="@layout/layout_dashboard_screen">
+        <action
+            android:id="@+id/action_fragmentDashboard_to_userTransactionFragment"
+            app:destination="@id/userTransactionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userTransactionFragment"
+        android:name="com.syrous.expensetracker.screen.usertransaction.UserTransactionFragment"
+        android:label="Add"
+        tools:layout="@layout/layout_add_user_transaction"/>
 
 </navigation>

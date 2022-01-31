@@ -1,10 +1,16 @@
 package com.syrous.expensetracker.screen.dashboard
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.syrous.expensetracker.model.DashboardCategoryItem
 import com.syrous.expensetracker.model.UserTransaction
+import com.syrous.expensetracker.usecase.GetDashboardSubCategoryItemUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 interface DashboardVM {
 
@@ -15,11 +21,14 @@ interface DashboardVM {
     fun setCurrentCategoryItemPosition(position: Int)
 }
 
-class DashboardVMImpl: ViewModel(), DashboardVM {
+@HiltViewModel
+class DashboardVMImpl @Inject constructor(
+    private val getDashboardSubCategoryItemUseCase: GetDashboardSubCategoryItemUseCase
+) : ViewModel(), DashboardVM {
 
-    private val _topCategoriesList = MutableStateFlow(emptyList<DashboardCategoryItem>())
     override val topCategoriesList: StateFlow<List<DashboardCategoryItem>>
-        get() = _topCategoriesList
+        get() = getDashboardSubCategoryItemUseCase.execute()
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     private val _categorizedUserTransactionList = MutableStateFlow(emptyList<UserTransaction>())
     override val categorizedUserTransactionList: StateFlow<List<UserTransaction>>

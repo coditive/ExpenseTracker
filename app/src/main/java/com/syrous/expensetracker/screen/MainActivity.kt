@@ -7,6 +7,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +47,17 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        val navController = Navigation.findNavController(this, R.id.nav_fragment)
+        binding.bottomNavView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.title) {
+                "Overview" -> navController.navigate(R.id.fragmentDashboard)
+                "Add" -> navController.navigate(R.id.userTransactionFragment)
+                else -> {
+
+                }
+            }
+            true
+        }
 
 //        binding.apply {
 //            addTransactionButton.setOnClickListener {

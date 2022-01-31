@@ -1,13 +1,19 @@
 package com.syrous.expensetracker.screen.usertransaction
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import com.syrous.expensetracker.databinding.LayoutAddUserTransactionBinding
 import com.syrous.expensetracker.model.Category
@@ -20,7 +26,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
-class UserTransactionActivity : AppCompatActivity() {
+class UserTransactionFragment : Fragment() {
 
     private lateinit var binding: LayoutAddUserTransactionBinding
 
@@ -30,16 +36,19 @@ class UserTransactionActivity : AppCompatActivity() {
 
     private val dateFormatter = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = LayoutAddUserTransactionBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        viewModel.viewState.asLiveData().observe(this) { viewState ->
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.viewState.asLiveData().observe(viewLifecycleOwner) { viewState ->
             if (viewState is Success) {
                 binding.apply {
 
@@ -68,10 +77,10 @@ class UserTransactionActivity : AppCompatActivity() {
             }
         }
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryTagList)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryTagList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        viewModel.getTagList().asLiveData().observe(this) { subCategoryList ->
+        viewModel.getTagList().asLiveData().observe(viewLifecycleOwner) { subCategoryList ->
             categoryTagList = subCategoryList.toMutableList()
             adapter.clear()
             adapter.addAll(categoryTagList)
@@ -83,7 +92,6 @@ class UserTransactionActivity : AppCompatActivity() {
 
             addUserTransactionButton.setOnClickListener {
                 viewModel.addUserTransaction()
-                finish()
             }
 
             amountEt.addTextChangedListener { text: Editable? ->

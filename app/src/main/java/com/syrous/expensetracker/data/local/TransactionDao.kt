@@ -28,4 +28,14 @@ interface TransactionDao {
 
     @Query("UPDATE dbtransaction SET isStoredOnSheet = 1 WHERE timestamp = :timestamp")
     suspend fun updateUserTransactionSyncStatus(timestamp: Long)
+
+    @Query("SELECT SUM(amount) from dbtransaction WHERE category = 1")
+    fun getTotalExpense(): Flow<Int>
+
+    @Query("SELECT SUM(amount) from dbtransaction WHERE category = 0")
+    fun getTotalIncome(): Flow<Int>
+
+
+    @Query("SELECT SUM(amount) from dbtransaction WHERE categoryId = :categoryId")
+    suspend fun getTotalSpentAmountForCategoryTag(categoryId: Int): Int
 }

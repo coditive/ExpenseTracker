@@ -31,9 +31,9 @@ interface TransactionManager {
 
     suspend fun syncAndUploadUserTransactions()
 
-    suspend fun getTotalExpenses(): Int
+    fun getTotalExpenses(): Flow<Int>
 
-    suspend fun getTotalIncome(): Int
+    fun getTotalIncome(): Flow<Int>
 }
 
 class TransactionManagerImpl(
@@ -96,23 +96,7 @@ class TransactionManagerImpl(
         }
     }
 
-    override suspend fun getTotalExpenses(): Int {
-        var expense = 0
-        transactionDao.getAllUserTransactions()
-            .filter { it.category == Category.EXPENSE }
-            .forEach {
-                expense += it.amount
-            }
-        return expense
-    }
+    override fun getTotalExpenses(): Flow<Int> = transactionDao.getTotalExpense()
 
-    override suspend fun getTotalIncome(): Int {
-        var income = 0
-        transactionDao.getAllUserTransactions()
-            .filter { it.category == Category.INCOME }
-            .forEach {
-                income += it.amount
-            }
-        return income
-    }
+    override fun getTotalIncome(): Flow<Int> = transactionDao.getTotalIncome()
 }

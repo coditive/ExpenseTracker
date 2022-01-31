@@ -7,8 +7,9 @@ import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class AppendTransactionsUseCase constructor(
+class AppendTransactionsUseCase @Inject constructor(
     private val transactionManager: TransactionManager,
     private val sheetApiRequest: SheetApiRequest,
     private val sharedPrefManager: SharedPrefManager
