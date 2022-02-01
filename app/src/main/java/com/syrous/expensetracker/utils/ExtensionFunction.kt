@@ -30,6 +30,7 @@ fun DBTransaction.toUserTransaction(categoryTag: String): UserTransaction = User
 
 fun DBDashboardSubCategoryItem.toDashboardCategoryItem(categoryTag: String): DashboardCategoryItem =
     DashboardCategoryItem(
+        subCategoryId,
         categoryTag,
         this.totalAmountSpent,
         this.count

@@ -14,6 +14,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
@@ -30,10 +31,9 @@ class SplashActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         GlobalScope.launch(Dispatchers.Default) {
-            delay(5000)
             workManager.enqueueDashboardItemSortWorker()
             delay(1000)
-            startActivity(Intent(this@SplashActivity, SignInActivity::class.java))
+            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
             finish()
         }
 

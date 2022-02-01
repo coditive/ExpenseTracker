@@ -1,5 +1,6 @@
 package com.syrous.expensetracker.datainterface
 
+import com.firebase.ui.auth.data.model.User
 import com.syrous.expensetracker.data.local.CategoriesDao
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.model.Category
@@ -31,9 +32,11 @@ interface TransactionManager {
 
     suspend fun syncAndUploadUserTransactions()
 
-    fun getTotalExpenses(): Flow<Int>
+    fun getTotalExpenseAmount(): Flow<Int>
 
-    fun getTotalIncome(): Flow<Int>
+    fun getTotalIncomeAmount(): Flow<Int>
+
+    fun getSubCategorisedUserTransactions(subCategoryId: Int): Flow<List<UserTransaction>>
 }
 
 class TransactionManagerImpl(
@@ -96,7 +99,17 @@ class TransactionManagerImpl(
         }
     }
 
-    override fun getTotalExpenses(): Flow<Int> = transactionDao.getTotalExpense()
+    override fun getTotalExpenseAmount(): Flow<Int> = transactionDao.getTotalExpense()
 
-    override fun getTotalIncome(): Flow<Int> = transactionDao.getTotalIncome()
+    override fun getTotalIncomeAmount(): Flow<Int> = transactionDao.getTotalIncome()
+
+    override fun getSubCategorisedUserTransactions(subCategoryId: Int): Flow<List<UserTransaction>> =
+        transactionDao.getUserTransactionsForCategoryTag(subCategoryId).map { dbTransaction ->
+            val userTransactionList = mutableListOf<UserTransaction>()
+            for (transaction in dbTransaction) {
+                val category = categoriesDao.getSubCategoryFromId(transaction.categoryId)
+                userTransactionList.add(transaction.toUserTransaction(categoryTag = category.name))
+            }
+            userTransactionList
+        }
 }

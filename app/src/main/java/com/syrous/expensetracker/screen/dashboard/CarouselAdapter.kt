@@ -29,7 +29,6 @@ class CarouselAdapter : ListAdapter<DashboardCategoryItem, DashboardCategoryItem
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DashboardCategoryItemVH {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = LayoutCategoryCardBinding.inflate(layoutInflater, parent, false)
-
         return DashboardCategoryItemVH(binding)
     }
 

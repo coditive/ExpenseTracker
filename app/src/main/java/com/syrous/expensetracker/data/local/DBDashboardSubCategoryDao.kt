@@ -17,7 +17,7 @@ interface DBDashboardSubCategoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertDBDashboardSubCategory(item: DBDashboardSubCategoryItem)
 
-    @Query("SELECT * FROM dbdashboardsubcategoryitem")
+    @Query("SELECT * FROM dbdashboardsubcategoryitem ORDER BY totalAmountSpent DESC")
     fun getAllDBDashboardItems(): Flow<List<DBDashboardSubCategoryItem>>
 
     @Query("SELECT * FROM subcategory " +
