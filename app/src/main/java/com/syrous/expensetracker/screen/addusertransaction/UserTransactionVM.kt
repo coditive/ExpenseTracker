@@ -1,4 +1,4 @@
-package com.syrous.expensetracker.screen.usertransaction
+package com.syrous.expensetracker.screen.addusertransaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

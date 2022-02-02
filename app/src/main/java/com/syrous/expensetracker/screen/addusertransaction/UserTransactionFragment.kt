@@ -1,4 +1,4 @@
-package com.syrous.expensetracker.screen.usertransaction
+package com.syrous.expensetracker.screen.addusertransaction
 
 import android.os.Build
 import android.os.Bundle
@@ -8,17 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import com.syrous.expensetracker.databinding.LayoutAddUserTransactionBinding
 import com.syrous.expensetracker.model.Category
-import com.syrous.expensetracker.screen.usertransaction.ViewState.Error
-import com.syrous.expensetracker.screen.usertransaction.ViewState.Success
+import com.syrous.expensetracker.screen.addusertransaction.ViewState.Error
+import com.syrous.expensetracker.screen.addusertransaction.ViewState.Success
 import com.syrous.expensetracker.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat

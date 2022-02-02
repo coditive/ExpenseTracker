@@ -11,6 +11,7 @@ import com.syrous.expensetracker.utils.toUserTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import java.util.*
 
 interface TransactionManager {
 
@@ -37,6 +38,8 @@ interface TransactionManager {
     fun getTotalIncomeAmount(): Flow<Int>
 
     fun getSubCategorisedUserTransactions(subCategoryId: Int): Flow<List<UserTransaction>>
+
+    fun getAllTransactionDates(): Flow<List<Date>>
 }
 
 class TransactionManagerImpl(
@@ -112,4 +115,6 @@ class TransactionManagerImpl(
             }
             userTransactionList
         }
+
+    override fun getAllTransactionDates(): Flow<List<Date>> = transactionDao.getAllTransactionDate()
 }

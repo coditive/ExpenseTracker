@@ -5,14 +5,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syrous.expensetracker.data.local.TransactionDao
-import com.syrous.expensetracker.data.remote.DriveApiRequest
-import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.model.UserTransaction
-import com.syrous.expensetracker.screen.MainActivityViewState.Success.Companion
-import com.syrous.expensetracker.screen.usertransaction.ViewState
 import com.syrous.expensetracker.usecase.*
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.hilt.android.lifecycle.HiltViewModel

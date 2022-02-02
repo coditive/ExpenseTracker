@@ -17,6 +17,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.syrous.expensetracker.databinding.LayoutDashboardScreenBinding
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.screen.CarouselAdapter
@@ -75,6 +76,20 @@ class FragmentDashboard : Fragment() {
                     granularity = 1f
                     setDrawGridLines(false)
                     position = XAxis.XAxisPosition.BOTTOM
+                    valueFormatter = object : ValueFormatter() {
+                        override fun getFormattedValue(value: Float): String {
+                            return when (value) {
+                                1f -> "M"
+                                2f -> "T"
+                                3f -> "W"
+                                4f -> "T"
+                                5f -> "F"
+                                6f -> "S"
+                                7f -> "S"
+                                else -> ""
+                            }
+                        }
+                    }
                 }
                 axisLeft.setDrawAxisLine(false)
                 axisRight.isEnabled = false
@@ -101,7 +116,7 @@ class FragmentDashboard : Fragment() {
     private fun setUpChartData(userTransactionList: List<UserTransaction>) {
         if (userTransactionList.isNotEmpty()) {
             val lineDataSetEntryList = mutableListOf<Entry>()
-            for (i in 1..6)
+            for (i in 1..7)
                 if (i < userTransactionList.size)
                     lineDataSetEntryList.add(
                         Entry(

@@ -16,6 +16,7 @@
         <entry key="app/src/main/res/layout/expense_tracker_widget.xml" value="0.35833333333333334" />
         <entry key="app/src/main/res/layout/layout_add_user_transaction.xml" value="0.37395833333333334" />
         <entry key="app/src/main/res/layout/layout_category_card.xml" value="0.37083333333333335" />
+        <entry key="app/src/main/res/layout/layout_category_tag_view_holder.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/layout_dashboard_card.xml" value="0.37083333333333335" />
         <entry key="app/src/main/res/layout/layout_dashboard_screen.xml" value="0.37083333333333335" />
         <entry key="app/src/main/res/layout/layout_date_header.xml" value="0.3723958333333333" />
@@ -25,7 +26,10 @@
         <entry key="app/src/main/res/layout/layout_expense_tracker_widget.xml" value="0.18177083333333333" />
         <entry key="app/src/main/res/layout/layout_expense_widget_input.xml" value="0.3572916666666667" />
         <entry key="app/src/main/res/layout/layout_splash_screen.xml" value="0.37083333333333335" />
+        <entry key="app/src/main/res/layout/layout_transaction_header_view_holder.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/layout_transaction_item_view_holder.xml" value="0.41545012165450124" />
         <entry key="app/src/main/res/layout/layout_transaction_view_holder.xml" value="0.3578125" />
+        <entry key="app/src/main/res/layout/layout_view_transactions.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.37083333333333335" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2" />

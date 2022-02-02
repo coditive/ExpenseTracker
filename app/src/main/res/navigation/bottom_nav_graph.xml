@@ -13,11 +13,23 @@
         <action
             android:id="@+id/action_fragmentDashboard_to_userTransactionFragment"
             app:destination="@id/userTransactionFragment" />
+        <action
+            android:id="@+id/action_fragmentDashboard_to_viewAllTransactionFragment"
+            app:destination="@id/viewAllTransactionFragment" />
     </fragment>
     <fragment
         android:id="@+id/userTransactionFragment"
-        android:name="com.syrous.expensetracker.screen.usertransaction.UserTransactionFragment"
+        android:name="com.syrous.expensetracker.screen.addusertransaction.UserTransactionFragment"
         android:label="Add"
         tools:layout="@layout/layout_add_user_transaction"/>
+    <fragment
+        android:id="@+id/viewAllTransactionFragment"
+        android:name="com.syrous.expensetracker.screen.viewtransaction.ViewAllTransactionFragment"
+        android:label="ViewAllTransactionFragment"
+        tools:layout="@layout/layout_view_transactions">
+        <action
+            android:id="@+id/action_viewAllTransactionFragment_to_userTransactionFragment"
+            app:destination="@id/userTransactionFragment" />
+    </fragment>
 
 </navigation>

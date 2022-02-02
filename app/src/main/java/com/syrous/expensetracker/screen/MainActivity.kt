@@ -3,6 +3,7 @@ package com.syrous.expensetracker.screen
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils.*
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
+import androidx.vectordrawable.graphics.drawable.AnimationUtilsCompat
 import androidx.work.WorkManager
+import com.google.android.material.animation.AnimationUtils
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.ActivityMainBinding
 import com.syrous.expensetracker.databinding.LayoutDashboardScreenBinding
@@ -50,8 +53,24 @@ class MainActivity : AppCompatActivity() {
         val navController = Navigation.findNavController(this, R.id.nav_fragment)
         binding.bottomNavView.setOnItemSelectedListener { menuItem ->
             when (menuItem.title) {
-                "Overview" -> navController.navigate(R.id.fragmentDashboard)
-                "Add" -> navController.navigate(R.id.userTransactionFragment)
+                "Overview" -> {
+                    binding.toolbarTitleTv.text = "Overview"
+
+                    navController.navigate(R.id.fragmentDashboard)
+
+                }
+                "Add" -> {
+                    binding.toolbarTitleTv.text = "Add"
+
+                    navController.navigate(R.id.userTransactionFragment)
+
+                }
+
+                "Transactions" -> {
+                    binding.toolbarTitleTv.text = "Transactions"
+
+                    navController.navigate(R.id.viewAllTransactionFragment)
+                }
                 else -> {
 
                 }

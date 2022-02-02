@@ -41,4 +41,7 @@ interface TransactionDao {
 
     @Query("SELECT * FROM dbtransaction WHERE categoryId = :categoryId")
     fun getUserTransactionsForCategoryTag(categoryId: Int): Flow<List<DBTransaction>>
+
+    @Query("SELECT distinct date from dbtransaction")
+    fun getAllTransactionDate(): Flow<List<Date>>
 }
