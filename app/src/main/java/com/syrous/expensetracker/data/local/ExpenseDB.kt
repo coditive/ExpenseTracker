@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.syrous.expensetracker.data.converters.DateConverter
-import com.syrous.expensetracker.data.local.model.DBDashboardSubCategoryItem
 import com.syrous.expensetracker.data.local.model.SubCategory
 import com.syrous.expensetracker.data.local.model.DBTransaction
 
@@ -13,8 +12,7 @@ import com.syrous.expensetracker.data.local.model.DBTransaction
 @Database(
     entities = [
         DBTransaction::class,
-        SubCategory::class,
-        DBDashboardSubCategoryItem::class
+        SubCategory::class
     ],
     version = 1,
     exportSchema = false
@@ -22,5 +20,4 @@ import com.syrous.expensetracker.data.local.model.DBTransaction
 abstract class ExpenseDB : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun categoriesDao(): CategoriesDao
-    abstract fun dashboardSubCategoryDao(): DBDashboardSubCategoryDao
 }

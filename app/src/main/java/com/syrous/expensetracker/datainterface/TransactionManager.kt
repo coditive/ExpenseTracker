@@ -4,6 +4,7 @@ import com.firebase.ui.auth.data.model.User
 import com.syrous.expensetracker.data.local.CategoriesDao
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.model.Category
+import com.syrous.expensetracker.model.DashboardCategoryItem
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.toDBTransaction
@@ -18,8 +19,6 @@ interface TransactionManager {
     suspend fun addTransaction(transaction: UserTransaction)
 
     fun getAllTransactionsFromStorage(): Flow<List<UserTransaction>>
-
-    suspend fun getAllTransactions(): List<UserTransaction>
 
     fun getCategorisedTransactionsFromStorage(
         category: Category
@@ -39,7 +38,6 @@ interface TransactionManager {
 
     fun getSubCategorisedUserTransactions(subCategoryId: Int): Flow<List<UserTransaction>>
 
-    fun getAllTransactionDates(): Flow<List<Date>>
 }
 
 class TransactionManagerImpl(
@@ -70,12 +68,6 @@ class TransactionManagerImpl(
             userTransactionList
         }
 
-    override suspend fun getAllTransactions(): List<UserTransaction> =
-        transactionDao.getAllUserTransactions().map { dbTransaction ->
-            val categoryTag = categoriesDao.getSubCategoryFromId(dbTransaction.categoryId)
-            dbTransaction.toUserTransaction(categoryTag.name)
-        }
-
 
     override fun getCategorisedTransactionsFromStorage(
         category: Category
@@ -89,7 +81,7 @@ class TransactionManagerImpl(
         .getUnSyncedUserTransaction()
         .map { dbTransaction ->
             val userTransactionList = mutableListOf<UserTransaction>()
-            for (transaction in dbTransaction) {
+            dbTransaction.forEach { transaction ->
                 val category = categoriesDao.getSubCategoryFromId(transaction.categoryId)
                 userTransactionList.add(transaction.toUserTransaction(categoryTag = category.name))
             }
@@ -109,12 +101,11 @@ class TransactionManagerImpl(
     override fun getSubCategorisedUserTransactions(subCategoryId: Int): Flow<List<UserTransaction>> =
         transactionDao.getUserTransactionsForCategoryTag(subCategoryId).map { dbTransaction ->
             val userTransactionList = mutableListOf<UserTransaction>()
-            for (transaction in dbTransaction) {
+            dbTransaction.forEach { transaction ->
                 val category = categoriesDao.getSubCategoryFromId(transaction.categoryId)
                 userTransactionList.add(transaction.toUserTransaction(categoryTag = category.name))
             }
             userTransactionList
         }
 
-    override fun getAllTransactionDates(): Flow<List<Date>> = transactionDao.getAllTransactionDate()
 }

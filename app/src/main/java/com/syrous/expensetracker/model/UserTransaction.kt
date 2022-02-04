@@ -9,6 +9,6 @@ data class UserTransaction(
     val description: String,
     val date: Date,
     val category: Category,
-    val categoryTag: String,
+    val categoryTag: String
 )
 

@@ -20,4 +20,9 @@
     <color name="color_on_surface">#000000</color>
     <color name="color_on_error">#ffffff</color>
 
+
+    <array name="pie_chart_colors">
+        <item>#EB8242</item>
+    </array>
+
 </resources>

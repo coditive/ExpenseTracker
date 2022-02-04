@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,7 +26,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
-class UserTransactionFragment : Fragment() {
+class UserTransactionActivity : AppCompatActivity() {
 
     private lateinit var binding: LayoutAddUserTransactionBinding
 
@@ -34,19 +36,17 @@ class UserTransactionFragment : Fragment() {
 
     private val dateFormatter = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         binding = LayoutAddUserTransactionBinding.inflate(layoutInflater)
-        return binding.root
+        setContentView(binding.root)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.viewState.asLiveData().observe(viewLifecycleOwner) { viewState ->
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.viewState.asLiveData().observe(this) { viewState ->
             if (viewState is Success) {
                 binding.apply {
 
@@ -75,10 +75,10 @@ class UserTransactionFragment : Fragment() {
             }
         }
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryTagList)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryTagList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        viewModel.getTagList().asLiveData().observe(viewLifecycleOwner) { subCategoryList ->
+        viewModel.getTagList().asLiveData().observe(this) { subCategoryList ->
             categoryTagList = subCategoryList.toMutableList()
             adapter.clear()
             adapter.addAll(categoryTagList)
@@ -90,6 +90,7 @@ class UserTransactionFragment : Fragment() {
 
             addUserTransactionButton.setOnClickListener {
                 viewModel.addUserTransaction()
+                finish()
             }
 
             amountEt.addTextChangedListener { text: Editable? ->

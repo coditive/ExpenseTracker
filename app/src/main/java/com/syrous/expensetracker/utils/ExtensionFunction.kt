@@ -1,11 +1,11 @@
 package com.syrous.expensetracker.utils
 
 
-import com.syrous.expensetracker.data.local.model.DBDashboardSubCategoryItem
 import com.syrous.expensetracker.data.local.model.DBTransaction
-import com.syrous.expensetracker.model.DashboardCategoryItem
 import com.syrous.expensetracker.model.UserTransaction
-import java.util.*
+import com.syrous.expensetracker.screen.viewtransaction.TransactionHeaderItem
+import com.syrous.expensetracker.screen.viewtransaction.TransactionHeaderItem.TransactionHeader
+import com.syrous.expensetracker.screen.viewtransaction.TransactionHeaderItem.TransactionItem
 
 
 fun UserTransaction.toDBTransaction(categoryId: Int): DBTransaction = DBTransaction(
@@ -27,11 +27,10 @@ fun DBTransaction.toUserTransaction(categoryTag: String): UserTransaction = User
     categoryTag
 )
 
+fun UserTransaction.toTransactionItem(): TransactionItem = TransactionItem(
+    userTransaction = this
+)
 
-fun DBDashboardSubCategoryItem.toDashboardCategoryItem(categoryTag: String): DashboardCategoryItem =
-    DashboardCategoryItem(
-        subCategoryId,
-        categoryTag,
-        this.totalAmountSpent,
-        this.count
-    )
+fun UserTransaction.toTransactionHeader(): TransactionHeader = TransactionHeader(
+    date = this.date
+)

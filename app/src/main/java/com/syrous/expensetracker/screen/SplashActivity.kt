@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.work.WorkManager
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.LayoutSplashScreenBinding
-import com.syrous.expensetracker.service.enqueueDashboardItemSortWorker
+import com.syrous.expensetracker.screen.release.ReleaseMainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,8 +22,6 @@ class SplashActivity: AppCompatActivity() {
 
     private lateinit var binding: LayoutSplashScreenBinding
 
-    @Inject
-    lateinit var workManager: WorkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +29,8 @@ class SplashActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         GlobalScope.launch(Dispatchers.Default) {
-            workManager.enqueueDashboardItemSortWorker()
             delay(1000)
-            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            startActivity(Intent(this@SplashActivity, ReleaseMainActivity::class.java))
             finish()
         }
 

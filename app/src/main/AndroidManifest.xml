@@ -52,6 +52,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".screen.release.ReleaseMainActivity"/>
+
+        <activity android:name=".screen.addusertransaction.UserTransactionActivity"/>
+
         <activity android:name=".screen.SignInActivity" />
         <activity android:name=".screen.MainActivity" />
         <activity

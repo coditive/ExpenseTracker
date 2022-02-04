@@ -15,11 +15,8 @@ interface TransactionDao {
     @Query("SELECT * from dbtransaction where timestamp = :timestamp")
     suspend fun getUserTransaction(timestamp: Long): DBTransaction
 
-    @Query("SELECT * from dbtransaction")
+    @Query("SELECT * FROM dbtransaction ORDER BY date DESC")
     fun getAllUserTransactionsFlow(): Flow<List<DBTransaction>>
-
-    @Query("SELECT * FROM dbtransaction")
-    fun getAllUserTransactions(): List<DBTransaction>
 
     @Query("SELECT distinct(categoryId) FROM dbtransaction")
     fun getAllUserCategoriesIdList(): List<Int>
@@ -41,7 +38,4 @@ interface TransactionDao {
 
     @Query("SELECT * FROM dbtransaction WHERE categoryId = :categoryId")
     fun getUserTransactionsForCategoryTag(categoryId: Int): Flow<List<DBTransaction>>
-
-    @Query("SELECT distinct date from dbtransaction")
-    fun getAllTransactionDate(): Flow<List<Date>>
 }

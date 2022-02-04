@@ -35,5 +35,12 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="ExpenseTextView" parent="">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:letterSpacing">.05</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
 
 </resources>

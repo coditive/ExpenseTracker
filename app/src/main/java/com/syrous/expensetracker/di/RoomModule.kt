@@ -3,7 +3,6 @@ package com.syrous.expensetracker.di
 import android.content.Context
 import androidx.room.Room
 import com.syrous.expensetracker.data.local.CategoriesDao
-import com.syrous.expensetracker.data.local.DBDashboardSubCategoryDao
 import com.syrous.expensetracker.data.local.ExpenseDB
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.datainterface.CategoryManager
@@ -44,8 +43,6 @@ class RoomModule {
         @Provides
         fun provideCategoriesDao(db: ExpenseDB): CategoriesDao = db.categoriesDao()
 
-        @Provides
-        fun provideDashboardSubCategory(db: ExpenseDB): DBDashboardSubCategoryDao = db.dashboardSubCategoryDao()
 
         @Provides
         fun provideCategoryTagManager(

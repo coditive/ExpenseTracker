@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.syrous.expensetracker.data.local.model.DBTransaction
 import com.syrous.expensetracker.data.local.model.SubCategory
 import kotlinx.coroutines.flow.Flow
 

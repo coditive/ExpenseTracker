@@ -97,12 +97,12 @@ class FragmentDashboard : Fragment() {
             }
         }
 
-        viewModel.topCategoriesList.asLiveData()
-            .observe(viewLifecycleOwner) { dashboardCategoryList ->
-                if (dashboardCategoryList.isNotEmpty())
-                    viewModel.setCurrentCategoryItemId(dashboardCategoryList[0].itemId)
-                carouselAdapter.submitList(dashboardCategoryList)
-            }
+//        viewModel.topCategoriesList.asLiveData()
+//            .observe(viewLifecycleOwner) { dashboardCategoryList ->
+//                if (dashboardCategoryList.isNotEmpty())
+//                    viewModel.setCurrentCategoryItemId(dashboardCategoryList[0].itemId)
+//                carouselAdapter.submitList(dashboardCategoryList)
+//            }
 
         viewModel.totalExpense.asLiveData().observe(viewLifecycleOwner) { totalExpense ->
             binding.totalExpenseAmountTv.text = "₹ $totalExpense"

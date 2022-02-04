@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/userTransactionFragment"
-        android:name="com.syrous.expensetracker.screen.addusertransaction.UserTransactionFragment"
+        android:name="com.syrous.expensetracker.screen.addusertransaction.UserTransactionActivity"
         android:label="Add"
         tools:layout="@layout/layout_add_user_transaction"/>
     <fragment

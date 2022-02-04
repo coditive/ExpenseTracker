@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.LayoutTransactionHeaderViewHolderBinding
 import com.syrous.expensetracker.databinding.LayoutTransactionItemViewHolderBinding
 import com.syrous.expensetracker.model.UserTransaction
@@ -19,18 +20,30 @@ import java.util.*
 
 class TransactionAdapter : ListAdapter<TransactionHeaderItem, TransactionViewHolder>(callback) {
     private val dateFormatter = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
+    private val headerFormatter = SimpleDateFormat(
+        "dd MMMM", Locale.getDefault()
+    )
 
     companion object {
+        val dateFormatter = SimpleDateFormat(Constants.datePattern)
         val callback = object : DiffUtil.ItemCallback<TransactionHeaderItem>() {
             override fun areItemsTheSame(
                 oldItem: TransactionHeaderItem,
                 newItem: TransactionHeaderItem
-            ): Boolean = true
+            ): Boolean = if (oldItem is TransactionHeader && newItem is TransactionHeader) {
+                dateFormatter.format(oldItem.date) == dateFormatter.format(newItem.date)
+            } else if (oldItem is TransactionItem && newItem is TransactionItem) {
+                oldItem.userTransaction.id == newItem.userTransaction.id
+            } else true
 
             override fun areContentsTheSame(
                 oldItem: TransactionHeaderItem,
                 newItem: TransactionHeaderItem
-            ): Boolean = true
+            ): Boolean = if (oldItem is TransactionHeader && newItem is TransactionHeader) {
+                dateFormatter.format(oldItem.date) == dateFormatter.format(newItem.date)
+            } else if (oldItem is TransactionItem && newItem is TransactionItem) {
+                oldItem.userTransaction.categoryTag == newItem.userTransaction.categoryTag && oldItem.userTransaction.amount == newItem.userTransaction.amount
+            } else true
         }
     }
 
@@ -40,10 +53,12 @@ class TransactionAdapter : ListAdapter<TransactionHeaderItem, TransactionViewHol
     ): TransactionViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return if (viewType == 0) {
-            val binding = LayoutTransactionHeaderViewHolderBinding.inflate(layoutInflater)
+            val binding =
+                LayoutTransactionHeaderViewHolderBinding.inflate(layoutInflater, parent, false)
             TransactionHeaderViewHolder(binding)
         } else {
-            val binding = LayoutTransactionItemViewHolderBinding.inflate(layoutInflater)
+            val binding =
+                LayoutTransactionItemViewHolderBinding.inflate(layoutInflater, parent, false)
             TransactionItemViewHolder(binding)
         }
     }
@@ -57,10 +72,14 @@ class TransactionAdapter : ListAdapter<TransactionHeaderItem, TransactionViewHol
         holderItem: TransactionViewHolder,
         position: Int
     ) {
-        if(holderItem is TransactionHeaderViewHolder)
-            holderItem.bind(getItem(position) as TransactionHeader, position, dateFormatter)
-         else if(holderItem is TransactionItemViewHolder)
-             holderItem.bind((getItem(position) as TransactionItem).userTransaction, position, dateFormatter)
+        if (holderItem is TransactionHeaderViewHolder)
+            holderItem.bind(getItem(position) as TransactionHeader, headerFormatter)
+        else if (holderItem is TransactionItemViewHolder)
+            holderItem.bind(
+                (getItem(position) as TransactionItem).userTransaction,
+                position,
+                dateFormatter
+            )
     }
 }
 
@@ -70,9 +89,18 @@ sealed class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
     class TransactionHeaderViewHolder(
         private val binding: LayoutTransactionHeaderViewHolderBinding
     ) : TransactionViewHolder(binding.root) {
-        fun bind(header: TransactionHeader, position: Int, dateFormatter: SimpleDateFormat) {
+        fun bind(header: TransactionHeader, dateFormatter: SimpleDateFormat) {
             binding.apply {
-                dateTv.text = dateFormatter.format(header.date)
+                val calendar = Calendar.getInstance()
+                val currentDate = dateFormatter.format(calendar.timeInMillis)
+                calendar.add(Calendar.DATE, -1)
+                val previousDate = dateFormatter.format(calendar.timeInMillis)
+                val headerDate = dateFormatter.format(header.date)
+                dateTv.text = when {
+                    currentDate == headerDate -> "Today"
+                    previousDate == headerDate -> "Yesterday"
+                    else -> headerDate
+                }
             }
         }
     }
@@ -86,6 +114,17 @@ sealed class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                 categoryTv.text = transaction.categoryTag
                 descriptionTv.text = transaction.description
                 amountTv.text = "₹ ${transaction.amount}"
+                val iconResId = when (transaction.categoryTag) {
+                    "Food" -> R.raw.food
+                    "MF" -> R.raw.rupee_coin
+                    "Medical/Health" -> R.raw.medical_syringe
+                    "Gifts" -> R.raw.gift
+                    "Home" -> R.raw.home_icon_loading
+                    "Personal" -> R.raw.profile
+                    else -> null
+                }
+                if (iconResId != null)
+                    iconAnimation.setAnimation(iconResId)
             }
         }
     }

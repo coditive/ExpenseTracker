@@ -30,19 +30,7 @@ class ViewTransactionVMImpl @Inject constructor(
 ) : ViewModel(), ViewTransactionVM {
 
     override val transactionsList: StateFlow<List<TransactionHeaderItem>>
-        get() = transactionManager.getAllTransactionsFromStorage()
-            .combine(transactionManager.getAllTransactionDates()) { transactions, dates ->
-                val transactionList = mutableListOf<TransactionHeaderItem>()
-                dates.forEach { date ->
-                    transactionList.add(TransactionHeader(date))
-                    transactions.filter { transaction ->
-                        transaction.date == date
-                    }.forEach {
-                        transactionList.add(TransactionItem(it))
-                    }
-                }
-                transactionList
-            }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        get() = TODO()
 
     override val categoryTagList: StateFlow<List<String>>
         get() = categoryManager.getExpenseSubCategoriesFlow()
