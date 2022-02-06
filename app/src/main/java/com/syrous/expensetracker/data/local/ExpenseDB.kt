@@ -19,5 +19,5 @@ import com.syrous.expensetracker.data.local.model.DBTransaction
 )
 abstract class ExpenseDB : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
-    abstract fun categoriesDao(): CategoriesDao
+    abstract fun categoriesDao(): SubCategoriesDao
 }

@@ -4,50 +4,69 @@ import com.syrous.expensetracker.BuildConfig
 import java.util.*
 
 object Constants {
-    val SharedPrefName = "com.syrous.expensetracker"
+    const val SharedPrefName = "com.syrous.expensetracker"
 
-    val monthStartBalance = "month_start_balance"
+    const val monthStartBalance = "month_start_balance"
 
-    val userToken = "user_token"
+    const val userToken = "user_token"
 
-    val emptyString = ""
+    const val emptyString = ""
 
-    val apiKey = BuildConfig.API_KEY
+    const val apiKey = BuildConfig.API_KEY
 
-    val webClientId = BuildConfig.WEB_CLIENT_ID
+    const val webClientId = BuildConfig.WEB_CLIENT_ID
 
-    val androidClientId = BuildConfig.ANDROID_CLIENT_ID
+    const val androidClientSecret = BuildConfig.ANDROID_CLIENT_SECRET
 
-    val androidClientSecret = BuildConfig.ANDROID_CLIENT_SECRET
+    const val spreadSheetId = "spreadsheet_id"
 
-    val spreadSheetId = "spreadsheet_id"
+    const val gridSheetType = "GRID"
 
-    val gridSheetType = "GRID"
+    const val summarySheetId = "summary_sheet_id"
 
-    val summarySheetId = "summary_sheet_id"
+    const val categorySheetId = "category_sheet_id"
 
-    val categorySheetId = "category_sheet_id"
+    const val transactionSheetId = "transaction_sheet_id"
 
-    val transactionSheetId = "transaction_sheet_id"
+    const val DATABASE_NAME = "expense_db"
 
-    val DATABASE_NAME = "expense_db"
+    const val DEFAULT_SHEET_NAME = "Sheet"
 
-    val DEFAULT_SHEET_NAME = "Sheet"
+    const val NEW_USER = "new_user"
 
-    val NEW_USER = "new_user"
+    const val datePattern = "dd/MM/yyyy"
 
-    val datePattern = "dd/MM/yyyy"
+    const val expenseTrackerFolder = "expense_tracker_folder"
 
-    val expenseTrackerFolder = "expense_tracker_folder"
+    const val spreadSheetMimeType = "application/vnd.google-apps.spreadsheet"
 
-    val spreadSheetMimeType = "application/vnd.google-apps.spreadsheet"
+    const val folderMimeType = "application/vnd.google-apps.folder"
 
-    val folderMimeType = "application/vnd.google-apps.folder"
+    const val corpora = "user"
 
-    val corpora = "user"
+    const val appName = "Expense-Tracker"
 
-    val appName = "Expense-Tracker"
+    const val fileUpload = "file_upload"
 
-    val fileUpload = "file_upload"
+    const val overwrite = "OVERWRITE"
 
+    const val formattedValue = "FORMATTED_VALUE"
+
+    const val userEntered = "USER_ENTERED"
+
+    const val transaction = "Transactions"
+
+    const val summary = "Summary"
+
+    const val categories = "Categories"
+
+    const val title = "title"
+
+    const val formula = "FORMULA"
+
+    const val unformattedValue = "UNFORMATTED_VALUE"
+
+    const val spreadsheetFileName = "Total-Expense-Sheet.csv"
+
+    const val spreadsheetFileDescription = "All in one sheet for expenses"
 }

@@ -6,21 +6,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.syrous.expensetracker.databinding.LayoutCategoryCardBinding
-import com.syrous.expensetracker.model.DashboardCategoryItem
+import com.syrous.expensetracker.model.DashboardSubCategoryItem
 
 
-class CarouselAdapter : ListAdapter<DashboardCategoryItem, DashboardCategoryItemVH>(CALLBACK) {
+class CarouselAdapter : ListAdapter<DashboardSubCategoryItem, DashboardCategoryItemVH>(CALLBACK) {
 
     companion object {
-        val CALLBACK = object : DiffUtil.ItemCallback<DashboardCategoryItem>() {
+        val CALLBACK = object : DiffUtil.ItemCallback<DashboardSubCategoryItem>() {
             override fun areContentsTheSame(
-                oldItem: DashboardCategoryItem,
-                newItem: DashboardCategoryItem
+                oldItem: DashboardSubCategoryItem,
+                newItem: DashboardSubCategoryItem
             ): Boolean = true
 
             override fun areItemsTheSame(
-                oldItem: DashboardCategoryItem,
-                newItem: DashboardCategoryItem
+                oldItem: DashboardSubCategoryItem,
+                newItem: DashboardSubCategoryItem
             ): Boolean = true
 
         }
@@ -42,7 +42,7 @@ class CarouselAdapter : ListAdapter<DashboardCategoryItem, DashboardCategoryItem
 class DashboardCategoryItemVH(private val binding: LayoutCategoryCardBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: DashboardCategoryItem) {
+    fun bind(item: DashboardSubCategoryItem) {
         binding.categoryItemName.text = item.itemName
         binding.categoryItemAmount.text = "₹ ${item.amountSpent}"
     }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 @Dao
-interface CategoriesDao {
+interface SubCategoriesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSubCategory(subCategory: SubCategory)

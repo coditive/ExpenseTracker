@@ -2,7 +2,7 @@ package com.syrous.expensetracker.screen.addusertransaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syrous.expensetracker.datainterface.CategoryManager
+import com.syrous.expensetracker.datainterface.SubCategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.model.UserTransaction
@@ -36,7 +36,7 @@ interface UserTransactionVM {
 @HiltViewModel
 class UserTransactionVMImpl @Inject constructor(
     private val transactionManager: TransactionManager,
-    private val categoryManager: CategoryManager,
+    private val subCategoryManager: SubCategoryManager,
     private val sharedPrefManager: SharedPrefManager
 ) : ViewModel(), UserTransactionVM {
 
@@ -76,15 +76,15 @@ class UserTransactionVMImpl @Inject constructor(
     override fun getTagList(): StateFlow<List<String>> {
         if (sharedPrefManager.isNewUser()) {
             viewModelScope.launch(Dispatchers.IO) {
-                categoryManager.addStoredSubCategoriesToDB()
+                subCategoryManager.addStoredSubCategoriesToDB()
                 sharedPrefManager.makeUserRegular()
             }
         }
 
         return combine(
             subCategoryType,
-            categoryManager.getExpenseSubCategoriesFlow(),
-            categoryManager.getIncomeSubCategoriesFlow()
+            subCategoryManager.getExpenseSubCategoriesFlow(),
+            subCategoryManager.getIncomeSubCategoriesFlow()
         ) { category, expenseSubCategory, incomeSubCategory ->
             if (category == Category.EXPENSE)
                 expenseSubCategory
@@ -112,7 +112,7 @@ sealed class ViewState {
     data class Success(
         val category: Category,
         val date: Date,
-        val categoryTag: String,
+        val subCategory: String,
         val description: String,
         val amount: Int,
     ) : ViewState() {
@@ -121,7 +121,7 @@ sealed class ViewState {
                 return Success(
                     Category.EXPENSE,
                     Date(),
-                    categoryTag = "",
+                    subCategory = "",
                     description = "",
                     amount = 0,
                 )

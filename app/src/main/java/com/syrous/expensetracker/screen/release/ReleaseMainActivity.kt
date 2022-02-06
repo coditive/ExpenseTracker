@@ -1,16 +1,14 @@
 package com.syrous.expensetracker.screen.release
 
-import android.R.attr.data
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.text.style.TypefaceSpan
-import android.util.Log
 import android.view.animation.AnimationUtils
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.Entry
@@ -23,10 +21,12 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.LayoutReleaseMainActivityBinding
-import com.syrous.expensetracker.model.DashboardCategoryItem
+import com.syrous.expensetracker.model.DashboardSubCategoryItem
 import com.syrous.expensetracker.screen.addusertransaction.UserTransactionActivity
 import com.syrous.expensetracker.screen.viewtransaction.TransactionAdapter
+import com.syrous.expensetracker.service.enqueueSpreadSheetSyncWork
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -37,6 +37,9 @@ class ReleaseMainActivity : AppCompatActivity(), OnChartValueSelectedListener {
     private val viewModel: ReleaseVMImpl by viewModels()
 
     private val transactionAdapter = TransactionAdapter()
+
+    @Inject
+    lateinit var workManager: WorkManager
 
     private lateinit var pieDataSet: PieDataSet
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,7 +123,12 @@ class ReleaseMainActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
     }
 
-    private fun setupPieChartData(dashboardCategoryItemList: List<DashboardCategoryItem>) {
+    override fun onPause() {
+        super.onPause()
+        workManager.enqueueSpreadSheetSyncWork()
+    }
+
+    private fun setupPieChartData(dashboardCategoryItemList: List<DashboardSubCategoryItem>) {
         val totalExpense = binding.totalExpenseAmountTv.text.split(" ")[1].toInt()
         val pieDataEntry = mutableListOf<PieEntry>()
 

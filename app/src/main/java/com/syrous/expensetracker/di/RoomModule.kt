@@ -2,11 +2,11 @@ package com.syrous.expensetracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.syrous.expensetracker.data.local.CategoriesDao
+import com.syrous.expensetracker.data.local.SubCategoriesDao
 import com.syrous.expensetracker.data.local.ExpenseDB
 import com.syrous.expensetracker.data.local.TransactionDao
-import com.syrous.expensetracker.datainterface.CategoryManager
-import com.syrous.expensetracker.datainterface.CategoryManagerImpl
+import com.syrous.expensetracker.datainterface.SubCategoryManager
+import com.syrous.expensetracker.datainterface.SubCategoryManagerImpl
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.datainterface.TransactionManagerImpl
 import com.syrous.expensetracker.utils.Constants
@@ -41,20 +41,20 @@ class RoomModule {
         fun provideTransactionDao(db: ExpenseDB): TransactionDao = db.transactionDao()
 
         @Provides
-        fun provideCategoriesDao(db: ExpenseDB): CategoriesDao = db.categoriesDao()
+        fun provideCategoriesDao(db: ExpenseDB): SubCategoriesDao = db.categoriesDao()
 
 
         @Provides
         fun provideCategoryTagManager(
             @ApplicationContext context: Context,
-            categoriesDao: CategoriesDao
-        ): CategoryManager = CategoryManagerImpl(context, categoriesDao)
+            subCategoriesDao: SubCategoriesDao
+        ): SubCategoryManager = SubCategoryManagerImpl(context, subCategoriesDao)
 
         @Provides
         fun provideTransactionManager(
             transactionDao: TransactionDao,
-            categoriesDao: CategoriesDao
-        ): TransactionManager = TransactionManagerImpl(transactionDao, categoriesDao)
+            subCategoriesDao: SubCategoriesDao
+        ): TransactionManager = TransactionManagerImpl(transactionDao, subCategoriesDao)
 
         @Provides
         fun initSharedPrefManager(@ApplicationContext context: Context): SharedPrefManager {

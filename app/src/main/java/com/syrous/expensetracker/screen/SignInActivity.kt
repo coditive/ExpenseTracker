@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.data.remote.AuthTokenRequest
 import com.syrous.expensetracker.databinding.ActivitySignInBinding
+import com.syrous.expensetracker.screen.release.ReleaseMainActivity
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -91,7 +92,7 @@ class SignInActivity : AppCompatActivity() {
                         "authorization_code"
                     )
                     sharedPrefManager.storeUserToken(authCred.accessToken)
-                    startActivity(Intent(this@SignInActivity, MainActivity::class.java))
+                    startActivity(Intent(this@SignInActivity, ReleaseMainActivity::class.java))
                 }
             }
         } catch (e: ApiException) {

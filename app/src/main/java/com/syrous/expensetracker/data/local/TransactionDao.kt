@@ -18,11 +18,14 @@ interface TransactionDao {
     @Query("SELECT * FROM dbtransaction ORDER BY date DESC")
     fun getAllUserTransactionsFlow(): Flow<List<DBTransaction>>
 
-    @Query("SELECT distinct(categoryId) FROM dbtransaction")
+    @Query("SELECT * FROM dbtransaction")
+    fun getAllUserTransactionsList(): List<DBTransaction>
+
+    @Query("SELECT distinct(subCategoryId) FROM dbtransaction")
     fun getAllUserCategoriesIdList(): List<Int>
 
     @Query("SELECT * FROM dbtransaction where isStoredOnSheet = 0")
-    fun getUnSyncedUserTransaction(): Flow<List<DBTransaction>>
+    suspend fun getUnSyncedUserTransaction(): List<DBTransaction>
 
     @Query("UPDATE dbtransaction SET isStoredOnSheet = 1 WHERE timestamp = :timestamp")
     suspend fun updateUserTransactionSyncStatus(timestamp: Long)
@@ -33,9 +36,9 @@ interface TransactionDao {
     @Query("SELECT SUM(amount) from dbtransaction WHERE category = 'INCOME'")
     fun getTotalIncome(): Flow<Int>
 
-    @Query("SELECT SUM(amount) from dbtransaction WHERE categoryId = :categoryId")
+    @Query("SELECT SUM(amount) from dbtransaction WHERE subCategoryId = :categoryId")
     suspend fun getTotalSpentAmountForCategoryTag(categoryId: Int): Int
 
-    @Query("SELECT * FROM dbtransaction WHERE categoryId = :categoryId")
+    @Query("SELECT * FROM dbtransaction WHERE subCategoryId = :categoryId")
     fun getUserTransactionsForCategoryTag(categoryId: Int): Flow<List<DBTransaction>>
 }

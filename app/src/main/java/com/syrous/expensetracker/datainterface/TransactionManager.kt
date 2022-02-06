@@ -1,10 +1,8 @@
 package com.syrous.expensetracker.datainterface
 
-import com.firebase.ui.auth.data.model.User
-import com.syrous.expensetracker.data.local.CategoriesDao
+import com.syrous.expensetracker.data.local.SubCategoriesDao
 import com.syrous.expensetracker.data.local.TransactionDao
 import com.syrous.expensetracker.model.Category
-import com.syrous.expensetracker.model.DashboardCategoryItem
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.toDBTransaction
@@ -12,7 +10,6 @@ import com.syrous.expensetracker.utils.toUserTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import java.util.*
 
 interface TransactionManager {
 
@@ -20,13 +17,15 @@ interface TransactionManager {
 
     fun getAllTransactionsFromStorage(): Flow<List<UserTransaction>>
 
+    suspend fun getAllTransactionListFromStorage(): List<UserTransaction>
+
     fun getCategorisedTransactionsFromStorage(
         category: Category
     ): Flow<List<UserTransaction>>
 
-    fun getUnSyncedTransaction(): Flow<List<UserTransaction>>
+    suspend fun getUnSyncedTransaction(): List<UserTransaction>
 
-    suspend fun updateTransactionListSyncStatus(userTransactionList: List<UserTransaction>)
+    suspend fun updateTransactionListSyncStatus(userTransaction: UserTransaction)
 
     suspend fun syncUserTransaction(sheetName: String = Constants.DEFAULT_SHEET_NAME)
 
@@ -42,11 +41,11 @@ interface TransactionManager {
 
 class TransactionManagerImpl(
     private val transactionDao: TransactionDao,
-    private val categoriesDao: CategoriesDao
+    private val subCategoriesDao: SubCategoriesDao
 ) : TransactionManager {
 
     override suspend fun addTransaction(transaction: UserTransaction) {
-        val id = categoriesDao.getSubCategoryId(transaction.categoryTag)
+        val id = subCategoriesDao.getSubCategoryId(transaction.categoryTag)
         transactionDao.insertUserTransaction(transaction.toDBTransaction(id))
     }
 
@@ -62,10 +61,17 @@ class TransactionManagerImpl(
         transactionDao.getAllUserTransactionsFlow().map { dbTransaction ->
             val userTransactionList = mutableListOf<UserTransaction>()
             for (transaction in dbTransaction) {
-                val category = categoriesDao.getSubCategoryFromId(transaction.categoryId)
+                val category = subCategoriesDao.getSubCategoryFromId(transaction.subCategoryId)
                 userTransactionList.add(transaction.toUserTransaction(categoryTag = category.name))
             }
             userTransactionList
+        }
+
+    override suspend fun getAllTransactionListFromStorage(): List<UserTransaction> = transactionDao
+        .getAllUserTransactionsList()
+        .map { userTransaction ->
+            val subCategory = subCategoriesDao.getSubCategoryFromId(userTransaction.subCategoryId)
+            userTransaction.toUserTransaction(subCategory.name)
         }
 
 
@@ -77,21 +83,15 @@ class TransactionManagerImpl(
         }
     }
 
-    override fun getUnSyncedTransaction(): Flow<List<UserTransaction>> = transactionDao
+    override suspend fun getUnSyncedTransaction(): List<UserTransaction> = transactionDao
         .getUnSyncedUserTransaction()
-        .map { dbTransaction ->
-            val userTransactionList = mutableListOf<UserTransaction>()
-            dbTransaction.forEach { transaction ->
-                val category = categoriesDao.getSubCategoryFromId(transaction.categoryId)
-                userTransactionList.add(transaction.toUserTransaction(categoryTag = category.name))
-            }
-            userTransactionList
+        .map { transaction ->
+            val category = subCategoriesDao.getSubCategoryFromId(transaction.subCategoryId)
+            transaction.toUserTransaction(categoryTag = category.name)
         }
 
-    override suspend fun updateTransactionListSyncStatus(userTransactionList: List<UserTransaction>) {
-        for (transaction in userTransactionList) {
-            transactionDao.updateUserTransactionSyncStatus(transaction.id)
-        }
+    override suspend fun updateTransactionListSyncStatus(userTransaction: UserTransaction) {
+        transactionDao.updateUserTransactionSyncStatus(userTransaction.id)
     }
 
     override fun getTotalExpenseAmount(): Flow<Int> = transactionDao.getTotalExpense()
@@ -102,7 +102,7 @@ class TransactionManagerImpl(
         transactionDao.getUserTransactionsForCategoryTag(subCategoryId).map { dbTransaction ->
             val userTransactionList = mutableListOf<UserTransaction>()
             dbTransaction.forEach { transaction ->
-                val category = categoriesDao.getSubCategoryFromId(transaction.categoryId)
+                val category = subCategoriesDao.getSubCategoryFromId(transaction.subCategoryId)
                 userTransactionList.add(transaction.toUserTransaction(categoryTag = category.name))
             }
             userTransactionList

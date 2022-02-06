@@ -7,6 +7,9 @@ import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.UploadFileMetaData
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.UserTransaction
+import com.syrous.expensetracker.screen.addusertransaction.ViewState
+import com.syrous.expensetracker.usecase.UseCaseResult.Failure
+import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.Constants.apiKey
 import com.syrous.expensetracker.utils.SharedPrefManager
@@ -37,20 +40,17 @@ class UploadUserTransactionUseCase @Inject constructor(
         context: Context,
         fileName: String,
         description: String
-    ) {
-        transactionManager
-            .getAllTransactionsFromStorage()
-            .take(1)
-            .map { listOfUserTransaction ->
-                convertUserTransactionToCSVFile(
-                    listOfUserTransaction,
+    ): UseCaseResult {
+        val transactionList = transactionManager.getAllTransactionListFromStorage()
+        return try {
+            if (transactionList.isNotEmpty()) {
+                val csvFile = convertUserTransactionToCSVFile(
+                    transactionList,
                     createCSVFileOnStorage(context, fileName)
                 )
-            }.map { csvFile ->
-                csvFile.readBytes().toRequestBody(
+                val fileRequestBody = csvFile.readBytes().toRequestBody(
                     Constants.spreadSheetMimeType.toMediaType()
                 )
-            }.map { fileRequestBody ->
 
                 val uploadFileMetaData = UploadFileMetaData(
                     fileName,
@@ -65,8 +65,20 @@ class UploadUserTransactionUseCase @Inject constructor(
                     MultipartBody.Part.create(uploadFileMetaData),
                     MultipartBody.Part.create(fileRequestBody)
                 )
-                sharedPrefManager.storeSpreadSheetId(response.id)
-            }.collect()
+
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        sharedPrefManager.storeSpreadSheetId(response.body()!!.id)
+                        Success(true)
+                    } else
+                        Failure(response.errorBody().toString())
+                } else
+                    Failure(response.message())
+            } else Success(true)
+        } catch (e: Exception) {
+            Failure(e.message!!)
+        }
+
     }
 
 
@@ -116,6 +128,7 @@ class UploadUserTransactionUseCase @Inject constructor(
         return stringBuilder
     }
 
+    @Throws(IOException::class)
     private fun addRecordsToFile(recordStringBuilder: StringBuilder, file: File): File {
         val outputStream = FileOutputStream(file)
         outputStream.write(recordStringBuilder.toString().toByteArray())
@@ -123,6 +136,7 @@ class UploadUserTransactionUseCase @Inject constructor(
         return file
     }
 
+    @Throws(IOException::class)
     @RequiresApi(Build.VERSION_CODES.R)
     private fun createCSVFileOnStorage(context: Context, fileName: String): File {
         val file = context.applicationContext.getFileStreamPath(fileName)

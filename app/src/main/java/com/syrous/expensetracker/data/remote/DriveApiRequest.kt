@@ -16,7 +16,7 @@ interface DriveApiRequest {
         @Query("key") apiKey: String,
         @Part(encoding = "8-bit") uploadFileMetaData: MultipartBody.Part,
         @Part(encoding = "base64") file: MultipartBody.Part
-    ): BasicFileMetaData
+    ): Response<BasicFileMetaData>
 
     @POST("drive/v3/files")
     @Headers("Content-Type: application/json")
@@ -24,7 +24,7 @@ interface DriveApiRequest {
         @Header("Authorization") authToken: String,
         @Query("key") apiKey: String,
         @Body request: CreateFolderRequest
-    ): BasicFileMetaData
+    ): Response<BasicFileMetaData>
 
     @GET("drive/v3/files")
     suspend fun searchFile(
@@ -32,6 +32,6 @@ interface DriveApiRequest {
         @Query("key") apiKey: String,
         @Query("corpora") corpora: String,
         @Query("q") query: String
-    ): SearchFileQueryResponse
+    ): Response<SearchFileQueryResponse>
 
 }

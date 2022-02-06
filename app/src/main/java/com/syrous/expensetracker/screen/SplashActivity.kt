@@ -30,7 +30,7 @@ class SplashActivity: AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Default) {
             delay(1000)
-            startActivity(Intent(this@SplashActivity, ReleaseMainActivity::class.java))
+            startActivity(Intent(this@SplashActivity, SignInActivity::class.java))
             finish()
         }
 

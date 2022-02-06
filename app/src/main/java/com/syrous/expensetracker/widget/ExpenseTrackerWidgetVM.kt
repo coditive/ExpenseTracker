@@ -2,7 +2,7 @@ package com.syrous.expensetracker.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syrous.expensetracker.datainterface.CategoryManager
+import com.syrous.expensetracker.datainterface.SubCategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.model.UserTransaction
@@ -38,7 +38,7 @@ interface ExpenseTrackerWidgetVM {
 @HiltViewModel
 class ExpenseTrackerWidgetVMImpl @Inject constructor(
     private val transactionManager: TransactionManager,
-    private val categoryManager: CategoryManager,
+    private val subCategoryManager: SubCategoryManager,
     private val sharedPrefManager: SharedPrefManager
 ) : ViewModel(), ExpenseTrackerWidgetVM {
 
@@ -78,14 +78,14 @@ class ExpenseTrackerWidgetVMImpl @Inject constructor(
     override fun getTagList(): StateFlow<List<String>> {
         if (sharedPrefManager.isNewUser()) {
             viewModelScope.launch(Dispatchers.IO) {
-                categoryManager.addStoredSubCategoriesToDB()
+                subCategoryManager.addStoredSubCategoriesToDB()
             }
         }
 
         return combine(
             subCategoryType,
-            categoryManager.getExpenseSubCategoriesFlow(),
-            categoryManager.getIncomeSubCategoriesFlow()
+            subCategoryManager.getExpenseSubCategoriesFlow(),
+            subCategoryManager.getIncomeSubCategoriesFlow()
         ) { category, expenseSubCategory, incomeSubCategory ->
             if (category == Category.EXPENSE)
                 expenseSubCategory

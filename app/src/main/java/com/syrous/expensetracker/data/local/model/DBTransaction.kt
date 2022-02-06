@@ -12,7 +12,7 @@ import java.util.*
         ForeignKey(
             entity = SubCategory::class,
             parentColumns = ["id"],
-            childColumns = ["categoryId"],
+            childColumns = ["subCategoryId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -23,6 +23,6 @@ data class DBTransaction(
     val description: String,
     val category: Category,
     val date: Date,
-    val categoryId: Int,
+    val subCategoryId: Int,
     val isStoredOnSheet: Boolean
 )

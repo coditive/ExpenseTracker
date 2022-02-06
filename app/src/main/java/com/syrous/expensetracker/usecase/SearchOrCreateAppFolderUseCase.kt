@@ -4,6 +4,8 @@ import android.util.Log
 import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.CreateFolderRequest
 import com.syrous.expensetracker.data.remote.model.SearchFileQueryResponse
+import com.syrous.expensetracker.usecase.UseCaseResult.Failure
+import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
 import kotlinx.coroutines.flow.collect
@@ -18,36 +20,44 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager
 ) {
 
-    suspend fun execute() {
+    suspend fun execute(): UseCaseResult {
         val query = "mimeType = 'application/vnd.google-apps.folder' and name = 'Expense-Tracker'"
 
-        flow {
-            emit(
-                apiRequest.searchFile(
-                    sharedPrefManager.getUserToken(),
-                    Constants.apiKey,
-                    Constants.corpora,
-                    query
-                )
-            )
-        }.collect { result ->
-            if (result.files.isEmpty()) {
-                val folder = apiRequest.createFolder(
-                    sharedPrefManager.getUserToken(),
-                    Constants.apiKey,
-                    CreateFolderRequest(
-                        Constants.appName,
-                        Constants.folderMimeType
+        val result = apiRequest.searchFile(
+            sharedPrefManager.getUserToken(),
+            Constants.apiKey,
+            Constants.corpora,
+            query
+        )
+        return if (result.isSuccessful) {
+            if (result.body() != null) {
+                if (result.body()!!.files.isEmpty()) {
+                    val folder = apiRequest.createFolder(
+                        sharedPrefManager.getUserToken(),
+                        Constants.apiKey,
+                        CreateFolderRequest(
+                            Constants.appName,
+                            Constants.folderMimeType
+                        )
                     )
-                )
-
-                sharedPrefManager.storeExpenseTrackerFolderId(folder.id)
-            } else {
-                result.files[0]
-                    .let { sharedPrefManager.storeExpenseTrackerFolderId(it.id) }
-
-            }
-        }
+                    if (folder.isSuccessful) {
+                        if (folder.body() != null) {
+                            sharedPrefManager.storeExpenseTrackerFolderId(folder.body()!!.id)
+                            Success(true)
+                        } else
+                            Failure(folder.errorBody().toString())
+                    } else
+                        Failure(folder.message())
+                } else {
+                    result.body()!!.files[0]
+                        .let { sharedPrefManager.storeExpenseTrackerFolderId(it.id) }
+                    Success(true)
+                }
+            } else
+                Failure(result.errorBody().toString())
+        } else
+            Failure(result.message())
     }
 }
+
 

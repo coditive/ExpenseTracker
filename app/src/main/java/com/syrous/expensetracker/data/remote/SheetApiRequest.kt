@@ -20,7 +20,7 @@ interface SheetApiRequest {
         @Path("spreadSheetId") spreadSheetId: String,
         @Query("key") apiKey: String,
         @Body spreadSheetBatchUpdateRequest: SpreadSheetBatchUpdateRequest
-    )
+    ): Response<SpreadSheetBatchUpdateResponse>
 
     @POST("{spreadSheetId}/values/{range}:append")
     suspend fun appendValueIntoSheet(
@@ -33,7 +33,7 @@ interface SheetApiRequest {
         @Query("responseValueRenderOption") responseValueRenderOption: String,
         @Query("valueInputOption") valueInputOption: String,
         @Body valuesRequest: ValuesRequest
-    )
+    ): Response<SpreadsheetAppendResponse>
 
     @POST("{spreadSheetId}/values:batchUpdate")
     suspend fun updateValueIntoSheet(

@@ -1,10 +1,14 @@
 package com.syrous.expensetracker.usecase
 
+import com.firebase.ui.auth.data.model.User
 import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.data.remote.model.ValuesRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
+import com.syrous.expensetracker.usecase.UseCaseResult.*
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -16,37 +20,44 @@ class AppendTransactionsUseCase @Inject constructor(
 ) {
 
     private val sdf = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
-    suspend fun execute() {
+    suspend fun execute(): UseCaseResult {
+        val updatesList = mutableListOf<List<String>>()
         transactionManager
             .getUnSyncedTransaction()
-            .collect { userTransactions ->
-
-                val updatesList = mutableListOf<List<String>>()
-                for (transaction in userTransactions) {
-                    val record = mutableListOf<String>()
-                    record.add(transaction.id.toString())
-                    record.add(sdf.format(transaction.date))
-                    record.add(transaction.description)
-                    record.add(transaction.amount.toString())
-                    record.add(transaction.category.name)
-                    record.add(transaction.categoryTag)
-
-                    updatesList.add(record)
-                }
-
-                sheetApiRequest.appendValueIntoSheet(
-                    sharedPrefManager.getUserToken(),
-                    sharedPrefManager.getSpreadSheetId(),
-                    "Transactions!A:F",
-                    Constants.apiKey,
-                    "OVERWRITE",
-                    null,
-                    "FORMATTED_VALUE",
-                    "USER_ENTERED",
-                    ValuesRequest(updatesList)
-                )
-
-                transactionManager.updateTransactionListSyncStatus(userTransactions)
+            .forEach { userTransaction ->
+                val record = mutableListOf<String>()
+                record.add(userTransaction.id.toString())
+                record.add(sdf.format(userTransaction.date))
+                record.add(userTransaction.description)
+                record.add(userTransaction.amount.toString())
+                record.add(userTransaction.category.name)
+                record.add(userTransaction.categoryTag)
+                updatesList.add(record)
             }
+
+        return try {
+            val result = sheetApiRequest.appendValueIntoSheet(
+                sharedPrefManager.getUserToken(),
+                sharedPrefManager.getSpreadSheetId(),
+                "Transactions!A:F",
+                Constants.apiKey,
+                Constants.overwrite,
+                null,
+                Constants.formattedValue,
+                Constants.userEntered,
+                ValuesRequest(updatesList)
+            )
+
+            if (result.isSuccessful) {
+                transactionManager.getUnSyncedTransaction().forEach { userTransaction ->
+                    transactionManager.updateTransactionListSyncStatus(userTransaction)
+                }
+                Success(true)
+            } else {
+                Failure(result.message())
+            }
+        } catch (e: Exception) {
+            Failure(e.message!!)
+        }
     }
 }
