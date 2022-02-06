@@ -1,5 +1,6 @@
 package com.syrous.expensetracker.usecase
 
+import android.util.Log
 import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.data.remote.model.*
 import com.syrous.expensetracker.usecase.UseCaseResult.*
@@ -18,6 +19,8 @@ class CreateSheetsUseCase @Inject constructor(
     private val sheetApiRequest: SheetApiRequest
 ) {
 
+    private val TAG = this::class.java.name
+
     suspend fun execute(): UseCaseResult {
         val result = sheetApiRequest.getSpreadSheetData(
             sharedPrefManager.getUserToken(),
@@ -34,6 +37,7 @@ class CreateSheetsUseCase @Inject constructor(
             )
 
             if (updateResult.isSuccessful) {
+                Log.i(TAG, "batch update Success!!!")
                 Success(true)
             } else {
                 Failure(updateResult.message())

@@ -19,9 +19,9 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
     private val apiRequest: DriveApiRequest,
     private val sharedPrefManager: SharedPrefManager
 ) {
-
+    private val TAG = this::class.java.name
     suspend fun execute(): UseCaseResult {
-        val query = "mimeType = 'application/vnd.google-apps.folder' and name = 'Expense-Tracker'"
+        val query = "mimeType = '${Constants.folderMimeType}' and name = '${Constants.appName}'"
 
         val result = apiRequest.searchFile(
             sharedPrefManager.getUserToken(),
@@ -43,6 +43,7 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
                     if (folder.isSuccessful) {
                         if (folder.body() != null) {
                             sharedPrefManager.storeExpenseTrackerFolderId(folder.body()!!.id)
+                            Log.i(TAG, "Folder created Success!!!")
                             Success(true)
                         } else
                             Failure(folder.errorBody().toString())
@@ -51,6 +52,7 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
                 } else {
                     result.body()!!.files[0]
                         .let { sharedPrefManager.storeExpenseTrackerFolderId(it.id) }
+                    Log.i(TAG, "Folder created Success!!!")
                     Success(true)
                 }
             } else

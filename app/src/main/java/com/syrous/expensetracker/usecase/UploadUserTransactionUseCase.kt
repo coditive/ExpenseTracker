@@ -2,6 +2,7 @@ package com.syrous.expensetracker.usecase
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.UploadFileMetaData
@@ -30,7 +31,7 @@ class UploadUserTransactionUseCase @Inject constructor(
     private val apiRequest: DriveApiRequest,
     private val sharedPrefManager: SharedPrefManager
 ) {
-
+    private val TAG = this::class.java.name
     private val sdf = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
     private val columnSeparator = ","
     private val lineSeparator = "\r\n"
@@ -69,6 +70,7 @@ class UploadUserTransactionUseCase @Inject constructor(
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         sharedPrefManager.storeSpreadSheetId(response.body()!!.id)
+                        Log.i(TAG, "file upload Success!!!")
                         Success(true)
                     } else
                         Failure(response.errorBody().toString())

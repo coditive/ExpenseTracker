@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
+import com.syrous.expensetracker.BuildConfig
 import com.syrous.expensetracker.usecase.*
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
@@ -97,17 +98,34 @@ class SpreadSheetSyncWorker @AssistedInject constructor(
 
 
 fun WorkManager.enqueueSpreadSheetSyncWork() {
-    val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
+    if(BuildConfig.DEBUG) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
 
-    val workRequest = OneTimeWorkRequestBuilder<SpreadSheetSyncWorker>()
-        .addTag(SpreadSheetSyncWorker.SPREADSHEET_SYNC_WORKER_TAG)
-        .setConstraints(constraints.build())
-        .build()
+        val workRequest = OneTimeWorkRequestBuilder<SpreadSheetSyncWorker>()
+            .addTag(SpreadSheetSyncWorker.SPREADSHEET_SYNC_WORKER_TAG)
+            .setConstraints(constraints.build())
+            .build()
 
-    this.enqueueUniqueWork(
-        SpreadSheetSyncWorker.SPREADSHEET_SYNC_WORKER_TAG,
-        ExistingWorkPolicy.REPLACE,
-        workRequest
-    )
+        this.enqueueUniqueWork(
+            SpreadSheetSyncWorker.SPREADSHEET_SYNC_WORKER_TAG,
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
+    } else {
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) constraints.setRequiresDeviceIdle(true)
+
+        val workRequest = PeriodicWorkRequestBuilder<SpreadSheetSyncWorker>(1, TimeUnit.DAYS)
+            .addTag(SpreadSheetSyncWorker.SPREADSHEET_SYNC_WORKER_TAG)
+            .setConstraints(constraints.build())
+            .build()
+        enqueueUniquePeriodicWork(
+            SpreadSheetSyncWorker.SPREADSHEET_SYNC_WORKER_TAG,
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
+    }
 }

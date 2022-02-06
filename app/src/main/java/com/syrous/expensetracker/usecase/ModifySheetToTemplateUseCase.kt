@@ -1,6 +1,7 @@
 package com.syrous.expensetracker.usecase
 
 import android.content.Context
+import android.util.Log
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.data.remote.model.*
@@ -15,7 +16,7 @@ class ModifySheetToTemplateUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
     private val sheetApiRequest: SheetApiRequest
 ) {
-
+    private val TAG = this::class.java.name
     private val timePeriod = "Time Period"
 
     private val earned = "Earned"
@@ -93,8 +94,10 @@ class ModifySheetToTemplateUseCase @Inject constructor(
                 ValuesRequest(values)
             )
 
-            return if (formulaResult.isSuccessful)
+            return if (formulaResult.isSuccessful) {
+                Log.i(TAG, "formula upload Success!!!")
                 Success(true)
+            }
             else
                 Failure(formulaResult.message())
         } else
@@ -125,8 +128,11 @@ class ModifySheetToTemplateUseCase @Inject constructor(
             ValuesRequest(values)
         )
 
-        return if (categoriesResult.isSuccessful)
+        return if (categoriesResult.isSuccessful){
+            Log.i(TAG, "category added Success!!!")
             Success(true)
+        }
+
         else
             Failure(categoriesResult.message())
     }
@@ -168,8 +174,10 @@ class ModifySheetToTemplateUseCase @Inject constructor(
             request
         )
 
-        return if (validationResult.isSuccessful)
+        return if (validationResult.isSuccessful) {
+            Log.i(TAG, "data validation upload Success!!!")
             Success(true)
+        }
         else
             Failure(validationResult.message())
     }

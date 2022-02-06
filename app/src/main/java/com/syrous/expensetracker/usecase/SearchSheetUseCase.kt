@@ -1,5 +1,6 @@
 package com.syrous.expensetracker.usecase
 
+import android.util.Log
 import com.syrous.expensetracker.data.remote.DriveApiRequest
 import com.syrous.expensetracker.data.remote.model.CreateFolderRequest
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
@@ -12,7 +13,7 @@ class SearchSheetUseCase @Inject constructor(
     private val apiRequest: DriveApiRequest,
     private val sharedPrefManager: SharedPrefManager
 ) {
-
+    private val TAG = this::class.java.name
     suspend fun execute(): UseCaseResult {
         val query =
             "mimeType = '${Constants.spreadSheetMimeType}' and name = '${Constants.spreadsheetFileName}'"
@@ -30,6 +31,7 @@ class SearchSheetUseCase @Inject constructor(
                 } else {
                     sharedPrefManager.storeSpreadSheetId(result.body()!!.files[0].id)
                 }
+                Log.i(TAG, "search sheet Success!!!")
                 Success(true)
             } else Failure(result.errorBody().toString())
         } else

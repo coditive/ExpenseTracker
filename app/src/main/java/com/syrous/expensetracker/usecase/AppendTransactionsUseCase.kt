@@ -1,5 +1,6 @@
 package com.syrous.expensetracker.usecase
 
+import android.util.Log
 import com.firebase.ui.auth.data.model.User
 import com.syrous.expensetracker.data.remote.SheetApiRequest
 import com.syrous.expensetracker.data.remote.model.ValuesRequest
@@ -18,7 +19,7 @@ class AppendTransactionsUseCase @Inject constructor(
     private val sheetApiRequest: SheetApiRequest,
     private val sharedPrefManager: SharedPrefManager
 ) {
-
+    private val TAG = this::class.java.name
     private val sdf = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
     suspend fun execute(): UseCaseResult {
         val updatesList = mutableListOf<List<String>>()
@@ -52,6 +53,7 @@ class AppendTransactionsUseCase @Inject constructor(
                 transactionManager.getUnSyncedTransaction().forEach { userTransaction ->
                     transactionManager.updateTransactionListSyncStatus(userTransaction)
                 }
+                Log.i(TAG, "append Success!!!")
                 Success(true)
             } else {
                 Failure(result.message())
