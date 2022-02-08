@@ -1,8 +1,11 @@
 package com.syrous.expensetracker.usecase
 
-sealed class UseCaseResult {
+sealed class UseCaseResult<out T> {
 
-    data class Success(val boolean: Boolean): UseCaseResult()
+    data class Success<T> (val boolean: T): UseCaseResult<T>()
 
-    data class Failure(val message: String): UseCaseResult()
+    class SucceedNoResultRequired<T>: UseCaseResult<T>()
+
+    data class Failure<T>(val message: String): UseCaseResult<T>()
+
 }

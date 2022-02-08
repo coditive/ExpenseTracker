@@ -35,7 +35,7 @@ class ActivityMainVMImpl @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
     private val searchUseCase: SearchOrCreateAppFolderUseCase,
     private val uploadUseCase: UploadUserTransactionUseCase,
-    private val createSheetsUseCase: CreateSheetsUseCase,
+    private val getAndUpdateSheetsUseCase: GetAndUpdateSheetsUseCase,
     private val modifySheetToTemplateUseCase: ModifySheetToTemplateUseCase,
     private val appendTransactionsUseCase: AppendTransactionsUseCase
 ) : ViewModel(), ActivityMainVM {
@@ -51,7 +51,7 @@ class ActivityMainVMImpl @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.R)
     fun searchFolderOrCreate(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (sharedPrefManager.isFileUploadStatus()) {
+            if (sharedPrefManager.isFileUploadedStatus()) {
                 searchUseCase.execute()
                 delay(100)
                 uploadUseCase.uploadUserTransactionToDrive(
@@ -60,10 +60,10 @@ class ActivityMainVMImpl @Inject constructor(
                     "All in one sheet for expenses"
                 )
                 delay(100)
-                createSheetsUseCase.execute()
+                getAndUpdateSheetsUseCase.execute()
                 delay(100)
                 modifySheetToTemplateUseCase.execute(context)
-                sharedPrefManager.storeFileUploadStatus(true)
+                sharedPrefManager.storeFileUploadedStatus(true)
             } else {
                 appendTransactionsUseCase.execute()
             }

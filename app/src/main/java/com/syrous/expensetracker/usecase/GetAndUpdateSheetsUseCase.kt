@@ -11,37 +11,45 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
+import javax.inject.Named
 import kotlin.math.abs
 import kotlin.random.Random
 
-class CreateSheetsUseCase @Inject constructor(
+class GetAndUpdateSheetsUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
-    private val sheetApiRequest: SheetApiRequest
+    private val sheetApiRequest: SheetApiRequest,
+    @Named("apiKey") private val apiKey: String
 ) {
 
     private val TAG = this::class.java.name
 
-    suspend fun execute(): UseCaseResult {
+    suspend fun execute(): UseCaseResult<SpreadSheetBatchUpdateResponse> {
         val result = sheetApiRequest.getSpreadSheetData(
             sharedPrefManager.getUserToken(),
             sharedPrefManager.getSpreadSheetId(),
-            Constants.apiKey
+            apiKey
         )
         return if (result.isSuccessful) {
-            val batchUpdateRequest = storeAndCreateAddSheetRequest(result)
-            val updateResult = sheetApiRequest.updateSpreadSheetToFormat(
-                sharedPrefManager.getUserToken(),
-                sharedPrefManager.getSpreadSheetId(),
-                Constants.apiKey,
-                batchUpdateRequest
-            )
+            if(result.body() != null) {
+                if(result.body()!!.sheets.isNotEmpty()) {
+                    val batchUpdateRequest = storeAndCreateAddSheetRequest(result)
+                    val updateResult = sheetApiRequest.updateSpreadSheetToFormat(
+                        sharedPrefManager.getUserToken(),
+                        sharedPrefManager.getSpreadSheetId(),
+                        apiKey,
+                        batchUpdateRequest
+                    )
 
-            if (updateResult.isSuccessful) {
-                Log.i(TAG, "batch update Success!!!")
-                Success(true)
-            } else {
-                Failure(updateResult.message())
-            }
+                    if (updateResult.isSuccessful) {
+//                Log.i(TAG, "batch update Success!!!")
+                        Success(updateResult.body()!!)
+                    } else {
+                        Failure(updateResult.message())
+                    }
+                } else
+                    Failure("sheets data is empty")
+            } else
+                Failure(result.errorBody().toString())
 
         } else {
             Failure(result.message())

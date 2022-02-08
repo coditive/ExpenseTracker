@@ -5,6 +5,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.model.BasicFileMetaData
 import com.syrous.expensetracker.data.remote.model.UploadFileMetaData
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.UserTransaction
@@ -24,12 +25,14 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class UploadUserTransactionUseCase @Inject constructor(
     private val transactionManager: TransactionManager,
     private val apiRequest: DriveApiRequest,
-    private val sharedPrefManager: SharedPrefManager
+    private val sharedPrefManager: SharedPrefManager,
+    @Named("apiKey") private val apiKey: String
 ) {
     private val TAG = this::class.java.name
     private val sdf = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
@@ -41,7 +44,7 @@ class UploadUserTransactionUseCase @Inject constructor(
         context: Context,
         fileName: String,
         description: String
-    ): UseCaseResult {
+    ): UseCaseResult<Boolean> {
         val transactionList = transactionManager.getAllTransactionListFromStorage()
         return try {
             if (transactionList.isNotEmpty()) {
@@ -80,7 +83,6 @@ class UploadUserTransactionUseCase @Inject constructor(
         } catch (e: Exception) {
             Failure(e.message!!)
         }
-
     }
 
 

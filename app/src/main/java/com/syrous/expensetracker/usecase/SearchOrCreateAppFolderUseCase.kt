@@ -2,6 +2,7 @@ package com.syrous.expensetracker.usecase
 
 import android.util.Log
 import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.model.BasicFileMetaData
 import com.syrous.expensetracker.data.remote.model.CreateFolderRequest
 import com.syrous.expensetracker.data.remote.model.SearchFileQueryResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
@@ -13,19 +14,21 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class SearchOrCreateAppFolderUseCase @Inject constructor(
     private val apiRequest: DriveApiRequest,
-    private val sharedPrefManager: SharedPrefManager
+    private val sharedPrefManager: SharedPrefManager,
+    @Named("apiKey") private val apiKey: String
 ) {
     private val TAG = this::class.java.name
-    suspend fun execute(): UseCaseResult {
+    suspend fun execute(): UseCaseResult<BasicFileMetaData> {
         val query = "mimeType = '${Constants.folderMimeType}' and name = '${Constants.appName}'"
 
         val result = apiRequest.searchFile(
             sharedPrefManager.getUserToken(),
-            Constants.apiKey,
+            apiKey,
             Constants.corpora,
             query
         )
@@ -34,7 +37,7 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
                 if (result.body()!!.files.isEmpty()) {
                     val folder = apiRequest.createFolder(
                         sharedPrefManager.getUserToken(),
-                        Constants.apiKey,
+                        apiKey,
                         CreateFolderRequest(
                             Constants.appName,
                             Constants.folderMimeType
@@ -42,9 +45,8 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
                     )
                     if (folder.isSuccessful) {
                         if (folder.body() != null) {
-                            sharedPrefManager.storeExpenseTrackerFolderId(folder.body()!!.id)
-                            Log.i(TAG, "Folder created Success!!!")
-                            Success(true)
+                           sharedPrefManager.storeExpenseTrackerFolderId(folder.body()!!.id)
+                            Success(folder.body()!!)
                         } else
                             Failure(folder.errorBody().toString())
                     } else
@@ -52,8 +54,8 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
                 } else {
                     result.body()!!.files[0]
                         .let { sharedPrefManager.storeExpenseTrackerFolderId(it.id) }
-                    Log.i(TAG, "Folder created Success!!!")
-                    Success(true)
+//                    Log.i(TAG, "Folder found Success!!!")
+                    Success(result.body()!!.files[0])
                 }
             } else
                 Failure(result.errorBody().toString())

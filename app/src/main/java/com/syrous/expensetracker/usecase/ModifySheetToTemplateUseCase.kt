@@ -11,10 +11,12 @@ import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
 import retrofit2.Response
 import javax.inject.Inject
+import javax.inject.Named
 
 class ModifySheetToTemplateUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
-    private val sheetApiRequest: SheetApiRequest
+    private val sheetApiRequest: SheetApiRequest,
+    @Named("apiKey") private val apiKey: String
 ) {
     private val TAG = this::class.java.name
     private val timePeriod = "Time Period"
@@ -38,17 +40,20 @@ class ModifySheetToTemplateUseCase @Inject constructor(
 
     private val categoriesAColumnRange = "Categories!A:A"
 
-    suspend fun execute(context: Context): UseCaseResult {
+    suspend fun execute(context: Context): UseCaseResult<Boolean> {
         val createSheetResult = createSummarySheet(context)
         return if (createSheetResult is Success) {
             val addCategoriesResult = addCategoriesToSheet(context)
-            if (addCategoriesResult is Success)
-                addDataValidation()
-            else addCategoriesResult
-        } else createSheetResult
+            if (addCategoriesResult is Success) {
+                val addDataValidationResult = addDataValidation()
+                if (addDataValidationResult is Success)
+                    Success(true)
+                else Failure("Data Validation Upload Failed!!!")
+            } else Failure("Categories Upload Failed!!!")
+        } else Failure("Summary sheet creation failed!!!")
     }
 
-    private suspend fun createSummarySheet(context: Context): UseCaseResult {
+    private suspend fun createSummarySheet(context: Context): UseCaseResult<SpreadsheetAppendResponse> {
         val expenseCategoryList = context.resources.getStringArray(R.array.expense_categories)
         val values = mutableListOf<List<String>>()
         values.add(listOf(timePeriod))
@@ -69,7 +74,7 @@ class ModifySheetToTemplateUseCase @Inject constructor(
             sharedPrefManager.getUserToken(),
             sharedPrefManager.getSpreadSheetId(),
             summaryAColumnRange,
-            Constants.apiKey,
+            apiKey,
             Constants.overwrite,
             null,
             Constants.formattedValue,
@@ -77,7 +82,7 @@ class ModifySheetToTemplateUseCase @Inject constructor(
             ValuesRequest(values)
         )
 
-        if (summaryResult.isSuccessful) {
+        return if (summaryResult.isSuccessful) {
             values.clear()
             values.add(listOf(sumIfFormula))
             values.add(listOf(sumIfFormula))
@@ -86,7 +91,7 @@ class ModifySheetToTemplateUseCase @Inject constructor(
                 sharedPrefManager.getUserToken(),
                 sharedPrefManager.getSpreadSheetId(),
                 summaryBColumnRange,
-                Constants.apiKey,
+                apiKey,
                 Constants.overwrite,
                 null,
                 Constants.formula,
@@ -94,17 +99,14 @@ class ModifySheetToTemplateUseCase @Inject constructor(
                 ValuesRequest(values)
             )
 
-            return if (formulaResult.isSuccessful) {
+            if (formulaResult.isSuccessful) {
                 Log.i(TAG, "formula upload Success!!!")
-                Success(true)
-            }
-            else
-                Failure(formulaResult.message())
-        } else
-            return Failure(summaryResult.message())
+                Success(formulaResult.body()!!)
+            } else Failure(formulaResult.message())
+        } else Failure(summaryResult.message())
     }
 
-    private suspend fun addCategoriesToSheet(context: Context): UseCaseResult {
+    private suspend fun addCategoriesToSheet(context: Context): UseCaseResult<SpreadsheetAppendResponse> {
         val incomeCategoryList = context.resources.getStringArray(R.array.income_categories)
         val expenseCategoryList = context.resources.getStringArray(R.array.expense_categories)
         val values = mutableListOf<List<String>>()
@@ -120,7 +122,7 @@ class ModifySheetToTemplateUseCase @Inject constructor(
             sharedPrefManager.getUserToken(),
             sharedPrefManager.getSpreadSheetId(),
             categoriesAColumnRange,
-            Constants.apiKey,
+            apiKey,
             Constants.overwrite,
             null,
             Constants.unformattedValue,
@@ -128,16 +130,15 @@ class ModifySheetToTemplateUseCase @Inject constructor(
             ValuesRequest(values)
         )
 
-        return if (categoriesResult.isSuccessful){
-            Log.i(TAG, "category added Success!!!")
-            Success(true)
-        }
-
-        else
-            Failure(categoriesResult.message())
+        return if (categoriesResult.isSuccessful) {
+            if (categoriesResult.body() != null) {
+                Log.i(TAG, "category added Success!!!")
+                Success(categoriesResult.body()!!)
+            } else Failure(categoriesResult.errorBody().toString())
+        } else Failure(categoriesResult.message())
     }
 
-    private suspend fun addDataValidation(): UseCaseResult {
+    private suspend fun addDataValidation(): UseCaseResult<SpreadSheetBatchUpdateResponse> {
         val dataValidation = SetDataValidationRequest(
             range = GridRange(
                 sheetId = sharedPrefManager.getTransactionSheetId(),
@@ -170,15 +171,14 @@ class ModifySheetToTemplateUseCase @Inject constructor(
         val validationResult = sheetApiRequest.updateSpreadSheetToFormat(
             sharedPrefManager.getUserToken(),
             sharedPrefManager.getSpreadSheetId(),
-            Constants.apiKey,
+            apiKey,
             request
         )
 
         return if (validationResult.isSuccessful) {
             Log.i(TAG, "data validation upload Success!!!")
-            Success(true)
-        }
-        else
+            Success(validationResult.body()!!)
+        } else
             Failure(validationResult.message())
     }
 }
