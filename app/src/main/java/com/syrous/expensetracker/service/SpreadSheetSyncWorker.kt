@@ -14,7 +14,6 @@ import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 
@@ -22,7 +21,7 @@ import java.util.concurrent.TimeUnit
 class SpreadSheetSyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workParams: WorkerParameters,
-    private val createSheetsUseCase: CreateSheetsUseCase,
+    private val getAndUpdateSheetsUseCase: GetAndUpdateSheetsUseCase,
     private val searchOrCreateAppFolderUseCase: SearchOrCreateAppFolderUseCase,
     private val uploadUserTransactionUseCase: UploadUserTransactionUseCase,
     private val modifySheetToTemplateUseCase: ModifySheetToTemplateUseCase,
@@ -32,12 +31,12 @@ class SpreadSheetSyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workParams) {
     @RequiresApi(Build.VERSION_CODES.R)
     override suspend fun doWork(): Result {
-        return if (!sharedPrefManager.isFileUploadStatus()) {
+        return if (!sharedPrefManager.isFileUploadedStatus()) {
             val searchUseCaseResult = searchOrCreateAppFolderUseCase.execute()
             if (searchUseCaseResult is Success) {
                 val searchSpreadSheetUseCaseResult = searchSheetUseCase.execute()
                 if(searchSpreadSheetUseCaseResult is Success) {
-                    if(!sharedPrefManager.isFileUploadStatus()) {
+                    if(!sharedPrefManager.isFileUploadedStatus()) {
                         val uploadUseCaseResult =
                             uploadUserTransactionUseCase.uploadUserTransactionToDrive(
                                 context,
@@ -45,11 +44,11 @@ class SpreadSheetSyncWorker @AssistedInject constructor(
                                 Constants.spreadsheetFileDescription
                             )
                         if (uploadUseCaseResult is Success) {
-                            val createUseCaseResult = createSheetsUseCase.execute()
+                            val createUseCaseResult = getAndUpdateSheetsUseCase.execute()
                             if (createUseCaseResult is Success) {
                                 val modifyUseCaseResult = modifySheetToTemplateUseCase.execute(context)
                                 if (modifyUseCaseResult is Success) {
-                                    sharedPrefManager.storeFileUploadStatus(true)
+                                    sharedPrefManager.storeFileUploadedStatus(true)
                                     Result.success()
                                 } else {
                                     Log.d("SpreadsheetSyncWorker", (modifyUseCaseResult as Failure).message)
@@ -81,11 +80,23 @@ class SpreadSheetSyncWorker @AssistedInject constructor(
                 Result.failure()
             }
         } else {
-            val appendUseCaseResult = appendTransactionsUseCase.execute()
-            if (appendUseCaseResult is Success)
-                Result.success()
-            else {
-                Log.d("SpreadsheetSyncWorker", (appendUseCaseResult as Failure).message)
+            val searchUseCaseResult = searchOrCreateAppFolderUseCase.execute()
+            if (searchUseCaseResult is Success) {
+                val searchSpreadSheetUseCaseResult = searchSheetUseCase.execute()
+                if (searchSpreadSheetUseCaseResult is Success) {
+                    val appendUseCaseResult = appendTransactionsUseCase.execute()
+                    if (appendUseCaseResult is Success)
+                        Result.success()
+                    else {
+                        Log.d("SpreadsheetSyncWorker", (appendUseCaseResult as Failure).message)
+                        Result.failure()
+                    }
+                } else {
+                    Log.d("SpreadsheetSyncWorker", (searchSpreadSheetUseCaseResult as Failure).message)
+                    Result.failure()
+                }
+            } else {
+                Log.d("SpreadsheetSyncWorker", (searchUseCaseResult as Failure).message)
                 Result.failure()
             }
         }
