@@ -4,17 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.work.WorkManager
-import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.LayoutSplashScreenBinding
-import com.syrous.expensetracker.screen.release.ReleaseMainActivity
+import com.syrous.expensetracker.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 @AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
@@ -30,7 +26,7 @@ class SplashActivity: AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Default) {
             delay(1000)
-            startActivity(Intent(this@SplashActivity, SignInActivity::class.java))
+            startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
             finish()
         }
 

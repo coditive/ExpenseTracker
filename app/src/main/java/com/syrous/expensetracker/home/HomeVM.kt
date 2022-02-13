@@ -1,18 +1,21 @@
-package com.syrous.expensetracker.screen.release
+package com.syrous.expensetracker.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.syrous.expensetracker.data.local.SubCategoriesDao
 import com.syrous.expensetracker.data.local.TransactionDao
+import com.syrous.expensetracker.datainterface.SubCategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
-import com.syrous.expensetracker.model.DashboardSubCategoryItem
-import com.syrous.expensetracker.screen.viewtransaction.TransactionHeaderItem
+import com.syrous.expensetracker.model.Category
+import com.syrous.expensetracker.model.SubCategoryItem
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.SharedPrefManager
 import com.syrous.expensetracker.utils.toTransactionHeader
 import com.syrous.expensetracker.utils.toTransactionItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -23,7 +26,7 @@ interface ReleaseVM {
 
     val totalExpense: StateFlow<Int>
 
-    val pieChartItemsList: StateFlow<List<DashboardSubCategoryItem>>
+    val pieChartItemsList: StateFlow<List<SubCategoryItem>>
 
     fun pieValueSelected(categoryTag: String)
 
@@ -33,12 +36,13 @@ interface ReleaseVM {
 @HiltViewModel
 class ReleaseVMImpl @Inject constructor(
     private val transactionManager: TransactionManager,
-    private val subCategoriesDao: SubCategoriesDao,
-    private val transactionDao: TransactionDao
+    private val subCategoryManager: SubCategoryManager,
+    private val sharedPrefManager: SharedPrefManager,
 ) : ViewModel(), ReleaseVM {
 
     private val dateFormatter = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
     private val categoryTagFlow = MutableStateFlow("")
+    private val subCategoryType = MutableStateFlow(Category.EXPENSE)
 
     override val transactionsList: StateFlow<List<TransactionHeaderItem>>
         get() = transactionManager.getAllTransactionsFromStorage()
@@ -71,26 +75,18 @@ class ReleaseVMImpl @Inject constructor(
         get() = transactionManager.getTotalExpenseAmount()
             .stateIn(viewModelScope, SharingStarted.Lazily, 0)
 
-    override val pieChartItemsList: StateFlow<List<DashboardSubCategoryItem>>
-        get() = subCategoriesDao.getAllSubCategoriesFlow()
-            .mapLatest { subCategoryList ->
-                val dashboardItemList = mutableListOf<DashboardSubCategoryItem>()
-                subCategoryList.forEach { subCategory ->
-                    if (transactionDao.getTotalSpentAmountForCategoryTag(subCategory.id) != null) {
-                        val amountSpent =
-                            transactionDao.getTotalSpentAmountForCategoryTag(subCategory.id)
+    override val pieChartItemsList: StateFlow<List<SubCategoryItem>>
+        get() = combine(
+            subCategoryType,
+            subCategoryManager.getExpenseSubCategoriesFlow(),
+            subCategoryManager.getIncomeSubCategoriesFlow()
+        ) { category, expenseSubCategory, incomeSubCategory ->
+            if (category == Category.EXPENSE)
+                expenseSubCategory
+            else
+                incomeSubCategory
+        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-                        dashboardItemList.add(
-                            DashboardSubCategoryItem(
-                                subCategory.id,
-                                subCategory.name,
-                                amountSpent
-                            )
-                        )
-                    }
-                }
-                dashboardItemList
-            }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     override fun pieValueSelected(categoryTag: String) {
         Log.d("categoryFlow", categoryTag)

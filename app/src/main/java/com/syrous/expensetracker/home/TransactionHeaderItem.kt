@@ -1,4 +1,4 @@
-package com.syrous.expensetracker.screen.viewtransaction
+package com.syrous.expensetracker.home
 
 import com.syrous.expensetracker.model.UserTransaction
 import java.util.*

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="expense_fab" type="id" />
+    <item name="income_fab" type="id" />
+    <item name="export_fab" type="id" />
+</resources>

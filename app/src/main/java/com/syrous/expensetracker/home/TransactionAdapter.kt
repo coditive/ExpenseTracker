@@ -1,8 +1,10 @@
-package com.syrous.expensetracker.screen.viewtransaction
+package com.syrous.expensetracker.home
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,20 +12,18 @@ import com.syrous.expensetracker.R
 import com.syrous.expensetracker.databinding.LayoutTransactionHeaderViewHolderBinding
 import com.syrous.expensetracker.databinding.LayoutTransactionItemViewHolderBinding
 import com.syrous.expensetracker.model.UserTransaction
-import com.syrous.expensetracker.screen.viewtransaction.TransactionHeaderItem.TransactionHeader
-import com.syrous.expensetracker.screen.viewtransaction.TransactionHeaderItem.TransactionItem
-import com.syrous.expensetracker.screen.viewtransaction.TransactionViewHolder.TransactionHeaderViewHolder
-import com.syrous.expensetracker.screen.viewtransaction.TransactionViewHolder.TransactionItemViewHolder
+import com.syrous.expensetracker.home.TransactionHeaderItem.TransactionHeader
+import com.syrous.expensetracker.home.TransactionHeaderItem.TransactionItem
+import com.syrous.expensetracker.home.TransactionViewHolder.TransactionHeaderViewHolder
+import com.syrous.expensetracker.home.TransactionViewHolder.TransactionItemViewHolder
+import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.utils.Constants
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionAdapter : ListAdapter<TransactionHeaderItem, TransactionViewHolder>(callback) {
-    private val dateFormatter = SimpleDateFormat(Constants.datePattern, Locale.getDefault())
-    private val headerFormatter = SimpleDateFormat(
-        "dd MMMM", Locale.getDefault()
-    )
 
+    private val headerFormatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
     companion object {
         val dateFormatter = SimpleDateFormat(Constants.datePattern)
         val callback = object : DiffUtil.ItemCallback<TransactionHeaderItem>() {
@@ -59,7 +59,7 @@ class TransactionAdapter : ListAdapter<TransactionHeaderItem, TransactionViewHol
         } else {
             val binding =
                 LayoutTransactionItemViewHolderBinding.inflate(layoutInflater, parent, false)
-            TransactionItemViewHolder(binding)
+            TransactionItemViewHolder(binding, parent.context)
         }
     }
 
@@ -76,10 +76,7 @@ class TransactionAdapter : ListAdapter<TransactionHeaderItem, TransactionViewHol
             holderItem.bind(getItem(position) as TransactionHeader, headerFormatter)
         else if (holderItem is TransactionItemViewHolder)
             holderItem.bind(
-                (getItem(position) as TransactionItem).userTransaction,
-                position,
-                dateFormatter
-            )
+                (getItem(position) as TransactionItem).userTransaction)
     }
 }
 
@@ -106,14 +103,20 @@ sealed class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
     }
 
     class TransactionItemViewHolder(
-        private val binding: LayoutTransactionItemViewHolderBinding
+        private val binding: LayoutTransactionItemViewHolderBinding,
+        private val context: Context
     ) : TransactionViewHolder(binding.root) {
 
-        fun bind(transaction: UserTransaction, position: Int, dateFormatter: SimpleDateFormat) {
+        fun bind(transaction: UserTransaction) {
             binding.apply {
                 categoryTv.text = transaction.categoryTag
                 descriptionTv.text = transaction.description
-                amountTv.text = "₹ ${transaction.amount}"
+                if (transaction.category == Category.EXPENSE)
+                    amountTv.setTextColor(ContextCompat.getColor(context, R.color.red))
+                else
+                    amountTv.setTextColor(ContextCompat.getColor(context, R.color.green))
+
+                amountTv.text = "${Constants.rupeeSign} ${transaction.amount}"
                 val iconResId = when (transaction.categoryTag) {
                     "Food" -> R.raw.food
                     "MF" -> R.raw.rupee_coin

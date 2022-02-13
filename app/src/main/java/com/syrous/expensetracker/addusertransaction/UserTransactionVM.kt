@@ -1,10 +1,11 @@
-package com.syrous.expensetracker.screen.addusertransaction
+package com.syrous.expensetracker.addusertransaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syrous.expensetracker.datainterface.SubCategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Category
+import com.syrous.expensetracker.model.SubCategoryItem
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,9 +27,9 @@ interface UserTransactionVM {
 
     fun setAmount(amount: Int)
 
-    fun setCategoryTag(type: String)
+    fun setSubCategoryTag(tag: SubCategoryItem)
 
-    fun getTagList(): StateFlow<List<String>>
+    fun getTagList(): StateFlow<List<SubCategoryItem>>
 
     fun addUserTransaction()
 }
@@ -49,7 +50,7 @@ class UserTransactionVMImpl @Inject constructor(
     private var amount = 0
     private var description: String = ""
     private var date = Date()
-    private var categoryTag = ""
+    private lateinit var subCategoryTag: SubCategoryItem
     private var category = Category.EXPENSE
 
     override fun setTransactionCategory(category: Category) {
@@ -69,11 +70,11 @@ class UserTransactionVMImpl @Inject constructor(
         this.amount = amount
     }
 
-    override fun setCategoryTag(type: String) {
-        this.categoryTag = type
+    override fun setSubCategoryTag(tag: SubCategoryItem) {
+        this.subCategoryTag = tag
     }
 
-    override fun getTagList(): StateFlow<List<String>> {
+    override fun getTagList(): StateFlow<List<SubCategoryItem>> {
         if (sharedPrefManager.isNewUser()) {
             viewModelScope.launch(Dispatchers.IO) {
                 subCategoryManager.addStoredSubCategoriesToDB()
@@ -99,7 +100,7 @@ class UserTransactionVMImpl @Inject constructor(
             transactionManager.addTransaction(
                 UserTransaction(
                     System.currentTimeMillis(),
-                    amount, description, date, category, categoryTag
+                    amount, description, date, category, subCategoryTag.itemName
                 )
             )
         }

@@ -7,11 +7,12 @@
     <color name="light_pink">#DADDFC</color>
     <color name="orange">#FC997C</color>
 
-
+    <color name="red">#EF4B4B</color>
+    <color name="green">#70AF85</color>
     <color name="color_surface">@color/white</color>
     <color name="color_background">@color/white</color>
     <color name="color_error">#b00020</color>
-
+    <color name="gray">#A8A8A8</color>
     <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
     <!--on which they appear.-->
     <color name="color_on_primary">#FFFFFF</color>

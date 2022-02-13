@@ -1,6 +1,5 @@
 package com.syrous.expensetracker.screen
 
-import android.R.attr.data
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,19 +10,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.data.remote.AuthTokenRequest
 import com.syrous.expensetracker.databinding.ActivitySignInBinding
-import com.syrous.expensetracker.screen.release.ReleaseMainActivity
+import com.syrous.expensetracker.home.HomeActivity
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.multibindings.IntKey
 import javax.inject.Inject
 
 
@@ -92,7 +88,7 @@ class SignInActivity : AppCompatActivity() {
                         "authorization_code"
                     )
                     sharedPrefManager.storeUserToken(authCred.accessToken)
-                    startActivity(Intent(this@SignInActivity, ReleaseMainActivity::class.java))
+                    startActivity(Intent(this@SignInActivity, HomeActivity::class.java))
                 }
             }
         } catch (e: ApiException) {

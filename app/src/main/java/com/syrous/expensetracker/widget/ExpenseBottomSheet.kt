@@ -56,7 +56,7 @@ class ExpenseBottomSheet : BottomSheetDialogFragment() {
             }
 
             viewModel.getTagList().asLiveData().observe(viewLifecycleOwner) { subCategoryList ->
-                setUpChips(subCategoryList)
+
             }
 
             saveButton.setOnClickListener {

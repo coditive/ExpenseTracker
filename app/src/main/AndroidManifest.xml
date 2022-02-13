@@ -42,7 +42,7 @@
         </receiver>
 
         <activity
-            android:name=".screen.SplashActivity"
+            android:name="com.syrous.expensetracker.screen.SplashActivity"
             android:exported="true"
             android:theme="@style/ExpenseTracker.DayNight.Splash">
             <intent-filter>
@@ -52,16 +52,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".screen.release.ReleaseMainActivity"/>
-
-        <activity android:name=".screen.addusertransaction.UserTransactionActivity"/>
-
         <activity android:name=".screen.SignInActivity" />
-        <activity android:name=".screen.MainActivity" />
+        <activity android:name=".home.HomeActivity"/>
         <activity
             android:name=".widget.ExpenseTrackerWidgetAddActivity"
             android:theme="@style/Theme.Transparent" />
-
 
         <meta-data
             android:name="preloaded_fonts"

@@ -38,20 +38,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Expense"
-                app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
-                app:layout_constraintStart_toEndOf="@id/transaction_category_title_tv"
-                app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv" />
+                android:text="Expense"/>
 
             <CheckBox
                 android:id="@+id/income_check_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Income"
-                app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
-                app:layout_constraintStart_toEndOf="@id/expense_check_box"
-                app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv" />
+                android:text="Income" />
         </LinearLayout>
 
         <LinearLayout

@@ -69,4 +69,6 @@ object Constants {
     const val spreadsheetFileName = "Total-Expense-Sheet.csv"
 
     const val spreadsheetFileDescription = "All in one sheet for expenses"
+
+    const val rupeeSign = "₹"
 }

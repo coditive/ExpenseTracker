@@ -1,161 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/title_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Transaction"
-        style="?attr/textAppearanceHeadline4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/transaction_category_title_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Transaction Category :"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_tv"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <CheckBox
-        android:id="@+id/expense_check_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Expense"
-        style="?attr/textAppearanceSubtitle2"
-        android:layout_marginStart="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
-        app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv"
-        app:layout_constraintStart_toEndOf="@id/transaction_category_title_tv"/>
-
-    <CheckBox
-        android:id="@+id/income_check_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Income"
-        style="?attr/textAppearanceSubtitle2"
-        android:layout_marginStart="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/transaction_category_title_tv"
-        app:layout_constraintTop_toTopOf="@id/transaction_category_title_tv"
-        app:layout_constraintStart_toEndOf="@id/expense_check_box"/>
-
-    <TextView
-        android:id="@+id/date_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date :"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintTop_toTopOf="@id/transaction_date_picker"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/transaction_date_picker"
-        app:layout_constraintEnd_toStartOf="@id/transaction_date_picker"/>
-
-    <DatePicker
-        android:id="@+id/transaction_date_picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:datePickerMode="spinner"
-        android:calendarViewShown="false"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expense_check_box"/>
-
-    <TextView
-        android:id="@+id/category_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Category :"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintTop_toBottomOf="@id/transaction_date_picker"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <Spinner
-        android:id="@+id/category_tag_spinner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintStart_toEndOf="@id/category_tv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/category_tv"
-        app:layout_constraintBottom_toBottomOf="@id/category_tv"/>
-
-    <TextView
-        android:id="@+id/description_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Description :"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintTop_toBottomOf="@id/category_tv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <EditText
-        android:id="@+id/description_et"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/standard_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/description_tv"/>
+        android:layout_height="300dp"
+        app:cardElevation="20dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <TextView
-        android:id="@+id/amount_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Amount :"
-        style="?attr/textAppearanceSubtitle1"
-        android:layout_marginStart="10dp"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintBottom_toBottomOf="@id/amount_et"
-        app:layout_constraintTop_toTopOf="@id/amount_et"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/add_user_transaction_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <EditText
-        android:id="@+id/amount_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Enter the amount in Rs."
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:inputType="number"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintTop_toBottomOf="@id/description_et"
-        app:layout_constraintStart_toEndOf="@id/amount_tv"
-        app:layout_constraintEnd_toEndOf="parent"/>
+    </com.google.android.material.card.MaterialCardView>
 
-    <Button
-        android:id="@+id/add_user_transaction_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/amount_et"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

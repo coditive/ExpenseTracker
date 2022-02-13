@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.syrous.expensetracker.datainterface.SubCategoryManager
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Category
+import com.syrous.expensetracker.model.SubCategoryItem
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.utils.SharedPrefManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,7 @@ interface ExpenseTrackerWidgetVM {
 
     fun setCategoryTag(type: String)
 
-    fun getTagList(): StateFlow<List<String>>
+    fun getTagList(): StateFlow<List<SubCategoryItem>>
 
     fun addUserTransaction()
 }
@@ -75,7 +76,7 @@ class ExpenseTrackerWidgetVMImpl @Inject constructor(
         this.categoryTag = type
     }
 
-    override fun getTagList(): StateFlow<List<String>> {
+    override fun getTagList(): StateFlow<List<SubCategoryItem>> {
         if (sharedPrefManager.isNewUser()) {
             viewModelScope.launch(Dispatchers.IO) {
                 subCategoryManager.addStoredSubCategoriesToDB()

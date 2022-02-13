@@ -21,9 +21,6 @@ interface TransactionDao {
     @Query("SELECT * FROM dbtransaction")
     fun getAllUserTransactionsList(): List<DBTransaction>
 
-    @Query("SELECT distinct(subCategoryId) FROM dbtransaction")
-    fun getAllUserCategoriesIdList(): List<Int>
-
     @Query("SELECT * FROM dbtransaction where isStoredOnSheet = 0")
     suspend fun getUnSyncedUserTransaction(): List<DBTransaction>
 
@@ -37,7 +34,7 @@ interface TransactionDao {
     fun getTotalIncome(): Flow<Int>
 
     @Query("SELECT SUM(amount) from dbtransaction WHERE subCategoryId = :categoryId")
-    suspend fun getTotalSpentAmountForCategoryTag(categoryId: Int): Int
+    suspend fun getTotalSpentAmountForCategoryTag(categoryId: Int): Int?
 
     @Query("SELECT * FROM dbtransaction WHERE subCategoryId = :categoryId")
     fun getUserTransactionsForCategoryTag(categoryId: Int): Flow<List<DBTransaction>>

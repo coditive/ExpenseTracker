@@ -2,16 +2,38 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="24dp"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="60dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/category_item_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/light_pink">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/category_icon_image_view"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:src="@color/gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/icon_animation"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:lottie_loop="true"
+            app:layout_constraintStart_toStartOf="@id/category_icon_image_view"
+            app:layout_constraintBottom_toBottomOf="@id/category_icon_image_view"
+            app:layout_constraintEnd_toEndOf="@id/category_icon_image_view"
+            app:layout_constraintTop_toTopOf="@id/category_icon_image_view"/>
+
 
         <TextView
             android:id="@+id/category_item_name"
@@ -20,27 +42,13 @@
             android:layout_height='wrap_content'
             android:layout_margin="16dp"
             android:text="Food"
+            android:alpha="0.5"
             android:textColor="?attr/colorOnSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/category_item_amount"
-            style="?attr/textAppearanceHeadline5"
-            android:layout_width="wrap_content"
-            android:layout_height='wrap_content'
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="16dp"
-            android:text="₹12,560.0"
-            android:textColor="?attr/colorOnSurface"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/category_item_name" />
+            app:layout_constraintStart_toEndOf="@id/category_icon_image_view"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -47,8 +47,9 @@ class RoomModule {
         @Provides
         fun provideCategoryTagManager(
             @ApplicationContext context: Context,
-            subCategoriesDao: SubCategoriesDao
-        ): SubCategoryManager = SubCategoryManagerImpl(context, subCategoriesDao)
+            subCategoriesDao: SubCategoriesDao,
+            transactionDao: TransactionDao
+        ): SubCategoryManager = SubCategoryManagerImpl(context, subCategoriesDao, transactionDao)
 
         @Provides
         fun provideTransactionManager(
