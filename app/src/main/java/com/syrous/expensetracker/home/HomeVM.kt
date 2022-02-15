@@ -28,13 +28,17 @@ interface ReleaseVM {
 
     val pieChartItemsList: StateFlow<List<SubCategoryItem>>
 
+    val totalIncome: StateFlow<Int>
+
     fun pieValueSelected(categoryTag: String)
+
+    fun categorySwitched(category: Category)
 
     fun nothingSelected()
 }
 
 @HiltViewModel
-class ReleaseVMImpl @Inject constructor(
+class HomeVMImpl @Inject constructor(
     private val transactionManager: TransactionManager,
     private val subCategoryManager: SubCategoryManager,
     private val sharedPrefManager: SharedPrefManager,
@@ -45,35 +49,40 @@ class ReleaseVMImpl @Inject constructor(
     private val subCategoryType = MutableStateFlow(Category.EXPENSE)
 
     override val transactionsList: StateFlow<List<TransactionHeaderItem>>
-        get() = transactionManager.getAllTransactionsFromStorage()
-            .combine(categoryTagFlow) { userTransactionList, categoryTag ->
-                if (categoryTag.isEmpty()) userTransactionList
-                else userTransactionList.filter { transaction ->
-                    transaction.categoryTag == categoryTag
-                }
-            }.map { userTransactionList ->
-                val transactionHeaderItemList = mutableListOf<TransactionHeaderItem>()
-                userTransactionList.forEachIndexed { index, transaction ->
-                    when {
-                        index == 0 -> {
-                            transactionHeaderItemList.add(transaction.toTransactionHeader())
-                            transactionHeaderItemList.add(transaction.toTransactionItem())
-                        }
-                        dateFormatter.format(userTransactionList[index - 1].date) != dateFormatter.format(
-                            userTransactionList[index].date
-                        ) -> {
-                            transactionHeaderItemList.add(transaction.toTransactionHeader())
-                            transactionHeaderItemList.add(transaction.toTransactionItem())
-                        }
-                        else -> transactionHeaderItemList.add(transaction.toTransactionItem())
+        get() = combine(
+            transactionManager.getAllTransactionsFromStorage(),
+            categoryTagFlow, subCategoryType
+        ) { userTransactionList, categoryTag, subCategoryType ->
+            if (categoryTag.isEmpty()) userTransactionList.filter { transaction ->
+                transaction.category == subCategoryType
+            }
+            else userTransactionList.filter { transaction ->
+                transaction.categoryTag == categoryTag && transaction.category == subCategoryType
+            }
+        }.map { userTransactionList ->
+            val transactionHeaderItemList = mutableListOf<TransactionHeaderItem>()
+            userTransactionList.forEachIndexed { index, transaction ->
+                when {
+                    index == 0 -> {
+                        transactionHeaderItemList.add(transaction.toTransactionHeader())
+                        transactionHeaderItemList.add(transaction.toTransactionItem())
                     }
+                    dateFormatter.format(userTransactionList[index - 1].date) != dateFormatter.format(
+                        userTransactionList[index].date
+                    ) -> {
+                        transactionHeaderItemList.add(transaction.toTransactionHeader())
+                        transactionHeaderItemList.add(transaction.toTransactionItem())
+                    }
+                    else -> transactionHeaderItemList.add(transaction.toTransactionItem())
                 }
-                transactionHeaderItemList
-            }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+            }
+            transactionHeaderItemList
+        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     override val totalExpense: StateFlow<Int>
         get() = transactionManager.getTotalExpenseAmount()
             .stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
 
     override val pieChartItemsList: StateFlow<List<SubCategoryItem>>
         get() = combine(
@@ -87,10 +96,17 @@ class ReleaseVMImpl @Inject constructor(
                 incomeSubCategory
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    override val totalIncome: StateFlow<Int>
+        get() = transactionManager.getTotalIncomeAmount()
+            .stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
 
     override fun pieValueSelected(categoryTag: String) {
-        Log.d("categoryFlow", categoryTag)
         categoryTagFlow.value = categoryTag
+    }
+
+    override fun categorySwitched(category: Category) {
+        subCategoryType.value = category
     }
 
     override fun nothingSelected() {

@@ -23,7 +23,8 @@ import java.util.*
 
 class TransactionAdapter : ListAdapter<TransactionHeaderItem, TransactionViewHolder>(callback) {
 
-    private val headerFormatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
+    private val headerFormatter = SimpleDateFormat(Constants.headerFormat, Locale.getDefault())
+
     companion object {
         val dateFormatter = SimpleDateFormat(Constants.datePattern)
         val callback = object : DiffUtil.ItemCallback<TransactionHeaderItem>() {
@@ -94,8 +95,8 @@ sealed class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                 val previousDate = dateFormatter.format(calendar.timeInMillis)
                 val headerDate = dateFormatter.format(header.date)
                 dateTv.text = when {
-                    currentDate == headerDate -> "Today"
-                    previousDate == headerDate -> "Yesterday"
+                    currentDate == headerDate -> Constants.today
+                    previousDate == headerDate -> Constants.yesterday
                     else -> headerDate
                 }
             }
@@ -111,12 +112,14 @@ sealed class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
             binding.apply {
                 categoryTv.text = transaction.categoryTag
                 descriptionTv.text = transaction.description
-                if (transaction.category == Category.EXPENSE)
+                if (transaction.category == Category.EXPENSE){
                     amountTv.setTextColor(ContextCompat.getColor(context, R.color.red))
-                else
+                    amountTv.text = "- ${Constants.rupeeSign} ${transaction.amount}"
+                } else {
                     amountTv.setTextColor(ContextCompat.getColor(context, R.color.green))
+                    amountTv.text = "+ ${Constants.rupeeSign} ${transaction.amount}"
+                }
 
-                amountTv.text = "${Constants.rupeeSign} ${transaction.amount}"
                 val iconResId = when (transaction.categoryTag) {
                     "Food" -> R.raw.food
                     "MF" -> R.raw.rupee_coin

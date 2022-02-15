@@ -33,9 +33,6 @@ interface TransactionDao {
     @Query("SELECT SUM(amount) from dbtransaction WHERE category = 'INCOME'")
     fun getTotalIncome(): Flow<Int>
 
-    @Query("SELECT SUM(amount) from dbtransaction WHERE subCategoryId = :categoryId")
-    suspend fun getTotalSpentAmountForCategoryTag(categoryId: Int): Int?
-
     @Query("SELECT * FROM dbtransaction WHERE subCategoryId = :categoryId")
     fun getUserTransactionsForCategoryTag(categoryId: Int): Flow<List<DBTransaction>>
 }

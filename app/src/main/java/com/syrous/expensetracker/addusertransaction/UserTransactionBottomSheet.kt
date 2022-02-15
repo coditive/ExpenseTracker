@@ -1,10 +1,12 @@
 package com.syrous.expensetracker.addusertransaction
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -14,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -30,7 +33,8 @@ import java.util.*
 
 
 @AndroidEntryPoint
-class UserTransactionBottomSheet : BottomSheetDialogFragment(), AddTransactionBottomSheetCallback, SubCategoryListProvider {
+class UserTransactionBottomSheet : BottomSheetDialogFragment(), AddTransactionBottomSheetCallback,
+    SubCategoryListProvider {
 
     private lateinit var binding: LayoutAddUserTransactionBinding
 
@@ -50,10 +54,10 @@ class UserTransactionBottomSheet : BottomSheetDialogFragment(), AddTransactionBo
         WindowCompat.setDecorFitsSystemWindows(dialog?.window!!, false)
         binding = LayoutAddUserTransactionBinding.inflate(inflater, container, false)
         val category = arguments?.getString("Category")
-        transactionCategory = if(category == "Income") {
+        transactionCategory = if (category == "Income") {
             viewModel.setTransactionCategory(Category.INCOME)
             Category.INCOME
-        } else{
+        } else {
             viewModel.setTransactionCategory(Category.EXPENSE)
             Category.EXPENSE
         }
@@ -73,6 +77,7 @@ class UserTransactionBottomSheet : BottomSheetDialogFragment(), AddTransactionBo
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -89,6 +94,13 @@ class UserTransactionBottomSheet : BottomSheetDialogFragment(), AddTransactionBo
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
 
+        binding.addUserTransactionRecyclerView.setOnTouchListener { _, _ ->
+            true
+        }
+
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.addUserTransactionRecyclerView)
+
         viewModel.getTagList().asLiveData().observe(viewLifecycleOwner) {
             subCategoryItemList = it
         }
@@ -103,14 +115,11 @@ class UserTransactionBottomSheet : BottomSheetDialogFragment(), AddTransactionBo
     override fun descriptionSaveButtonClicked(description: String) {
         viewModel.setDescription(description)
         viewModel.addUserTransaction()
-        lifecycleScope.launchWhenCreated {
-            delay(1000)
-            dialog?.dismiss()
-        }
+        dialog?.dismiss()
         (requireActivity() as HomeActivity).displaySuccessSnackbar("Expense")
     }
 
-    override fun calendarIconClicked() {
+    override fun calendarIconClicked(callback: CalendarDismissCallback) {
         val picker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select date")
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
@@ -119,15 +128,17 @@ class UserTransactionBottomSheet : BottomSheetDialogFragment(), AddTransactionBo
         picker.show(childFragmentManager, "date-picker")
         picker.addOnPositiveButtonClickListener {
             viewModel.setDate(Date(it))
+            callback.dateSelected()
+        }
+        picker.addOnDismissListener {
+            callback.dialogDismissed()
         }
     }
 
     override fun subCategoryClicked(subCategory: SubCategoryItem) {
         viewModel.setSubCategoryTag(subCategory)
-        lifecycleScope.launchWhenCreated {
-            delay(300)
-            binding.addUserTransactionRecyclerView.smoothScrollToPosition(2)
-        }
+        binding.addUserTransactionRecyclerView.smoothScrollToPosition(2)
+
     }
 
     override fun getSubCategoryList(): List<SubCategoryItem> = subCategoryItemList

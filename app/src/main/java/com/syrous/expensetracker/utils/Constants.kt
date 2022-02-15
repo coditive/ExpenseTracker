@@ -71,4 +71,24 @@ object Constants {
     const val spreadsheetFileDescription = "All in one sheet for expenses"
 
     const val rupeeSign = "₹"
+
+    const val category = "Category"
+
+    const val expense = "Expense"
+
+    const val income = "Income"
+
+    const val amount = "Amount"
+
+    const val description = "Description"
+
+    const val today = "Today"
+
+    const val yesterday = "Yesterday"
+
+    const val headerFormat = "dd MMMM"
+
+    const val selectDate = "Select date"
+
+    const val datePicker = "date-picker"
 }

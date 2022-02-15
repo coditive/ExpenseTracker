@@ -1,13 +1,10 @@
 package com.syrous.expensetracker.widget
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.syrous.expensetracker.R
 import dagger.hilt.android.AndroidEntryPoint
 
 

@@ -1,5 +1,6 @@
 package com.syrous.expensetracker.home
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.animation.AnimationUtils
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkManager
@@ -17,6 +19,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
@@ -26,10 +29,13 @@ import com.syrous.expensetracker.R
 import com.syrous.expensetracker.model.SubCategoryItem
 import com.syrous.expensetracker.addusertransaction.UserTransactionBottomSheet
 import com.syrous.expensetracker.databinding.LayoutHomeActivityBinding
+import com.syrous.expensetracker.model.Category
+import com.syrous.expensetracker.screen.SignInActivity
 import com.syrous.expensetracker.service.enqueueSpreadSheetSyncWork
 import com.syrous.expensetracker.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -37,7 +43,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
     private lateinit var binding: LayoutHomeActivityBinding
 
-    private val viewModel: ReleaseVMImpl by viewModels()
+    private val viewModel: HomeVMImpl by viewModels()
 
     private val transactionAdapter = TransactionAdapter()
 
@@ -45,6 +51,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var workManager: WorkManager
 
     private lateinit var pieDataSet: PieDataSet
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = LayoutHomeActivityBinding.inflate(layoutInflater)
@@ -60,11 +67,28 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
                 hideAllViews()
                 binding.homeScreenAnim.visibility = View.VISIBLE
                 binding.homeScreenAnim.playAnimation()
-            }
-            else {
+            } else {
                 binding.totalExpenseAmountTv.text = "₹ $totalExpense"
                 showAllViews()
                 binding.homeScreenAnim.visibility = View.GONE
+            }
+        }
+
+        viewModel.totalIncome.asLiveData().observe(this) { totalIncome ->
+            if (totalIncome == null) {
+                binding.totalIncomeAmountTv.text = "₹ 0"
+                binding.apply {
+                    totalIncomeAmountTv.visibility = View.GONE
+                    totalIncomeHeadTv.visibility = View.GONE
+                    categorySwitcher.visibility = View.GONE
+                }
+            } else {
+                binding.totalIncomeAmountTv.text = "₹ $totalIncome"
+                binding.apply {
+                    totalIncomeAmountTv.visibility = View.VISIBLE
+                    totalIncomeHeadTv.visibility = View.VISIBLE
+                    categorySwitcher.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -90,6 +114,13 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
         }
 
         setupSpeedDialFab()
+
+        binding.categorySwitcher.setOnCheckedChangeListener { isChecked ->
+            if (isChecked)
+                viewModel.categorySwitched(Category.INCOME)
+            else
+                viewModel.categorySwitched(Category.EXPENSE)
+        }
 
         binding.categoryPieChart.apply {
 
@@ -124,7 +155,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
             l.xEntrySpace = 7f
             l.yEntrySpace = 0f
             l.yOffset = 0f
-
+            setEntryLabelTypeface(ResourcesCompat.getFont(context, R.font.poppins_semibold))
             setDrawEntryLabels(false)
         }
 
@@ -136,7 +167,11 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     private fun setupPieChartData(categoryItemList: List<SubCategoryItem>) {
-        val totalExpense = binding.totalExpenseAmountTv.text.split(" ")[1].toInt()
+        var totalExpense = 0
+        categoryItemList.forEach {
+            totalExpense += it.amountSpent
+        }
+
         val pieDataEntry = mutableListOf<PieEntry>()
 
         for (item in categoryItemList)
@@ -157,6 +192,11 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
         data.setValueFormatter(PercentFormatter())
         data.setValueTextSize(11f)
         data.setValueTextColor(Color.WHITE)
+        data.setValueFormatter(object : ValueFormatter() {
+            override fun getPieLabel(value: Float, pieEntry: PieEntry?): String =
+                if (value == 0f) ""
+                else value.roundToInt().toString() + "%"
+        })
 
         binding.categoryPieChart.data = data
         binding.categoryPieChart.invalidate()
@@ -196,8 +236,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
                             this@HomeActivity,
                             R.color.dark_blue
                         )
-                    )
-                    .create()
+                    ).create()
             )
             addActionItem(
                 SpeedDialActionItem.Builder(R.id.income_fab, R.drawable.ic_income)
@@ -240,7 +279,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
                     R.id.expense_fab -> {
                         val userTransactionDialog = UserTransactionBottomSheet()
                         val bundle = Bundle()
-                        bundle.putString("Category", "Expense")
+                        bundle.putString(Constants.category, Constants.expense)
                         userTransactionDialog.arguments = bundle
                         userTransactionDialog.show(supportFragmentManager, "UserTransaction")
                         close()
@@ -249,15 +288,20 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
                     R.id.income_fab -> {
                         val userTransactionDialog = UserTransactionBottomSheet()
                         val bundle = Bundle()
-                        bundle.putString("Category", "Income")
+                        bundle.putString(Constants.category, Constants.income)
                         userTransactionDialog.arguments = bundle
                         userTransactionDialog.show(supportFragmentManager, "UserTransaction")
                         close()
                         true
                     }
-                    else -> {
+                    R.id.export_fab -> {
+                        startActivity(Intent(this@HomeActivity, SignInActivity::class.java))
                         close()
                         false
+                    }
+                    else -> {
+                        close()
+                        true
                     }
                 }
             }

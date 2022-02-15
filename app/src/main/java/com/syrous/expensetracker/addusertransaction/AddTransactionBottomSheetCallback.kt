@@ -9,7 +9,7 @@ interface AddTransactionBottomSheetCallback {
 
     fun descriptionSaveButtonClicked(description: String)
 
-    fun calendarIconClicked()
+    fun calendarIconClicked(callback: CalendarDismissCallback)
 
     fun subCategoryClicked(subCategory: SubCategoryItem)
 }

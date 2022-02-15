@@ -1,37 +1,22 @@
 package com.syrous.expensetracker.addusertransaction
 
-import android.animation.Animator
 import android.content.Context
-import android.os.Handler
 import android.text.Selection
-import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
-import androidx.core.text.isDigitsOnly
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.chip.Chip
-import com.google.android.material.datepicker.DateSelector
-import com.google.android.material.datepicker.MaterialCalendar
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.datepicker.MaterialStyledDatePickerDialog
 import com.syrous.expensetracker.R
 import com.syrous.expensetracker.addusertransaction.UserTransactionVH.*
 import com.syrous.expensetracker.databinding.*
 import com.syrous.expensetracker.model.Category
-import com.syrous.expensetracker.model.SubCategoryItem
 import com.syrous.expensetracker.utils.Constants
-import kotlinx.coroutines.delay
 
 class UserTransactionAdapter(
     private val clickCallback: AddTransactionBottomSheetCallback,
@@ -52,7 +37,7 @@ class UserTransactionAdapter(
             }
             2 -> {
                 val binding = LayoutAddDescriptionBinding.inflate(layoutInflater, parent, false)
-                AddDescription(binding)
+                AddDescription(binding, parent.context)
             }
             else -> throw RuntimeException()
         }
@@ -90,20 +75,16 @@ sealed class UserTransactionVH(itemView: View) : RecyclerView.ViewHolder(itemVie
 
         fun bind(clickCallback: AddTransactionBottomSheetCallback, transactionCategory: Category) {
             binding.nextButton.setOnClickListener {
-                val amount = binding.amountEt.text.toString().split(" ")
-                if (amount.size >= 2 && amount[1].isNotEmpty() && amount[1].isDigitsOnly())
-                    clickCallback.amountNextButtonClicked(amount = amount[1].toInt())
-                else {
-                    binding.apply {
-                        amountEt.error = "Please Enter Numeric Value"
-                        amountEt.setText(Constants.rupeeSign + " ")
-                        Selection.setSelection(amountEt.text, amountEt.text?.length!!)
-                    }
-                }
                 binding.amountEt.clearFocus()
+                val amountString = binding.amountEt.text.toString().split(Constants.rupeeSign)[1]
+                val amountValue = if(amountString.startsWith(" ")) {
+                    amountString.trimStart().toInt()
+                } else amountString.toInt()
+                clickCallback.amountNextButtonClicked(amountValue)
             }
 
             binding.apply {
+                amountEt.requestFocus()
                 amountEt.setText(Constants.rupeeSign + " ")
                 Selection.setSelection(amountEt.text, amountEt.text?.length!!)
                 amountEt.addTextChangedListener { text ->
@@ -113,39 +94,43 @@ sealed class UserTransactionVH(itemView: View) : RecyclerView.ViewHolder(itemVie
                     }
                 }
 
+                amountEt.setOnEditorActionListener { _, actionId, _ ->
+                    if(actionId == EditorInfo.IME_ACTION_DONE) {
+                        binding.amountEt.clearFocus()
+                        val amountString = binding.amountEt.text.toString().split(Constants.rupeeSign)[1]
+                        val amountValue = if(amountString.startsWith(" ")) {
+                            amountString.trimStart().toInt()
+                        } else amountString.toInt()
+                        clickCallback.amountNextButtonClicked(amountValue)
+                        true
+                    } else false
+                }
+
                 if (transactionCategory == Category.INCOME)
                     binding.spentHeader.text = "How much did you \nearned?"
             }
         }
     }
 
-    class AddDescription(private val binding: LayoutAddDescriptionBinding) :
+    class AddDescription(private val binding: LayoutAddDescriptionBinding, private val context: Context) :
         UserTransactionVH(binding.root) {
 
         fun bind(clickCallback: AddTransactionBottomSheetCallback) {
             binding.apply {
+                
                 calendarIconButton.setOnClickListener {
-                    calendarIconButton.playAnimation()
+                    descriptionEt.clearFocus()
+                    clickCallback.calendarIconClicked(object: CalendarDismissCallback {
+                        override fun dialogDismissed() {
+                            calendarIconButton.playAnimation()
+                        }
+
+                        override fun dateSelected() {
+                            calendarIconButton.setAnimation(R.raw.calendar_blue)
+                        }
+
+                    })
                 }
-
-                calendarIconButton.addAnimatorListener(object: Animator.AnimatorListener{
-                    override fun onAnimationStart(animation: Animator?) {
-
-                    }
-
-                    override fun onAnimationEnd(animation: Animator?) {
-                        clickCallback.calendarIconClicked()
-                    }
-
-                    override fun onAnimationCancel(animation: Animator?) {
-
-                    }
-
-                    override fun onAnimationRepeat(animation: Animator?) {
-
-                    }
-
-                })
 
                 saveButton.setOnClickListener {
                     if(binding.descriptionEt.text.toString().isEmpty())
