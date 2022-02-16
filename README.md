@@ -21,3 +21,6 @@ and then add the following 2 lines to gradle.properties file (create one if it d
 
 where `xxxxxxxxxxxxxx` is the google_api_key, web_client_id & android_client_secret that you will get from Google Api Console.
 
+# App Preview
+
+<img width=300 height=600 src="https://i.imgur.com/yOucDDl.png"/>
