@@ -28,7 +28,7 @@ and then add the following 2 lines to gradle.properties file (create one if it d
  you will get them from Google Api Console.
 
 
-#Feature List 
+# Feature List 
 
 - Manage Expenses and Income.
 - Import Quick Expense using Widget.
