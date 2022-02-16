@@ -1,3 +1,9 @@
+
+# App Preview
+
+<img width=300 height=600 src="https://i.imgur.com/yOucDDl.png"/>
+
+
 Expense Input         |Income Input
 :----------------------------------:|:----------------------------------:
 <img width=300 height=600 src="https://media3.giphy.com/media/hxbN1u73aVHINK9zRq/giphy.gif"/> | <img width=300 height=600 src="https://media3.giphy.com/media/9VnRSBLTAj4H4fexMH/giphy.gif"/>
@@ -15,12 +21,15 @@ Now on your development machine goto
 
 and then add the following 2 lines to gradle.properties file (create one if it doesn’t exist).
 
-`GOOGLE_API_KEY = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"`
-`WEB_CLIENT_ID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"`
-`ANDROID_CLIENT_SECRET = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"`
+`GOOGLE_API_KEY = "xxxxxxxxxxxxxx"`
+`WEB_CLIENT_ID = "xxxxxxxxxxxxxx"`
+`ANDROID_CLIENT_SECRET = "xxxxxxxxxxxxxx"`
 
-where `xxxxxxxxxxxxxx` is the google_api_key, web_client_id & android_client_secret that you will get from Google Api Console.
+ you will get them from Google Api Console.
 
-# App Preview
 
-<img width=300 height=600 src="https://i.imgur.com/yOucDDl.png"/>
+#Feature List 
+
+- Manage Expenses and Income.
+- Import Quick Expense using Widget.
+- Data Syncing Capabilities with Google Drive and Google Sheets.
