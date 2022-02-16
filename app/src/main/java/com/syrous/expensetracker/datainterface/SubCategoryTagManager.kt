@@ -42,12 +42,12 @@ class SubCategoryManagerImpl(
                             }?.amount ?: 0
                         }
                         val animRes = when (subCategory.name) {
-                            "Food" -> R.raw.food
-                            "Gifts" -> R.raw.gift
-                            "Medical/Health" -> R.raw.medical_syringe
-                            "Home" -> R.raw.home_icon_loading
-                            "Personal" -> R.raw.profile
-                            "MF" -> R.raw.rupee_coin
+                            "Food" -> R.drawable.food
+                            "Gifts" -> R.drawable.gift
+                            "Medical/Health" -> R.drawable.healthcare
+                            "Home" -> R.drawable.home
+                            "Personal" -> R.drawable.personal
+                            "MF" -> R.drawable.fund
                             else -> null
                         }
                         nameList.add(subCategory.toSubCategoryItem(amount, animRes))
@@ -69,11 +69,11 @@ class SubCategoryManagerImpl(
                             }?.amount ?: 0
                         }
                         val animRes = when (subCategory.name) {
-                            "Savings" -> null
-                            "Paycheck" -> null
-                            "Bonus" -> null
-                            "Interest" -> null
-                            "Other" -> null
+                            "Savings" -> R.drawable.savings
+                            "Paycheck" -> R.drawable.paycheque
+                            "Bonus" -> R.drawable.bonus
+                            "Interest" -> R.drawable.interest
+                            "Other" -> R.drawable.other
                             else -> null
                         }
                         nameList.add(subCategory.toSubCategoryItem(amount, animRes))

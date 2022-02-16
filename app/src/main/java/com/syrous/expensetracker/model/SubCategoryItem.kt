@@ -7,5 +7,5 @@ data class SubCategoryItem(
     val itemId: Int,
     val itemName: String,
     val amountSpent: Int = 0,
-   @RawRes val animRes: Int? = null
+   @DrawableRes val animRes: Int? = null
 )

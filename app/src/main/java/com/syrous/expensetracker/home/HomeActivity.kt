@@ -1,11 +1,17 @@
 package com.syrous.expensetracker.home
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.icu.text.DecimalFormat
+import android.icu.text.NumberFormat
+import android.icu.util.Currency
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -33,8 +39,11 @@ import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.screen.SignInActivity
 import com.syrous.expensetracker.service.enqueueSpreadSheetSyncWork
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.getFormattedString
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 
@@ -58,6 +67,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
         setContentView(binding.root)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
 
@@ -68,7 +78,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
                 binding.homeScreenAnim.visibility = View.VISIBLE
                 binding.homeScreenAnim.playAnimation()
             } else {
-                binding.totalExpenseAmountTv.text = "₹ $totalExpense"
+                binding.totalExpenseAmountTv.text = "₹ ${totalExpense.toString().getFormattedString()}"
                 showAllViews()
                 binding.homeScreenAnim.visibility = View.GONE
             }
@@ -83,7 +93,7 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
                     categorySwitcher.visibility = View.GONE
                 }
             } else {
-                binding.totalIncomeAmountTv.text = "₹ $totalIncome"
+                binding.totalIncomeAmountTv.text = "₹ ${totalIncome.toString().getFormattedString()}"
                 binding.apply {
                     totalIncomeAmountTv.visibility = View.VISIBLE
                     totalIncomeHeadTv.visibility = View.VISIBLE

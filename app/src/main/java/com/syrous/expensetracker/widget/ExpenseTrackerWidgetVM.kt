@@ -17,9 +17,6 @@ import javax.inject.Inject
 
 
 interface ExpenseTrackerWidgetVM {
-
-    val viewState: StateFlow<BottomSheetViewState>
-
     fun setTransactionCategory(category: Category)
 
     fun setDate(date: Date)
@@ -42,11 +39,6 @@ class ExpenseTrackerWidgetVMImpl @Inject constructor(
     private val subCategoryManager: SubCategoryManager,
     private val sharedPrefManager: SharedPrefManager
 ) : ViewModel(), ExpenseTrackerWidgetVM {
-
-    private val _viewState = MutableStateFlow<BottomSheetViewState>(Success.defaultState())
-    override val viewState: StateFlow<BottomSheetViewState>
-        get() = _viewState
-
     private val subCategoryType = MutableStateFlow(Category.EXPENSE)
 
     private var amount = 0
@@ -107,28 +99,3 @@ class ExpenseTrackerWidgetVMImpl @Inject constructor(
         }
     }
 }
-
-sealed class BottomSheetViewState
-
-
-data class Success(
-    val transactionCategory: Category,
-    val date: Date,
-    val categoryTag: String?,
-    val description: String?,
-    val amount: Int
-    ): BottomSheetViewState() {
-        companion object {
-            fun defaultState(): Success {
-                return Success(
-                    Category.EXPENSE,
-                    Date(),
-                    null,
-                    null,
-                    0
-                )
-            }
-        }
-    }
-
-data class Error(val element: String, val message: String): BottomSheetViewState()

@@ -18,6 +18,7 @@ import com.syrous.expensetracker.home.TransactionViewHolder.TransactionHeaderVie
 import com.syrous.expensetracker.home.TransactionViewHolder.TransactionItemViewHolder
 import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.getFormattedString
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -114,23 +115,28 @@ sealed class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
                 descriptionTv.text = transaction.description
                 if (transaction.category == Category.EXPENSE){
                     amountTv.setTextColor(ContextCompat.getColor(context, R.color.red))
-                    amountTv.text = "- ${Constants.rupeeSign} ${transaction.amount}"
+                    amountTv.text = "- ${Constants.rupeeSign} ${transaction.amount.toString().getFormattedString()}"
                 } else {
                     amountTv.setTextColor(ContextCompat.getColor(context, R.color.green))
-                    amountTv.text = "+ ${Constants.rupeeSign} ${transaction.amount}"
+                    amountTv.text = "+ ${Constants.rupeeSign} ${transaction.amount.toString().getFormattedString()}"
                 }
 
                 val iconResId = when (transaction.categoryTag) {
-                    "Food" -> R.raw.food
-                    "MF" -> R.raw.rupee_coin
-                    "Medical/Health" -> R.raw.medical_syringe
-                    "Gifts" -> R.raw.gift
-                    "Home" -> R.raw.home_icon_loading
-                    "Personal" -> R.raw.profile
+                    "Food" -> R.drawable.food
+                    "Gifts" -> R.drawable.gift
+                    "Medical/Health" -> R.drawable.healthcare
+                    "Home" -> R.drawable.home
+                    "Personal" -> R.drawable.personal
+                    "MF" -> R.drawable.fund
+                    "Savings" -> R.drawable.savings
+                    "Paycheck" -> R.drawable.paycheque
+                    "Bonus" -> R.drawable.bonus
+                    "Interest" -> R.drawable.interest
+                    "Other" -> R.drawable.other
                     else -> null
                 }
                 if (iconResId != null)
-                    iconAnimation.setAnimation(iconResId)
+                    iconAnimation.setImageResource(iconResId)
             }
         }
     }

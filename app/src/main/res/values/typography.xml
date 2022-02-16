@@ -35,12 +35,12 @@
     <style name="TextAppearance.ExpenseTracker.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="fontFamily">@font/space_grotesk_semibold</item>
         <item name="android:letterSpacing">0.05</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="TextAppearance.ExpenseTracker.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
         <item name="fontFamily">@font/poppins_medium</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">.05</item>
         <item name="android:lineSpacingExtra">2dp</item>
     </style>

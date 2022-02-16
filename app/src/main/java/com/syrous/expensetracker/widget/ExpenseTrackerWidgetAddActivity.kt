@@ -16,18 +16,11 @@ class ExpenseTrackerWidgetAddActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         hideSystemUI()
         val inputDialog = ExpenseBottomSheet()
-        Log.d("ExpenseTrackerWidget", "Activity was launched!!!")
         inputDialog.show(supportFragmentManager, "ExpenseBottomSheetInput")
-
     }
 
     private fun hideSystemUI() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-            controller.hide(WindowInsetsCompat.Type.statusBars())
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
     }
 
 }

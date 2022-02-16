@@ -91,4 +91,6 @@ object Constants {
     const val selectDate = "Select date"
 
     const val datePicker = "date-picker"
+
+    const val blankSpace = " "
 }
