@@ -32,7 +32,8 @@
         <entry key="app/src/main/res/layout/layout_expense_tracker_loading_appwidget.xml" value="0.3572916666666667" />
         <entry key="app/src/main/res/layout/layout_expense_tracker_widget.xml" value="0.18177083333333333" />
         <entry key="app/src/main/res/layout/layout_expense_widget_input.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/layout_home_activity.xml" value="0.3546875" />
+        <entry key="app/src/main/res/layout/layout_home_activity.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/layout_home_transaction.xml" value="0.3546875" />
         <entry key="app/src/main/res/layout/layout_release_main_activity.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_splash_screen.xml" value="0.37083333333333335" />
         <entry key="app/src/main/res/layout/layout_transaction_header_view_holder.xml" value="0.33" />

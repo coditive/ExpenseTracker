@@ -109,7 +109,6 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
         binding.transactionList.apply {
             adapter = transactionAdapter
-            setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this.context)
         }
 
