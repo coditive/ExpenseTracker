@@ -1,24 +1,19 @@
 package com.syrous.expensetracker.usecase
 
-import android.util.Log
-import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.DriveApi
 import com.syrous.expensetracker.data.remote.model.BasicFileMetaData
 import com.syrous.expensetracker.data.remote.model.CreateFolderRequest
-import com.syrous.expensetracker.data.remote.model.SearchFileQueryResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Named
 
 
 class SearchOrCreateAppFolderUseCase @Inject constructor(
-    private val apiRequest: DriveApiRequest,
+    private val provider: GoogleApisClientProvider,
     private val sharedPrefManager: SharedPrefManager,
     @Named("apiKey") private val apiKey: String
 ) {
@@ -26,8 +21,7 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
     suspend fun execute(): UseCaseResult<BasicFileMetaData> {
         val query = "mimeType = '${Constants.folderMimeType}' and name = '${Constants.appName}'"
 
-        val result = apiRequest.searchFile(
-            sharedPrefManager.getUserToken(),
+        val result = provider.driveApiClient().searchFile(
             apiKey,
             Constants.corpora,
             query
@@ -35,8 +29,7 @@ class SearchOrCreateAppFolderUseCase @Inject constructor(
         return if (result.isSuccessful) {
             if (result.body() != null) {
                 if (result.body()!!.files.isEmpty()) {
-                    val folder = apiRequest.createFolder(
-                        sharedPrefManager.getUserToken(),
+                    val folder = provider.driveApiClient().createFolder(
                         apiKey,
                         CreateFolderRequest(
                             Constants.appName,

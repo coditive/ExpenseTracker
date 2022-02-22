@@ -1,6 +1,6 @@
 package com.syrous.expensetracker.usecase
 
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.*
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
@@ -10,7 +10,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
@@ -21,14 +20,14 @@ class GetAndUpdateSheetsUseCaseTest {
 
     private lateinit var useCase: GetAndUpdateSheetsUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApiRequest: SheetApiRequest = mockk()
+    private val sheetApi: SheetApi = mockk()
     private val authToken = ""
     private val spreadSheetId = ""
     private val apiKey = ""
 
     @Before
     fun setUp() {
-        useCase = GetAndUpdateSheetsUseCase(sharedPrefManager, sheetApiRequest, apiKey)
+        useCase = GetAndUpdateSheetsUseCase(sharedPrefManager, sheetApi, apiKey)
     }
 
     @Test
@@ -36,7 +35,7 @@ class GetAndUpdateSheetsUseCaseTest {
         coEvery { sharedPrefManager.getUserToken() } returns authToken
         coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApiRequest.getSpreadSheetData(
+            sheetApi.getSpreadSheetData(
                 authToken,
                 spreadSheetId,
                 apiKey
@@ -55,7 +54,7 @@ class GetAndUpdateSheetsUseCaseTest {
             coEvery { sharedPrefManager.getUserToken() } returns authToken
             coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApiRequest.getSpreadSheetData(
+                sheetApi.getSpreadSheetData(
                     authToken,
                     spreadSheetId,
                     apiKey
@@ -74,7 +73,7 @@ class GetAndUpdateSheetsUseCaseTest {
             coEvery { sharedPrefManager.getUserToken() } returns authToken
             coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApiRequest.getSpreadSheetData(
+                sheetApi.getSpreadSheetData(
                     authToken,
                     spreadSheetId,
                     apiKey
@@ -91,7 +90,7 @@ class GetAndUpdateSheetsUseCaseTest {
             coEvery { sharedPrefManager.getUserToken() } returns authToken
             coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApiRequest.getSpreadSheetData(
+                sheetApi.getSpreadSheetData(
                     any(),
                     any(),
                     any()
@@ -105,7 +104,7 @@ class GetAndUpdateSheetsUseCaseTest {
             every { sharedPrefManager.storeSummarySheetId(any()) } returns Unit
             every { sharedPrefManager.storeCategoriesSheetId(any()) } returns Unit
             coEvery {
-                sheetApiRequest.updateSpreadSheetToFormat(
+                sheetApi.updateSpreadSheetToFormat(
                     authToken, spreadSheetId, apiKey, any()
                 )
             } returns Response.error(404, "".toResponseBody())
@@ -121,7 +120,7 @@ class GetAndUpdateSheetsUseCaseTest {
         coEvery { sharedPrefManager.getUserToken() } returns authToken
         coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApiRequest.getSpreadSheetData(
+            sheetApi.getSpreadSheetData(
                 any(),
                 any(),
                 any()
@@ -135,7 +134,7 @@ class GetAndUpdateSheetsUseCaseTest {
         every { sharedPrefManager.storeSummarySheetId(any()) } returns Unit
         every { sharedPrefManager.storeCategoriesSheetId(any()) } returns Unit
         coEvery {
-            sheetApiRequest.updateSpreadSheetToFormat(
+            sheetApi.updateSpreadSheetToFormat(
                 authToken, spreadSheetId, apiKey, any()
             )
         } returns Response.success(SpreadSheetBatchUpdateResponse("", emptyList()))

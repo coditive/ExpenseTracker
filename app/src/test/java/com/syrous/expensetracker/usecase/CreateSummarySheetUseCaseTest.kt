@@ -2,7 +2,7 @@ package com.syrous.expensetracker.usecase
 
 import android.content.Context
 import com.syrous.expensetracker.R
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.SpreadsheetAppendResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
@@ -14,7 +14,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.*
 
 import org.junit.Before
 import org.junit.Test
@@ -24,7 +23,7 @@ class CreateSummarySheetUseCaseTest {
 
     private lateinit var useCase: CreateSummarySheetUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApiRequest: SheetApiRequest = mockk()
+    private val sheetApi: SheetApi = mockk()
     private val apiKey = ""
     private val context: Context = mockk(relaxed = true)
     private val authToken = ""
@@ -34,7 +33,7 @@ class CreateSummarySheetUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = CreateSummarySheetUseCase(sharedPrefManager, sheetApiRequest, apiKey)
+        useCase = CreateSummarySheetUseCase(sharedPrefManager, sheetApi, apiKey)
     }
 
     @Test
@@ -55,7 +54,7 @@ class CreateSummarySheetUseCaseTest {
             every { sharedPrefManager.getUserToken() } returns authToken
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApiRequest.appendValueIntoSheet(
+                sheetApi.appendValueIntoSheet(
                     authToken,
                     spreadSheetId,
                     summaryAColumnRange,
@@ -81,7 +80,7 @@ class CreateSummarySheetUseCaseTest {
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             val range = slot<String>()
             coEvery {
-                sheetApiRequest.appendValueIntoSheet(
+                sheetApi.appendValueIntoSheet(
                     authToken,
                     spreadSheetId,
                     capture(range),
@@ -117,7 +116,7 @@ class CreateSummarySheetUseCaseTest {
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             val range = slot<String>()
             coEvery {
-                sheetApiRequest.appendValueIntoSheet(
+                sheetApi.appendValueIntoSheet(
                     authToken,
                     spreadSheetId,
                     capture(range),

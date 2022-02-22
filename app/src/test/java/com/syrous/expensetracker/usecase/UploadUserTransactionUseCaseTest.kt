@@ -1,7 +1,7 @@
 package com.syrous.expensetracker.usecase
 
 import android.content.Context
-import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.DriveApi
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.model.UserTransaction
@@ -12,14 +12,12 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
 import org.junit.Before
 
 import org.junit.Test
 import java.io.File
 import java.io.IOException
 import java.util.*
-import javax.inject.Named
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -27,7 +25,7 @@ class UploadUserTransactionUseCaseTest {
 
     private lateinit var useCase: UploadUserTransactionUseCase
     private val transactionManager: TransactionManager = mockk()
-    private val apiRequest: DriveApiRequest = mockk()
+    private val api: DriveApi = mockk()
     private val sharedPrefManager: SharedPrefManager = mockk()
     private val apiKey = ""
     private val context: Context = mockk()
@@ -36,7 +34,7 @@ class UploadUserTransactionUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = UploadUserTransactionUseCase(transactionManager, apiRequest, sharedPrefManager, apiKey)
+        useCase = UploadUserTransactionUseCase(transactionManager, api, sharedPrefManager, apiKey)
     }
 
     @Test

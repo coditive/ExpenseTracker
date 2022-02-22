@@ -88,4 +88,19 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
         return sharedPref.getInt(Constants.monthStartBalance, 0)
     }
 
+    fun getServerAuthToken() = sharedPref.getString(Constants.serverAuthCode, Constants.emptyString).toString()
+
+    fun storeServerAuthToken(token: String) {
+        sharedPref.edit()
+            .putString(Constants.serverAuthCode, token)
+            .apply()
+    }
+
+    fun getRefreshToken() = sharedPref.getString(Constants.refreshToken, Constants.emptyString).toString()
+
+    fun storeRefreshToken(token: String) {
+        sharedPref.edit()
+            .putString(Constants.refreshToken, token)
+            .apply()
+    }
 }

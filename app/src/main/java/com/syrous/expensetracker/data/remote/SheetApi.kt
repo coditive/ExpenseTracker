@@ -5,18 +5,16 @@ import retrofit2.Response
 import retrofit2.http.*
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
-interface SheetApiRequest {
+interface SheetApi {
 
     @GET("{spreadSheetId}")
     suspend fun getSpreadSheetData(
-        @Header("Authorization") authToken: String,
         @Path("spreadSheetId") spreadSheetId: String,
         @Query("key") apiKey: String
     ): Response<SpreadSheetResponse>
 
     @POST("{spreadSheetId}:batchUpdate")
     suspend fun updateSpreadSheetToFormat(
-        @Header("Authorization") authToken: String,
         @Path("spreadSheetId") spreadSheetId: String,
         @Query("key") apiKey: String,
         @Body spreadSheetBatchUpdateRequest: SpreadSheetBatchUpdateRequest
@@ -24,7 +22,6 @@ interface SheetApiRequest {
 
     @POST("{spreadSheetId}/values/{range}:append")
     suspend fun appendValueIntoSheet(
-        @Header("Authorization") authToken: String,
         @Path("spreadSheetId") spreadSheetId: String,
         @Path("range") range: String,
         @Query("key") apiKey: String,
@@ -37,11 +34,8 @@ interface SheetApiRequest {
 
     @POST("{spreadSheetId}/values:batchUpdate")
     suspend fun updateValueIntoSheet(
-        @Header("Authorization") authToken: String,
         @Path("spreadSheetId") spreadSheetId: String,
         @Query("key") apiKey: String,
         @Body uploadValueRequest: UpdateValueRequest
     )
-
-
 }

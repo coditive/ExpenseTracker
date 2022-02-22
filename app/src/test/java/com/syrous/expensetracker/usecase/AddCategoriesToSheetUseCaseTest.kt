@@ -2,9 +2,8 @@ package com.syrous.expensetracker.usecase
 
 import android.content.Context
 import com.syrous.expensetracker.R
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.SpreadsheetAppendResponse
-import com.syrous.expensetracker.data.remote.model.ValuesRequest
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
@@ -14,7 +13,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.*
 
 import org.junit.Before
 import org.junit.Test
@@ -24,7 +22,7 @@ class AddCategoriesToSheetUseCaseTest {
 
     private lateinit var useCase: AddCategoriesToSheetUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApiRequest: SheetApiRequest = mockk()
+    private val sheetApi: SheetApi = mockk()
     private val apiKey = ""
     private val context: Context = mockk(relaxed = true)
     private val authToken = ""
@@ -33,7 +31,7 @@ class AddCategoriesToSheetUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = AddCategoriesToSheetUseCase(sharedPrefManager, sheetApiRequest, apiKey)
+        useCase = AddCategoriesToSheetUseCase(sharedPrefManager, sheetApi, apiKey)
     }
 
     @Test
@@ -61,7 +59,7 @@ class AddCategoriesToSheetUseCaseTest {
         every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApiRequest.appendValueIntoSheet(
+            sheetApi.appendValueIntoSheet(
                 authToken,
                 spreadSheetId,
                 categoriesAColumnRange,
@@ -86,7 +84,7 @@ class AddCategoriesToSheetUseCaseTest {
         every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApiRequest.appendValueIntoSheet(
+            sheetApi.appendValueIntoSheet(
                 authToken,
                 spreadSheetId,
                 categoriesAColumnRange,

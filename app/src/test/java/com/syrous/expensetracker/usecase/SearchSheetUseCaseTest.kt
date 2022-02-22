@@ -1,6 +1,6 @@
 package com.syrous.expensetracker.usecase
 
-import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.DriveApi
 import com.syrous.expensetracker.data.remote.model.BasicFileMetaData
 import com.syrous.expensetracker.data.remote.model.SearchFileQueryResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
@@ -12,30 +12,28 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.*
 import org.junit.Before
 
 import org.junit.Test
 import retrofit2.Response
-import javax.inject.Named
 
 class SearchSheetUseCaseTest {
 
     private lateinit var useCase: SearchSheetUseCase
-    private val apiRequest: DriveApiRequest = mockk()
+    private val api: DriveApi = mockk()
     private val sharedPrefManager: SharedPrefManager = mockk()
     private val apiKey = ""
     private val authToken = ""
 
     @Before
     fun setUp() {
-        useCase = SearchSheetUseCase(apiRequest, sharedPrefManager, apiKey)
+        useCase = SearchSheetUseCase(api, sharedPrefManager, apiKey)
     }
 
     @Test
     fun `when api sends error response`() = runBlocking {
         coEvery {
-            apiRequest.searchFile(
+            api.searchFile(
                 authToken,
                 apiKey,
                 Constants.corpora,
@@ -52,7 +50,7 @@ class SearchSheetUseCaseTest {
     @Test
     fun `when api sends success response but body is empty`() = runBlocking {
         coEvery {
-            apiRequest.searchFile(
+            api.searchFile(
                 authToken,
                 apiKey,
                 Constants.corpora,
@@ -70,7 +68,7 @@ class SearchSheetUseCaseTest {
     @Test
     fun `when api sends success response with body but files is emptyList`() = runBlocking {
         coEvery {
-            apiRequest.searchFile(
+            api.searchFile(
                 authToken,
                 apiKey,
                 Constants.corpora,
@@ -95,7 +93,7 @@ class SearchSheetUseCaseTest {
     @Test
     fun `when api sends success response with body but files is not emptyList`() = runBlocking {
         coEvery {
-            apiRequest.searchFile(
+            api.searchFile(
                 authToken,
                 apiKey,
                 Constants.corpora,

@@ -1,6 +1,6 @@
 package com.syrous.expensetracker.usecase
 
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.SpreadsheetAppendResponse
 import com.syrous.expensetracker.data.remote.model.ValuesRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
@@ -17,7 +17,6 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 import kotlin.random.Random
@@ -26,7 +25,7 @@ import kotlin.random.Random
 class AppendTransactionsUseCaseTest {
     lateinit var appendUseCase: AppendTransactionsUseCase
     private val transactionManager: TransactionManager = mockk()
-    private val sheetApiRequest: SheetApiRequest = mockk(relaxed = true)
+    private val sheetApi: SheetApi = mockk(relaxed = true)
     private val sharedPrefManager: SharedPrefManager = mockk()
     private val authToken = ""
     private val spreadSheetId = ""
@@ -41,14 +40,14 @@ class AppendTransactionsUseCaseTest {
     @Before
     fun setUp() {
         appendUseCase =
-            AppendTransactionsUseCase(transactionManager, sheetApiRequest, sharedPrefManager, apiKey)
+            AppendTransactionsUseCase(transactionManager, sheetApi, sharedPrefManager, apiKey)
     }
 
     @Test
     fun `when room is empty don't call api`() = runBlocking {
         coEvery { transactionManager.getUnSyncedTransaction() } returns emptyList()
         coEvery {
-            sheetApiRequest.appendValueIntoSheet(
+            sheetApi.appendValueIntoSheet(
                 authToken,
                 spreadSheetId,
                 range,
@@ -71,7 +70,7 @@ class AppendTransactionsUseCaseTest {
         runBlocking {
             coEvery { transactionManager.getUnSyncedTransaction() } returns buildUnSyncTransaction(2)
             coEvery {
-                sheetApiRequest.appendValueIntoSheet(
+                sheetApi.appendValueIntoSheet(
                     authToken,
                     spreadSheetId,
                     range,
@@ -94,7 +93,7 @@ class AppendTransactionsUseCaseTest {
     fun `when user transaction list is given, called api then success but null body is received`() = runBlocking {
         coEvery { transactionManager.getUnSyncedTransaction() } returns buildUnSyncTransaction(2)
         coEvery {
-            sheetApiRequest.appendValueIntoSheet(
+            sheetApi.appendValueIntoSheet(
                 authToken,
                 spreadSheetId,
                 range,
@@ -121,7 +120,7 @@ class AppendTransactionsUseCaseTest {
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery { transactionManager.getUnSyncedTransaction() } returns buildUnSyncTransaction(5)
             coEvery {
-                sheetApiRequest.appendValueIntoSheet(
+                sheetApi.appendValueIntoSheet(
                     any(),
                     any(),
                     any(),

@@ -1,21 +1,21 @@
 package com.syrous.expensetracker.usecase
 
 import android.content.Context
-import android.util.Log
 import com.syrous.expensetracker.R
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.SpreadsheetAppendResponse
 import com.syrous.expensetracker.data.remote.model.ValuesRequest
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import javax.inject.Inject
 import javax.inject.Named
 
 class AddCategoriesToSheetUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
-    private val sheetApiRequest: SheetApiRequest,
+    private val provider: GoogleApisClientProvider,
     @Named("apiKey") private val apiKey: String
 ) {
 
@@ -36,8 +36,7 @@ class AddCategoriesToSheetUseCase @Inject constructor(
                 values.add(listOf(category))
             }
 
-            val categoriesResult = sheetApiRequest.appendValueIntoSheet(
-                sharedPrefManager.getUserToken(),
+            val categoriesResult = provider.sheetApiClient().appendValueIntoSheet(
                 sharedPrefManager.getSpreadSheetId(),
                 categoriesAColumnRange,
                 apiKey,

@@ -1,6 +1,6 @@
 package com.syrous.expensetracker.usecase
 
-import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.DriveApi
 import com.syrous.expensetracker.data.remote.model.BasicFileMetaData
 import com.syrous.expensetracker.data.remote.model.CreateFolderRequest
 import com.syrous.expensetracker.data.remote.model.SearchFileQueryResponse
@@ -20,21 +20,21 @@ import retrofit2.Response
 class SearchOrCreateAppFolderUseCaseTest {
 
     private lateinit var useCase: SearchOrCreateAppFolderUseCase
-    private val apiRequest: DriveApiRequest = mockk()
+    private val api: DriveApi = mockk()
     private val sharedPrefManager: SharedPrefManager = mockk()
     private val apiKey = ""
     private val authToken = ""
 
     @Before
     fun setUp() {
-        useCase = SearchOrCreateAppFolderUseCase(apiRequest, sharedPrefManager, apiKey)
+        useCase = SearchOrCreateAppFolderUseCase(api, sharedPrefManager, apiKey)
     }
 
     @Test
     fun `when initial search for folder is requested and Error is received`() = runBlocking {
         every { sharedPrefManager.getUserToken() } returns ""
         coEvery {
-            apiRequest.searchFile(authToken, apiKey, Constants.corpora, any())
+            api.searchFile(authToken, apiKey, Constants.corpora, any())
         } returns Response.error(404, "".toResponseBody())
 
         val result = useCase.execute()
@@ -46,7 +46,7 @@ class SearchOrCreateAppFolderUseCaseTest {
     fun `when initial search for folder is requested and success is received but body is null`() =
         runBlocking {
             coEvery {
-                apiRequest.searchFile(authToken, apiKey, Constants.corpora, any())
+                api.searchFile(authToken, apiKey, Constants.corpora, any())
             } returns Response.success(null)
             every { sharedPrefManager.getUserToken() } returns ""
             val result = useCase.execute()
@@ -59,7 +59,7 @@ class SearchOrCreateAppFolderUseCaseTest {
         runBlocking {
             every { sharedPrefManager.getUserToken() } returns ""
             coEvery {
-                apiRequest.searchFile(authToken, apiKey, Constants.corpora, any())
+                api.searchFile(authToken, apiKey, Constants.corpora, any())
             } returns Response.success(
                 SearchFileQueryResponse(
                     "",
@@ -80,10 +80,10 @@ class SearchOrCreateAppFolderUseCaseTest {
         runBlocking {
             every { sharedPrefManager.getUserToken() } returns ""
             coEvery {
-                apiRequest.searchFile(authToken, apiKey, Constants.corpora, any())
+                api.searchFile(authToken, apiKey, Constants.corpora, any())
             } returns Response.success(SearchFileQueryResponse("", false, emptyList()))
             coEvery {
-                apiRequest.createFolder(
+                api.createFolder(
                     authToken,
                     apiKey,
                     CreateFolderRequest(Constants.appName, Constants.folderMimeType)

@@ -1,14 +1,11 @@
 package com.syrous.expensetracker.usecase
 
-import android.util.Log
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.*
 import com.syrous.expensetracker.usecase.UseCaseResult.*
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Named
@@ -17,15 +14,14 @@ import kotlin.random.Random
 
 class GetAndUpdateSheetsUseCase @Inject constructor(
     private val sharedPrefManager: SharedPrefManager,
-    private val sheetApiRequest: SheetApiRequest,
+    private val provider: GoogleApisClientProvider,
     @Named("apiKey") private val apiKey: String
 ) {
 
     private val TAG = this::class.java.name
 
     suspend fun execute(): UseCaseResult<SpreadSheetBatchUpdateResponse> {
-        val result = sheetApiRequest.getSpreadSheetData(
-            sharedPrefManager.getUserToken(),
+        val result = provider.sheetApiClient().getSpreadSheetData(
             sharedPrefManager.getSpreadSheetId(),
             apiKey
         )
@@ -33,8 +29,7 @@ class GetAndUpdateSheetsUseCase @Inject constructor(
             if(result.body() != null) {
                 if(result.body()!!.sheets.isNotEmpty()) {
                     val batchUpdateRequest = storeAndCreateAddSheetRequest(result)
-                    val updateResult = sheetApiRequest.updateSpreadSheetToFormat(
-                        sharedPrefManager.getUserToken(),
+                    val updateResult = provider.sheetApiClient().updateSpreadSheetToFormat(
                         sharedPrefManager.getSpreadSheetId(),
                         apiKey,
                         batchUpdateRequest

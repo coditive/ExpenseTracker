@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.work.WorkManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -14,11 +15,13 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.syrous.expensetracker.R
-import com.syrous.expensetracker.data.remote.AuthTokenRequest
+import com.syrous.expensetracker.data.remote.AuthTokenApi
 import com.syrous.expensetracker.databinding.ActivitySignInBinding
 import com.syrous.expensetracker.home.HomeActivity
+import com.syrous.expensetracker.service.enqueueSpreadSheetSyncWork
 import com.syrous.expensetracker.utils.Constants
 import com.syrous.expensetracker.utils.SharedPrefManager
+import com.syrous.expensetracker.utils.TokenInterceptor
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -36,7 +39,13 @@ class SignInActivity : AppCompatActivity() {
     lateinit var sharedPrefManager: SharedPrefManager
 
     @Inject
-    lateinit var authRequest: AuthTokenRequest
+    lateinit var tokenInterceptor: TokenInterceptor
+
+    @Inject
+    lateinit var workManager: WorkManager
+
+    @Inject
+    lateinit var authApi: AuthTokenApi
 
     private val userLoginResultContract =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -81,13 +90,14 @@ class SignInActivity : AppCompatActivity() {
             val account = completedTask.getResult(ApiException::class.java)
             lifecycleScope.launchWhenCreated {
                 account.serverAuthCode?.let {
-                   val authCred = authRequest.getToken(
+                   val authCred = authApi.getToken(
                         it,
                         Constants.webClientId,
                         Constants.androidClientSecret,
-                        "authorization_code"
+                        Constants.authorizationCode
                     )
-                    sharedPrefManager.storeUserToken(authCred.accessToken)
+                    sharedPrefManager.storeRefreshToken(authCred.refreshToken!!)
+                    tokenInterceptor.token = authCred.accessToken
                     startActivity(Intent(this@SignInActivity, HomeActivity::class.java))
                 }
             }
@@ -98,5 +108,8 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        workManager.enqueueSpreadSheetSyncWork()
+    }
 }

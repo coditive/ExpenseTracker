@@ -1,14 +1,13 @@
 package com.syrous.expensetracker.usecase
 
-import android.util.Log
-import com.google.android.gms.common.api.internal.ApiKey
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.SpreadsheetAppendResponse
 import com.syrous.expensetracker.data.remote.model.ValuesRequest
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.usecase.UseCaseResult.*
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,7 +16,7 @@ import javax.inject.Named
 
 class AppendTransactionsUseCase @Inject constructor(
     private val transactionManager: TransactionManager,
-    private val sheetApiRequest: SheetApiRequest,
+    private val provider: GoogleApisClientProvider,
     private val sharedPrefManager: SharedPrefManager,
     @Named("apiKey") private val apiKey: String
 ) {
@@ -30,8 +29,7 @@ class AppendTransactionsUseCase @Inject constructor(
         )
         return try {
             if (valueRequest.values.isNotEmpty()) {
-                val result = sheetApiRequest.appendValueIntoSheet(
-                    sharedPrefManager.getUserToken(),
+                val result = provider.sheetApiClient().appendValueIntoSheet(
                     sharedPrefManager.getSpreadSheetId(),
                     range,
                     apiKey,

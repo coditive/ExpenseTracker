@@ -93,4 +93,10 @@ object Constants {
     const val datePicker = "date-picker"
 
     const val blankSpace = " "
+
+    const val serverAuthCode = "server-auth-code"
+
+    const val refreshToken = "refresh_token"
+
+    const val authorizationCode = "authorization_code"
 }

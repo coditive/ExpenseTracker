@@ -1,7 +1,6 @@
 package com.syrous.expensetracker.usecase
 
-import android.content.Context
-import com.syrous.expensetracker.data.remote.SheetApiRequest
+import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.SpreadSheetBatchUpdateResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
@@ -11,7 +10,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.*
 
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +20,7 @@ class AddDataValidationUseCaseTest {
 
     private lateinit var useCase: AddDataValidationUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApiRequest: SheetApiRequest = mockk()
+    private val sheetApi: SheetApi = mockk()
     private val apiKey = ""
     private val authToken = ""
     private val spreadSheetId = ""
@@ -30,7 +28,7 @@ class AddDataValidationUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = AddDataValidationUseCase(sharedPrefManager, sheetApiRequest, apiKey)
+        useCase = AddDataValidationUseCase(sharedPrefManager, sheetApi, apiKey)
     }
 
     @Test
@@ -39,7 +37,7 @@ class AddDataValidationUseCaseTest {
         every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApiRequest.updateSpreadSheetToFormat(
+            sheetApi.updateSpreadSheetToFormat(
                 authToken,
                 spreadSheetId,
                 apiKey,
@@ -58,7 +56,7 @@ class AddDataValidationUseCaseTest {
         every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApiRequest.updateSpreadSheetToFormat(
+            sheetApi.updateSpreadSheetToFormat(
                 authToken,
                 spreadSheetId,
                 apiKey,

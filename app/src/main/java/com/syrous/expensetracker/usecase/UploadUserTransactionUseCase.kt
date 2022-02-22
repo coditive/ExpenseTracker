@@ -4,13 +4,14 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.DriveApi
 import com.syrous.expensetracker.data.remote.model.UploadFileMetaData
 import com.syrous.expensetracker.datainterface.TransactionManager
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -24,7 +25,7 @@ import javax.inject.Named
 
 class UploadUserTransactionUseCase @Inject constructor(
     private val transactionManager: TransactionManager,
-    private val apiRequest: DriveApiRequest,
+    private val provider: GoogleApisClientProvider,
     private val sharedPrefManager: SharedPrefManager,
     @Named("apiKey") private val apiKey: String
 ) {
@@ -57,8 +58,7 @@ class UploadUserTransactionUseCase @Inject constructor(
                     listOf(sharedPrefManager.getExpenseTrackerFolderId())
                 )
 
-                val response = apiRequest.uploadFile(
-                    sharedPrefManager.getUserToken(),
+                val response = provider.driveApiClient().uploadFile(
                     apiKey,
                     MultipartBody.Part.create(uploadFileMetaData),
                     MultipartBody.Part.create(fileRequestBody)

@@ -2,7 +2,7 @@ package com.syrous.expensetracker.data.remote.model
 
 import com.squareup.moshi.Json
 
-data class AuthTokenResponse(
+data class AuthToken(
     @Json(name = "access_token") val accessToken: String,
     val scope: String,
     @Json(name = "token_type") val tokenType: String,

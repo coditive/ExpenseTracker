@@ -1,18 +1,17 @@
 package com.syrous.expensetracker.usecase
 
-import android.util.Log
-import androidx.work.ListenableWorker
-import com.syrous.expensetracker.data.remote.DriveApiRequest
+import com.syrous.expensetracker.data.remote.DriveApi
 import com.syrous.expensetracker.data.remote.model.SearchFileQueryResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import javax.inject.Inject
 import javax.inject.Named
 
 class SearchSheetUseCase @Inject constructor(
-    private val apiRequest: DriveApiRequest,
+    private val provider: GoogleApisClientProvider,
     private val sharedPrefManager: SharedPrefManager,
     @Named("apiKey") private val apiKey: String
 ) {
@@ -20,8 +19,7 @@ class SearchSheetUseCase @Inject constructor(
     suspend fun execute(): UseCaseResult<SearchFileQueryResponse> {
         val query =
             "mimeType = '${Constants.spreadSheetMimeType}' and name = '${Constants.spreadsheetFileName}'"
-        val result = apiRequest.searchFile(
-            sharedPrefManager.getUserToken(),
+        val result = provider.driveApiClient().searchFile(
             apiKey,
             Constants.corpora,
             query
