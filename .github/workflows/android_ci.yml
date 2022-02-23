@@ -18,6 +18,6 @@ jobs:
           java-version: 11
 
       - name: Unit Tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew clean test -PGOOGLE_API_KEY="xxxxxxxxxxx" -PWEB_CLIENT_ID="xxxxxxxxxxx" -PANDROID_CLIENT_ID="xxxxxxxxx"
 
 
