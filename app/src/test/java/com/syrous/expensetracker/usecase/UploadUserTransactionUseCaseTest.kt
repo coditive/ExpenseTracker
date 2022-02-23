@@ -7,6 +7,7 @@ import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import io.mockk.coEvery
 import io.mockk.every
@@ -25,7 +26,7 @@ class UploadUserTransactionUseCaseTest {
 
     private lateinit var useCase: UploadUserTransactionUseCase
     private val transactionManager: TransactionManager = mockk()
-    private val api: DriveApi = mockk()
+    private val provider: GoogleApisClientProvider = mockk()
     private val sharedPrefManager: SharedPrefManager = mockk()
     private val apiKey = ""
     private val context: Context = mockk()
@@ -34,7 +35,7 @@ class UploadUserTransactionUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = UploadUserTransactionUseCase(transactionManager, api, sharedPrefManager, apiKey)
+        useCase = UploadUserTransactionUseCase(transactionManager, provider, sharedPrefManager, apiKey)
     }
 
     @Test

@@ -54,6 +54,8 @@
 
         <activity android:name=".screen.SignInActivity" />
         <activity android:name=".home.HomeActivity"/>
+        <activity android:name=".screen.LoggedInUserExportActivity"/>
+
         <activity
             android:name=".widget.ExpenseTrackerWidgetAddActivity"
             android:theme="@style/Theme.Transparent" />

@@ -4,6 +4,7 @@ import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.*
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import io.mockk.coEvery
 import io.mockk.every
@@ -20,23 +21,21 @@ class GetAndUpdateSheetsUseCaseTest {
 
     private lateinit var useCase: GetAndUpdateSheetsUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApi: SheetApi = mockk()
+    private val provider: GoogleApisClientProvider = mockk()
     private val authToken = ""
     private val spreadSheetId = ""
     private val apiKey = ""
 
     @Before
     fun setUp() {
-        useCase = GetAndUpdateSheetsUseCase(sharedPrefManager, sheetApi, apiKey)
+        useCase = GetAndUpdateSheetsUseCase(sharedPrefManager, provider, apiKey)
     }
 
     @Test
     fun `when api sends error response for getSpreadSheetData to valid request`() = runBlocking {
-        coEvery { sharedPrefManager.getUserToken() } returns authToken
         coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApi.getSpreadSheetData(
-                authToken,
+            provider.sheetApiClient().getSpreadSheetData(
                 spreadSheetId,
                 apiKey
             )
@@ -51,11 +50,9 @@ class GetAndUpdateSheetsUseCaseTest {
     @Test
     fun `when api send success response But sheetList is empty for getSpreadSheetData to valid request`() =
         runBlocking {
-            coEvery { sharedPrefManager.getUserToken() } returns authToken
             coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApi.getSpreadSheetData(
-                    authToken,
+                provider.sheetApiClient().getSpreadSheetData(
                     spreadSheetId,
                     apiKey
                 )
@@ -70,11 +67,9 @@ class GetAndUpdateSheetsUseCaseTest {
     @Test
     fun `when api send success response But body is null for getSpreadSheetData to valid request`() =
         runBlocking {
-            coEvery { sharedPrefManager.getUserToken() } returns authToken
             coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApi.getSpreadSheetData(
-                    authToken,
+                provider.sheetApiClient().getSpreadSheetData(
                     spreadSheetId,
                     apiKey
                 )
@@ -87,11 +82,9 @@ class GetAndUpdateSheetsUseCaseTest {
     @Test
     fun `when api send success response for getSpreadSheetData but error for updateSpreadSheetToFormat`() =
         runBlocking {
-            coEvery { sharedPrefManager.getUserToken() } returns authToken
             coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApi.getSpreadSheetData(
-                    any(),
+                provider.sheetApiClient().getSpreadSheetData(
                     any(),
                     any()
                 )
@@ -104,8 +97,8 @@ class GetAndUpdateSheetsUseCaseTest {
             every { sharedPrefManager.storeSummarySheetId(any()) } returns Unit
             every { sharedPrefManager.storeCategoriesSheetId(any()) } returns Unit
             coEvery {
-                sheetApi.updateSpreadSheetToFormat(
-                    authToken, spreadSheetId, apiKey, any()
+                provider.sheetApiClient().updateSpreadSheetToFormat(
+                    spreadSheetId, apiKey, any()
                 )
             } returns Response.error(404, "".toResponseBody())
 
@@ -117,11 +110,9 @@ class GetAndUpdateSheetsUseCaseTest {
 
     @Test
     fun `when api send success response for getSpreadSheetData but success for updateSpreadSheetToFormat`() = runBlocking {
-        coEvery { sharedPrefManager.getUserToken() } returns authToken
         coEvery { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApi.getSpreadSheetData(
-                any(),
+            provider.sheetApiClient().getSpreadSheetData(
                 any(),
                 any()
             )
@@ -134,8 +125,8 @@ class GetAndUpdateSheetsUseCaseTest {
         every { sharedPrefManager.storeSummarySheetId(any()) } returns Unit
         every { sharedPrefManager.storeCategoriesSheetId(any()) } returns Unit
         coEvery {
-            sheetApi.updateSpreadSheetToFormat(
-                authToken, spreadSheetId, apiKey, any()
+            provider.sheetApiClient().updateSpreadSheetToFormat(
+                spreadSheetId, apiKey, any()
             )
         } returns Response.success(SpreadSheetBatchUpdateResponse("", emptyList()))
 

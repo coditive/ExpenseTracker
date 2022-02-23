@@ -41,8 +41,8 @@ class GoogleApisClientProviderImpl @Inject constructor(
     }
 
     private suspend fun getRefreshAuthToken(): AuthToken = withContext(Dispatchers.IO) {
-        authTokenApi.getToken(
-            sharedPrefManager.getServerAuthToken(),
+        authTokenApi.getRefreshedToken(
+            sharedPrefManager.getRefreshToken(),
             Constants.webClientId,
             Constants.androidClientSecret,
             Constants.refreshToken

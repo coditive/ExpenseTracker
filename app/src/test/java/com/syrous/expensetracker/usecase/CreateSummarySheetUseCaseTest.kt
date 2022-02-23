@@ -7,6 +7,7 @@ import com.syrous.expensetracker.data.remote.model.SpreadsheetAppendResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import io.mockk.coEvery
 import io.mockk.every
@@ -23,7 +24,7 @@ class CreateSummarySheetUseCaseTest {
 
     private lateinit var useCase: CreateSummarySheetUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApi: SheetApi = mockk()
+    private val provider: GoogleApisClientProvider = mockk()
     private val apiKey = ""
     private val context: Context = mockk(relaxed = true)
     private val authToken = ""
@@ -33,7 +34,7 @@ class CreateSummarySheetUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = CreateSummarySheetUseCase(sharedPrefManager, sheetApi, apiKey)
+        useCase = CreateSummarySheetUseCase(sharedPrefManager, provider, apiKey)
     }
 
     @Test
@@ -51,11 +52,9 @@ class CreateSummarySheetUseCaseTest {
             every { context.resources.getStringArray(R.array.expense_categories) } returns buildExpenseCategoriesArray(
                 5
             )
-            every { sharedPrefManager.getUserToken() } returns authToken
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery {
-                sheetApi.appendValueIntoSheet(
-                    authToken,
+                provider.sheetApiClient().appendValueIntoSheet(
                     spreadSheetId,
                     summaryAColumnRange,
                     apiKey,
@@ -76,12 +75,10 @@ class CreateSummarySheetUseCaseTest {
     fun `when initial append api for createSummarySheet fun is called and success is received and other append call fails `() =
         runBlocking {
             every { context.resources.getStringArray(R.array.expense_categories) } returns buildExpenseCategoriesArray(5)
-            every { sharedPrefManager.getUserToken() } returns authToken
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             val range = slot<String>()
             coEvery {
-                sheetApi.appendValueIntoSheet(
-                    authToken,
+                provider.sheetApiClient().appendValueIntoSheet(
                     spreadSheetId,
                     capture(range),
                     apiKey,
@@ -112,12 +109,10 @@ class CreateSummarySheetUseCaseTest {
             every { context.resources.getStringArray(R.array.expense_categories) } returns buildExpenseCategoriesArray(
                 5
             )
-            every { sharedPrefManager.getUserToken() } returns authToken
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             val range = slot<String>()
             coEvery {
-                sheetApi.appendValueIntoSheet(
-                    authToken,
+                provider.sheetApiClient().appendValueIntoSheet(
                     spreadSheetId,
                     capture(range),
                     apiKey,

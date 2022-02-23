@@ -22,7 +22,7 @@ class TokenInterceptor @Inject constructor(): Interceptor {
             Log.i(TAG, " intercept: no auth header present thus adding new ones")
             if(token != null) {
                 Log.i(TAG, " intercept: token - $token")
-                requestBuilder.addHeader("Authorization", "bearer $token")
+                requestBuilder.addHeader("Authorization", "Bearer $token")
             } else Log.e(TAG, "intercept: token is null")
         }
         return chain.proceed(requestBuilder.build())

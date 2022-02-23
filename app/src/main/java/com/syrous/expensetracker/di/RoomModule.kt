@@ -2,6 +2,8 @@ package com.syrous.expensetracker.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import com.syrous.expensetracker.data.local.SubCategoriesDao
 import com.syrous.expensetracker.data.local.ExpenseDB
 import com.syrous.expensetracker.data.local.TransactionDao
@@ -58,11 +60,14 @@ class RoomModule {
 
         @Provides
         fun initSharedPrefManager(@ApplicationContext context: Context): SharedPrefManager {
-            val sharedPref = context.getSharedPreferences(
+            val encryptedSharedPreferences = EncryptedSharedPreferences.create(
                 Constants.SharedPrefName,
-                Context.MODE_PRIVATE
+                MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+                context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
-            return SharedPrefManager(sharedPref)
+            return SharedPrefManager(encryptedSharedPreferences)
         }
     }
 

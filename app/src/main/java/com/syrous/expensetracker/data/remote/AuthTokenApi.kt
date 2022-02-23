@@ -16,4 +16,15 @@ interface AuthTokenApi {
         @Field("grant_type") grantType: String
     ): AuthToken
 
+    @POST("token")
+    @FormUrlEncoded
+    suspend fun getRefreshedToken(
+        @Field("refresh_token") serverAuthCode: String,
+        @Field("client_id") clientId: String,
+        @Field("client_secret") clientSecret: String,
+        @Field("grant_type") grantType: String
+    ): AuthToken
+
+
+
 }

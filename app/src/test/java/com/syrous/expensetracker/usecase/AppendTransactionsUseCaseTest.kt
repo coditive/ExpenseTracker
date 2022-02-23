@@ -8,6 +8,7 @@ import com.syrous.expensetracker.model.Category
 import com.syrous.expensetracker.model.UserTransaction
 import com.syrous.expensetracker.usecase.UseCaseResult.*
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import io.mockk.coEvery
 import io.mockk.every
@@ -25,7 +26,7 @@ import kotlin.random.Random
 class AppendTransactionsUseCaseTest {
     lateinit var appendUseCase: AppendTransactionsUseCase
     private val transactionManager: TransactionManager = mockk()
-    private val sheetApi: SheetApi = mockk(relaxed = true)
+    private val provider: GoogleApisClientProvider = mockk(relaxed = true)
     private val sharedPrefManager: SharedPrefManager = mockk()
     private val authToken = ""
     private val spreadSheetId = ""
@@ -40,15 +41,14 @@ class AppendTransactionsUseCaseTest {
     @Before
     fun setUp() {
         appendUseCase =
-            AppendTransactionsUseCase(transactionManager, sheetApi, sharedPrefManager, apiKey)
+            AppendTransactionsUseCase(transactionManager, provider, sharedPrefManager, apiKey)
     }
 
     @Test
     fun `when room is empty don't call api`() = runBlocking {
         coEvery { transactionManager.getUnSyncedTransaction() } returns emptyList()
         coEvery {
-            sheetApi.appendValueIntoSheet(
-                authToken,
+            provider.sheetApiClient().appendValueIntoSheet(
                 spreadSheetId,
                 range,
                 apiKey,
@@ -70,8 +70,7 @@ class AppendTransactionsUseCaseTest {
         runBlocking {
             coEvery { transactionManager.getUnSyncedTransaction() } returns buildUnSyncTransaction(2)
             coEvery {
-                sheetApi.appendValueIntoSheet(
-                    authToken,
+                provider.sheetApiClient().appendValueIntoSheet(
                     spreadSheetId,
                     range,
                     apiKey,
@@ -93,8 +92,7 @@ class AppendTransactionsUseCaseTest {
     fun `when user transaction list is given, called api then success but null body is received`() = runBlocking {
         coEvery { transactionManager.getUnSyncedTransaction() } returns buildUnSyncTransaction(2)
         coEvery {
-            sheetApi.appendValueIntoSheet(
-                authToken,
+            provider.sheetApiClient().appendValueIntoSheet(
                 spreadSheetId,
                 range,
                 apiKey,
@@ -116,12 +114,10 @@ class AppendTransactionsUseCaseTest {
     fun `when user transaction list is given, call api then succeed received`() =
         runBlocking {
             val mutableValueRequestList = mutableListOf<ValuesRequest>()
-            every { sharedPrefManager.getUserToken() } returns authToken
             every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
             coEvery { transactionManager.getUnSyncedTransaction() } returns buildUnSyncTransaction(5)
             coEvery {
-                sheetApi.appendValueIntoSheet(
-                    any(),
+                provider.sheetApiClient().appendValueIntoSheet(
                     any(),
                     any(),
                     any(),

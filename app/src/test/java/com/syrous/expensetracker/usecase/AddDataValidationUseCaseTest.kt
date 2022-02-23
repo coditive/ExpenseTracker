@@ -4,6 +4,7 @@ import com.syrous.expensetracker.data.remote.SheetApi
 import com.syrous.expensetracker.data.remote.model.SpreadSheetBatchUpdateResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import io.mockk.coEvery
 import io.mockk.every
@@ -20,7 +21,7 @@ class AddDataValidationUseCaseTest {
 
     private lateinit var useCase: AddDataValidationUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApi: SheetApi = mockk()
+    private val provider: GoogleApisClientProvider = mockk()
     private val apiKey = ""
     private val authToken = ""
     private val spreadSheetId = ""
@@ -28,17 +29,15 @@ class AddDataValidationUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = AddDataValidationUseCase(sharedPrefManager, sheetApi, apiKey)
+        useCase = AddDataValidationUseCase(sharedPrefManager, provider, apiKey)
     }
 
     @Test
     fun `when error is received`() = runBlocking {
         every { sharedPrefManager.getTransactionSheetId() } returns transactionSheetId
-        every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApi.updateSpreadSheetToFormat(
-                authToken,
+            provider.sheetApiClient().updateSpreadSheetToFormat(
                 spreadSheetId,
                 apiKey,
                 any()
@@ -53,11 +52,9 @@ class AddDataValidationUseCaseTest {
     @Test
     fun `when success is received with emptyList of replies`() = runBlocking {
         every { sharedPrefManager.getTransactionSheetId() } returns transactionSheetId
-        every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApi.updateSpreadSheetToFormat(
-                authToken,
+            provider.sheetApiClient().updateSpreadSheetToFormat(
                 spreadSheetId,
                 apiKey,
                 any()

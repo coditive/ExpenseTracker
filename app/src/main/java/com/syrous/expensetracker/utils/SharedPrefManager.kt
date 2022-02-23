@@ -9,23 +9,12 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
 
     private var sharedPref: SharedPreferences = sharedPreferences
 
-    fun addMonthStartBalance(amount: Int) {
-        sharedPref.edit()
-            .putInt(Constants.monthStartBalance, amount)
-            .apply()
-    }
-
     fun storeExpenseTrackerFolderId(id: String) {
         sharedPref.edit()
             .putString(Constants.expenseTrackerFolder, id)
             .apply()
     }
 
-    fun storeUserToken(token: String) {
-        sharedPref.edit()
-            .putString(Constants.userToken, "Bearer $token")
-            .apply()
-    }
 
     fun storeSummarySheetId(id: Int) {
         sharedPref.edit()
@@ -62,10 +51,6 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
 
     fun getCategoriesSheetId(): Int = sharedPref.getInt(Constants.categorySheetId, 0)
 
-    fun getUserToken(): String = sharedPref
-        .getString(Constants.userToken, Constants.emptyString)
-        .toString()
-
     fun isNewUser(): Boolean = sharedPref.getBoolean(Constants.NEW_USER, true)
 
     fun makeUserRegular() {
@@ -83,18 +68,6 @@ class SharedPrefManager constructor(sharedPreferences: SharedPreferences) {
     fun getSpreadSheetId(): String = sharedPref
         .getString(Constants.spreadSheetId, Constants.emptyString)
         .toString()
-
-    fun getMonthStartBalance(): Int {
-        return sharedPref.getInt(Constants.monthStartBalance, 0)
-    }
-
-    fun getServerAuthToken() = sharedPref.getString(Constants.serverAuthCode, Constants.emptyString).toString()
-
-    fun storeServerAuthToken(token: String) {
-        sharedPref.edit()
-            .putString(Constants.serverAuthCode, token)
-            .apply()
-    }
 
     fun getRefreshToken() = sharedPref.getString(Constants.refreshToken, Constants.emptyString).toString()
 

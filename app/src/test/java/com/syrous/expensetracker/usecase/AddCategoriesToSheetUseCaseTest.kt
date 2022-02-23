@@ -7,6 +7,7 @@ import com.syrous.expensetracker.data.remote.model.SpreadsheetAppendResponse
 import com.syrous.expensetracker.usecase.UseCaseResult.Failure
 import com.syrous.expensetracker.usecase.UseCaseResult.Success
 import com.syrous.expensetracker.utils.Constants
+import com.syrous.expensetracker.utils.GoogleApisClientProvider
 import com.syrous.expensetracker.utils.SharedPrefManager
 import io.mockk.coEvery
 import io.mockk.every
@@ -22,7 +23,7 @@ class AddCategoriesToSheetUseCaseTest {
 
     private lateinit var useCase: AddCategoriesToSheetUseCase
     private val sharedPrefManager: SharedPrefManager = mockk()
-    private val sheetApi: SheetApi = mockk()
+    private val provider: GoogleApisClientProvider = mockk()
     private val apiKey = ""
     private val context: Context = mockk(relaxed = true)
     private val authToken = ""
@@ -31,7 +32,7 @@ class AddCategoriesToSheetUseCaseTest {
 
     @Before
     fun setUp() {
-        useCase = AddCategoriesToSheetUseCase(sharedPrefManager, sheetApi, apiKey)
+        useCase = AddCategoriesToSheetUseCase(sharedPrefManager, provider, apiKey)
     }
 
     @Test
@@ -56,11 +57,9 @@ class AddCategoriesToSheetUseCaseTest {
     fun `when api request sent and error is received`() = runBlocking {
         every { context.resources.getStringArray(R.array.expense_categories) } returns buildExpenseCategoriesArray(5)
         every { context.resources.getStringArray(R.array.income_categories) } returns emptyArray()
-        every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApi.appendValueIntoSheet(
-                authToken,
+            provider.sheetApiClient().appendValueIntoSheet(
                 spreadSheetId,
                 categoriesAColumnRange,
                 apiKey,
@@ -81,11 +80,9 @@ class AddCategoriesToSheetUseCaseTest {
     fun `when api request sent and success is received`() = runBlocking {
         every { context.resources.getStringArray(R.array.expense_categories) } returns buildExpenseCategoriesArray(5)
         every { context.resources.getStringArray(R.array.income_categories) } returns buildExpenseCategoriesArray(2)
-        every { sharedPrefManager.getUserToken() } returns authToken
         every { sharedPrefManager.getSpreadSheetId() } returns spreadSheetId
         coEvery {
-            sheetApi.appendValueIntoSheet(
-                authToken,
+            provider.sheetApiClient().appendValueIntoSheet(
                 spreadSheetId,
                 categoriesAColumnRange,
                 apiKey,

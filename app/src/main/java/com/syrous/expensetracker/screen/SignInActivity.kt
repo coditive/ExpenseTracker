@@ -42,9 +42,6 @@ class SignInActivity : AppCompatActivity() {
     lateinit var tokenInterceptor: TokenInterceptor
 
     @Inject
-    lateinit var workManager: WorkManager
-
-    @Inject
     lateinit var authApi: AuthTokenApi
 
     private val userLoginResultContract =
@@ -74,6 +71,10 @@ class SignInActivity : AppCompatActivity() {
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
+        if(account != null) {
+            startActivity(Intent(this, LoggedInUserExportActivity::class.java))
+            finish()
+        }
 
         binding.googleSignButton.setOnClickListener {
             beginSignIn()
@@ -106,10 +107,5 @@ class SignInActivity : AppCompatActivity() {
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code= ${e.status}" + e.printStackTrace())
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        workManager.enqueueSpreadSheetSyncWork()
     }
 }

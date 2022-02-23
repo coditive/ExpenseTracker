@@ -170,11 +170,6 @@ class HomeActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
     }
 
-    override fun onPause() {
-        super.onPause()
-        workManager.enqueueSpreadSheetSyncWork()
-    }
-
     private fun setupPieChartData(categoryItemList: List<SubCategoryItem>) {
         var totalExpense = 0
         categoryItemList.forEach {
